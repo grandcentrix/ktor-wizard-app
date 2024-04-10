@@ -47,4 +47,10 @@ dependencies {
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
+    implementation("io.ktor:ktor-server-core:1.6.5")
+    implementation("io.ktor:ktor-server-netty:1.6.5")
+    implementation("io.ktor:ktor-html-builder:1.6.5")
+    implementation("ch.qos.logback:logback-classic:1.2.6")
+    implementation("com.fasterxml.jackson.module", "jackson-module-kotlin", "2.13.0")
 }
