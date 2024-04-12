@@ -23,7 +23,7 @@ fun Application.configureAuthentication() {
         }
         session<UserSession>("auth-session") {
             validate { session ->
-                if(UserManagerInstance.getItem(session.name) != null) {
+                if(UserManagerInstance.getItem(session.username) != null) {
                     session
                 } else {
                     null
