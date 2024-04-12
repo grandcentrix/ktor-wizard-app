@@ -1,9 +1,13 @@
 package net.grandcentrix.backend.models;
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import java.util.Date
 import java.util.UUID
 
+@Serializable
 data class Movie(
+    @Contextual
     val id: UUID,
     val title: String,
     val boxOffice: Double,
@@ -17,6 +21,7 @@ data class Movie(
     val posterUrl: String,
     val producers: List<String>,
     val rating: String,
+    @Contextual
     val releaseDate: Date,
     val duration: Int,
     val slug: String,

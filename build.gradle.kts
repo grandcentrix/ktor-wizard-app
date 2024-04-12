@@ -5,6 +5,7 @@ val logback_version: String by project
 plugins {
     kotlin("jvm") version "1.9.23"
     id("io.ktor.plugin") version "2.3.9"
+    kotlin("plugin.serialization") version "1.9.22"
 }
 
 group = "net.grandcentrix.backend"
@@ -39,18 +40,16 @@ ktor {
 dependencies {
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
-    implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-server-config-yaml:2.3.9")
+    implementation("io.ktor:ktor-server-sessions:$ktor_version")
+    implementation("io.ktor:ktor-server-auth:$ktor_version")
     implementation("io.ktor:ktor-server-status-pages:$ktor_version")
     implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
+    implementation("io.ktor:ktor-server-freemarker-jvm:2.3.7")
+    implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     testImplementation("io.mockk:mockk:1.13.8")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
-    implementation("io.ktor:ktor-server-core:1.6.5")
-    implementation("io.ktor:ktor-server-netty:1.6.5")
-    implementation("io.ktor:ktor-html-builder:1.6.5")
-    implementation("ch.qos.logback:logback-classic:1.2.6")
-    implementation("com.fasterxml.jackson.module", "jackson-module-kotlin", "2.13.0")
 }

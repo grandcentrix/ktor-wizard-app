@@ -1,0 +1,12 @@
+[
+  {
+    "id":1,
+    "name":"John",
+    "surname":"Smith",
+    "username":"johnsmith",
+    "password":"pass",
+    "house":
+      {"id":1,"name":"Gryffindor","colors":[],"founder":"","animal":"","element":"","ghost":"","commonRoom":"","heads":[],"traits":[]},
+    "favouriteItems":[]
+  }
+]
