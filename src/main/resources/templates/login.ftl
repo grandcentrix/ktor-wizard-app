@@ -19,6 +19,7 @@
         <input class="button" type="submit">
         <p>${loginStatus}</p>
     </form>
+    <a href="/signup">Create account</a>
 </section>
 </body>
 </html>

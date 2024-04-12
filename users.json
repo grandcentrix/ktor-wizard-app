@@ -1,12 +1,1 @@
-[
-  {
-    "id":1,
-    "name":"John",
-    "surname":"Smith",
-    "username":"johnsmith",
-    "password":"pass",
-    "house":
-      {"id":1,"name":"Gryffindor","colors":[],"founder":"","animal":"","element":"","ghost":"","commonRoom":"","heads":[],"traits":[]},
-    "favouriteItems":[]
-  }
-]
+[{"id":1,"name":"John","surname":"Smith","email":"email@email.com","username":"johnsmith","password":"pass","house":{"id":1,"name":"Gryffindor","colors":[],"founder":"","animal":"","element":"","ghost":"","commonRoom":"","heads":[],"traits":[]}},{"id":2,"name":"Maksimilian","surname":"Usoltcev","email":"maksi@google.com","username":"maksi","password":"1313"}]

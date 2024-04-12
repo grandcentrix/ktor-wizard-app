@@ -1,0 +1,26 @@
+[
+  {
+  "id": 1,
+  "name": "Gryffindor",
+  "colors": [],
+  "founder": "",
+  "animal": "",
+  "element": "",
+  "ghost": "",
+  "commonRoom": "",
+  "heads": [],
+  "traits": []
+  },
+  {
+    "id": 1,
+    "name": "Ravenclaw",
+    "colors": [],
+    "founder": "",
+    "animal": "",
+    "element": "",
+    "ghost": "",
+    "commonRoom": "",
+    "heads": [],
+    "traits": []
+  }
+]

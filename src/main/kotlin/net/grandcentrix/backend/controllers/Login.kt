@@ -1,14 +1,9 @@
 package net.grandcentrix.backend.controllers
 
-import io.ktor.http.*
-import io.ktor.server.sessions.*
-import io.ktor.server.util.*
+import io.ktor.server.auth.*
 import kotlinx.serialization.json.Json
 import net.grandcentrix.backend.models.User
 import java.io.File
-import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.response.*
 
 
 class Login {
@@ -18,10 +13,10 @@ class Login {
 
     var status = ""
 
-    private val usersFile = File("users.json")
+    val usersFile = File("users.json")
     private val users = getUsers().toMutableList()
 
-    private fun getUsers(): List<User> {
+    fun getUsers(): List<User> {
         if (!usersFile.exists()) {
             usersFile.createNewFile()
         }

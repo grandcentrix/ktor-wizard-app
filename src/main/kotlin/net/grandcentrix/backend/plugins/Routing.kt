@@ -8,9 +8,10 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
-import io.ktor.server.util.*
 import net.grandcentrix.backend.controllers.Login.Companion.LoginInstance
+import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
+import net.grandcentrix.backend.repository.HouseManager.Companion.HouseManagerInstance
 
 
 fun Application.configureRouting() {
@@ -37,6 +38,22 @@ fun Application.configureRouting() {
                     call.sessions.set(UserSession(username))
                     call.respondRedirect("/")
                 }
+            }
+
+            get("/signup") {
+                call.respond(FreeMarkerContent(
+                    "signup.ftl",
+                    mapOf(
+                        "signUpStatus" to SignupInstance.status,
+                        "houses" to HouseManagerInstance.getAll().map { it.name }
+                    )
+                ))
+            }
+
+            post("/signup") {
+                val formParameters = call.receiveParameters()
+                SignupInstance.createUser(formParameters)
+                call.respondRedirect("/login")
             }
         }
     }
