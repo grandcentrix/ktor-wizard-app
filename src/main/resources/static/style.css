@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800');
+
+@font-face {
+    font-family: 'Lumos';
+    src:
+            url('/static/fonts/Lumos.eot'),
+            url('/static/fonts/Lumos.woff') format('woff'),
+            url('/static/fonts/Lumos.woff2') format('woff2'),
+            url('/static/fonts/Lumos.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Open Sans', sans-serif;
+    background-color: #28191C;
+    color: #ffffff;
+}
+
+a,a:hover {
+    text-decoration: none;
+    color: #D8804E;
+}
+
+li {
+    list-style: none
+}
+
+header {
+    background-image: url("/static/img/background.jpg");
+    height: 600px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-direction: column;
+    box-shadow: 0 20px 90px #13090B;
+}
+
+.bg-effect {
+    background: black;
+    opacity: 0.5;
+    width: 100%;
+    height: 600px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+
+h1.logo {
+    font-family: 'Lumos';
+    font-size: 122px;
+    font-weight: normal;
+    color: #fff;
+    margin: 0;
+    line-height: 1;
+    position: relative;
+    z-index: 1;
+}
+
+h1.logo a {
+    color: #fff
+}
+
+menu.main-menu {
+    display: flex;
+    color: #734136;
+    font-weight: 600;
+    font-size: 20px;
+    text-transform: uppercase;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+}
+
+menu.main-menu a {
+    color: #fff;
+}
+
+menu.main-menu a:hover {
+    color: #fff;
+}
+
+menu.main-menu li:target {
+    background-color: #D8804E;
+}
+
+.search-bar input[type="text"] {
+    background-color: transparent;
+    border: 1px solid #D8804E;
+    padding: 20px 25px;
+    color: #fff;
+    width: calc(1235px - 25px);
+    font-size: 18px;
+    letter-spacing: 0.2px;
+}
+
+.search-bar span {
+    background-color: #D8804E;
+    width: 65px;
+    height: 65px;
+    color: #fff;
+    text-align: center;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    font-size: 30px;
+}
+
+.search-bar {
+    display: flex;
+    margin-top: 150px;
+    margin-bottom: 50px;
+    position: relative;
+    z-index: 1;
+}
+
+.search-bar input[type="text"]:focus-visible {
+    outline: 0;
+}
+
+.search-bar ::placeholder {
+    color: #ffffff;
+    opacity: 1; /* Firefox */
+}
+
+.search-bar ::-ms-input-placeholder { /* Edge 12 -18 */
+    color: #ffffff;
+}
+
+.container {
+    display: block;
+    margin: 0 auto;
+    height: 100%;
+    width: 1327px;
+}
+
+.content {
+    width: 100%;
+    height: auto;
+}

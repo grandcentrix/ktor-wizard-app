@@ -23,7 +23,10 @@ fun Application.configureRouting() {
                 get {
                     val userSession = call.principal<UserSession>()
                     call.sessions.set(userSession?.copy())
-                    call.respond("${LoginInstance.status} Hello, world!")
+                    call.respond(FreeMarkerContent(
+                        "index.ftl",
+                        mapOf("loginStatus" to LoginInstance.status)
+                    ))
                 }
             }
 

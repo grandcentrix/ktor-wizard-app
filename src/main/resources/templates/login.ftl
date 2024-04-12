@@ -1,12 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Video Shuffle</title>
-    <link href="/style.css" rel="stylesheet" />
-</head>
-<body>
+<#import "_layout.ftl" as layout />
+<@layout.base>
+
 <h1>Login</h1>
-<section class="container">
+<section class="content">
     <form action="/login" method="POST">
         <label>
             <input placeholder="Username" type="text" name="username">
@@ -21,5 +17,5 @@
     </form>
     <a href="/signup">Create account</a>
 </section>
-</body>
-</html>
+
+</@layout.base>
