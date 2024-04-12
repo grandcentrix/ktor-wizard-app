@@ -13,7 +13,6 @@ import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.repository.HouseManager.Companion.HouseManagerInstance
 
-
 fun Application.configureRouting() {
     routing {
         staticResources("/static", "static")

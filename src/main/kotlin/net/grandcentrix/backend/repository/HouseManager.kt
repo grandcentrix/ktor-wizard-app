@@ -2,10 +2,9 @@ package net.grandcentrix.backend.repository;
 
 import kotlinx.serialization.json.Json
 import net.grandcentrix.backend.models.House
-import net.grandcentrix.backend.models.User
 import java.io.File
 
-class HouseManager: RepositoryManager<String, List<House>,House?> {
+class HouseManager: RepositoryManager<House,String, List<House>,House?> {
 
     companion object {
         val HouseManagerInstance: HouseManager = HouseManager()
@@ -27,20 +26,18 @@ class HouseManager: RepositoryManager<String, List<House>,House?> {
         return listOf()
     }
 
-    override fun deleteItem(item: String){
+    override fun getItem(name: String): House? = getAll().find { it.name == name }
+
+    override fun deleteItem(name: String){
         TODO("Not yet implemented")
     }
 
-    override fun addItem(item: String) {
-
-    }
-
-    override fun updateItem(item: String) {
+    override fun addItem(item: House) {
         TODO("Not yet implemented")
     }
 
-    override fun getItem(item: String): House? = getAll().find { it.name == item }
-
-
+    override fun updateItem(item: House) {
+        TODO("Not yet implemented")
+    }
 
 }
