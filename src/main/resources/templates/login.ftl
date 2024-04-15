@@ -1,9 +1,14 @@
 <#import "_layout.ftl" as layout />
 <@layout.base>
 
-<h1>Login</h1>
+<h1>
+    <span class="material-symbols-outlined">login</span>
+    Login
+</h1>
 <section class="content">
-    <form action="/login" method="POST">
+
+    <form class="form" action="/login" method="POST">
+
         <label>
             <input placeholder="Username" type="text" name="username">
         </label>
@@ -15,7 +20,10 @@
         <input class="button" type="submit">
         <p>${loginStatus}</p>
     </form>
-    <a href="/signup">Create account</a>
+    <a class="links" href="/signup">
+        Create account
+        <span class="material-symbols-outlined">north_east</span>
+    </a>
 </section>
 
 </@layout.base>
