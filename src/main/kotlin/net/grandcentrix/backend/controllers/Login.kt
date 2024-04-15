@@ -25,4 +25,4 @@ class Login {
 }
 
 // stores the session data
-data class UserSession(val name: String): Principal
+data class UserSession(val username: String): Principal
