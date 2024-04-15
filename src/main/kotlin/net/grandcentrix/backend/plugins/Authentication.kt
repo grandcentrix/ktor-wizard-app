@@ -17,7 +17,7 @@ fun Application.configureAuthentication() {
                 if (LoginInstance.verifyLogin(credentials)) {
                     UserIdPrincipal(credentials.name)
                 } else {
-                    null
+                    throw UnauthorizedException("Login not authorized")
                 }
             }
         }
@@ -43,3 +43,5 @@ fun Application.configureAuthentication() {
         }
     }
 }
+
+class UnauthorizedException(override val message: String?): Exception()
