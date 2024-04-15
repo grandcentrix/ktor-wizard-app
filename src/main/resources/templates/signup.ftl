@@ -1,37 +1,48 @@
 <#import "_layout.ftl" as layout />
 <@layout.base>
 
-<h1>Sign-up</h1>
+<h1>
+    <span class="material-symbols-outlined">edit_square</span>
+    Sign-up
+</h1>
 <section class="content">
-    <form action="/signup" method="POST">
-        <label>
-            <input placeholder="Name" required type="text" name="name">
-        </label>
+    <form class="form form-signup" action="/signup" method="POST">
+        <div class="register-fields">
+            <label>
+                <input placeholder="Name" required type="text" name="name">
+            </label>
 
-        <label>
-            <input placeholder="Surname" required type="text" name="surname">
-        </label>
+            <label>
+                <input placeholder="Surname" required type="text" name="surname">
+            </label>
+        </div>
+        <div class="register-fields">
+            <label>
+                <input placeholder="E-mail" required type="text" name="email">
+            </label>
 
-        <label>
-            <input placeholder="E-mail" required type="text" name="email">
-        </label>
+            <label>
+                <input placeholder="Username" required type="text" name="username">
+            </label>
+        </div>
 
-        <label>
-            <input placeholder="Username" required type="text" name="username">
-        </label>
+        <div class="register-fields">
+            <label>
+                <input placeholder="Password" required type="password" name="password">
+            </label>
 
-        <label>
-            <input placeholder="Password" required type="password" name="password">
-        </label>
+            <div class="register-fields">
+                <label class="select-label" for="houses">Choose your Hogwarts' House:</label>
+                <select class="round-arrow" name="houses" id="houses">
+                    <#list houses as house>
+                        <option name="house" value="${house}">${house}</option>
+                    </#list>
+                </select>
+            </div>
+        </div>
 
-        <label for="houses">Choose your Hogwarts' House:</label>
-        <select name="houses" id="houses">
-            <#list houses as house>
-                <option name="house" value="${house}">${house}</option>
-            </#list>
-        </select>
 
-        <input class="button" type="submit" value="Register">
+        <input class="register-button button" type="submit" value="Register">
         <p>${signUpStatus}</p>
     </form>
 </section>

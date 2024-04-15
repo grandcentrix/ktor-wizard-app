@@ -11,12 +11,23 @@
     font-style: normal;
 }
 
+h1 .material-symbols-outlined {
+    font-size: 30px !important;
+    margin-left: -3px;
+}
+
+span.material-symbols-outlined {
+    font-size: 20px;
+}
+
 body {
     margin: 0;
     padding: 0;
     font-family: 'Open Sans', sans-serif;
     background-color: #28191C;
     color: #ffffff;
+    font-size: 15px;
+    font-weight: normal;
 }
 
 a,a:hover {
@@ -26,6 +37,58 @@ a,a:hover {
 
 li {
     list-style: none
+}
+
+input, select {
+    font-size: 15px;
+    font-family: 'Open Sans', sans-serif;
+}
+
+:focus-visible {
+    outline: none;
+}
+
+select {
+    margin: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+select.round-arrow{
+    background-image: linear-gradient(45deg, transparent 50%, #dbb7bd 50%), linear-gradient(135deg, #dbb7bd 50%, transparent 50%), radial-gradient(#562b35 70%, transparent 72%);
+    background-position: calc(100% - 26px) calc(1em + 10px),
+    calc(100% - 21px) calc(1em + 10px),
+    calc(100% - 1em) 1em;
+    background-size:
+            5px 5px,
+            5px 5px,
+            1.5em 1.5em;
+    background-repeat: no-repeat;
+}
+
+h1 {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 35px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #50383c;
+    padding-bottom: 10px;
+}
+
+a.links {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    /* background-color: #744136; */
+    width: max-content;
+    padding: 5px;
+    /* border-radius: 5px; */
+    border: 1px solid;
 }
 
 header {
@@ -59,6 +122,7 @@ h1.logo {
     line-height: 1;
     position: relative;
     z-index: 1;
+    border: none;
 }
 
 h1.logo a {
@@ -116,19 +180,18 @@ menu.main-menu li:target {
     margin-bottom: 50px;
     position: relative;
     z-index: 1;
-}
-
-.search-bar input[type="text"]:focus-visible {
-    outline: 0;
+    height: 65px;
 }
 
 .search-bar ::placeholder {
     color: #ffffff;
     opacity: 1; /* Firefox */
+    letter-spacing: 0.5px;
 }
 
 .search-bar ::-ms-input-placeholder { /* Edge 12 -18 */
     color: #ffffff;
+    letter-spacing: 0.5px;
 }
 
 .container {
@@ -141,4 +204,103 @@ menu.main-menu li:target {
 .content {
     width: 100%;
     height: auto;
+}
+
+.form {
+    display: flex;
+    /* column-gap: 8px; */
+    height: 100%;
+    margin-bottom: 30px;
+}
+
+.form input {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background-color: transparent;
+    color: #fff;
+    padding: 0 20px;
+}
+
+.form input.button {
+    width: 130px;
+    height: 50px;
+    color: #dab5bd;
+    background-color: #984d5d;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    border-radius: 100px;
+    margin-left: 10px;
+    padding: 0;
+    /* background-color: transparent; */
+    /* border: 1px solid #dab5bd; */
+}
+
+.form ::placeholder {
+    color: #dab5bd;
+}
+
+.form ::-ms-input-placeholder { /* Edge 12 -18 */
+    color: #dab5bd;
+}
+
+.form label {
+    background-color: #7C404C;
+    border-right: 1px solid #582d36;
+    height: 50px;
+}
+
+.form label:last-of-type {
+    border-right: none;
+    border-radius: 0 100px 100px 0;
+}
+
+.form label:first-of-type {
+    border-radius: 100px 0 0 100px;
+}
+
+.form-signup {
+    /* display: flex; */
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+}
+
+.form-signup label {
+    width: 100%;
+}
+
+.form-signup select {
+    padding: 0 20px;
+    height: 100%;
+    background-color: #7c404d;
+    border: none;
+    color: #dab6bd;
+    width: 50%;
+    border-radius: 0 100px 100px 0;
+    /* text-align: right; */
+}
+
+.form-signup .register-fields {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    /* gap: 10px; */
+    align-items: center;
+}
+
+.form label.select-label {
+    padding: 0 20px;
+    color: #dab6bd;
+    align-content: center;
+    width: 70%;
+    border-radius: 0;
+    border-left: 1px solid #582d36;
+}
+
+.form-signup input.register-button {
+    margin-left: 0;
+    background-color: transparent;
+    border: 1px solid;
+    cursor: pointer;
 }
