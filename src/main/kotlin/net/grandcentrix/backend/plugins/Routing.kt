@@ -52,6 +52,14 @@ fun Application.configureRouting() {
                 ))
             }
 
+            get("/profile") {
+                val username = call.sessions.get<UserSession>()?.username // Retrieve username from session
+                call.respond(FreeMarkerContent("profile.ftl", mapOf("username" to username, "uploadButton" to true)))
+            }
+
+
+
+
             post("/signup") {
                 val formParameters = call.receiveParameters()
                 SignupInstance.createUser(formParameters)
