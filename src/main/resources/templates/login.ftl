@@ -18,8 +18,9 @@
         </label>
 
         <input class="button" type="submit">
-        <p>${loginStatus}</p>
+        <p style="color: #dab6bd; margin-left:15px;">${loginStatus}</p>
     </form>
+
     <a class="links" href="/signup">
         Create account
         <span class="material-symbols-outlined">north_east</span>

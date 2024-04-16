@@ -21,7 +21,9 @@ fun Application.configureStatusPage() {
                     mapOf("errorMessage" to "Error 403. Forbidden.")
                 )
 
-                is UnauthorizedException -> call.respondRedirect("/login")
+                is UnauthorizedException -> {
+                    call.respondRedirect("/login")
+                }
 
                 else -> call.respondTemplate(
                     "error.ftl",

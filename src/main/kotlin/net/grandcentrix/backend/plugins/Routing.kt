@@ -1,5 +1,6 @@
 package net.grandcentrix.backend.plugins
 
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.freemarker.*
@@ -42,6 +43,16 @@ fun Application.configureRouting() {
                 }
             }
 
+            authenticate("auth-session") {
+                get("/profile") {
+                    val userSession = call.sessions.get<UserSession>()
+                    val username = userSession?.username
+                    call.sessions.set(userSession?.copy())
+                    call.respond(FreeMarkerContent("profile.ftl", mapOf("username" to username, "uploadButton" to true)))
+                }
+            }
+
+
             get("/signup") {
                 call.respond(FreeMarkerContent(
                     "signup.ftl",
@@ -52,6 +63,11 @@ fun Application.configureRouting() {
                 ))
             }
 
+
+
+
+
+
             post("/signup") {
                 val formParameters = call.receiveParameters()
                 SignupInstance.createUser(formParameters)
@@ -60,3 +76,4 @@ fun Application.configureRouting() {
         }
     }
 }
+
