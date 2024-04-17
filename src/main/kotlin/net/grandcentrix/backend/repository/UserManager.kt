@@ -11,15 +11,16 @@ class UserManager: RepositoryManager<User,String, List<User>,User?> {
         val UserManagerInstance: UserManager = UserManager()
     }
 
-    private val usersFile = File("users.json")
-    private val users = getAll().toMutableList()
+    var users = listOf<User>()
+
+    fun getFile() = File("users.json")
 
     override fun getAll(): List<User> {
-        if (!usersFile.exists()) {
-            usersFile.createNewFile()
+        if (!getFile().exists()) {
+            getFile().createNewFile()
         }
 
-        val fileText = usersFile.readText()
+        val fileText = getFile().readText()
         if (fileText != "[]") {
             val usersList = Json.decodeFromString<List<User>>(fileText)
 
@@ -28,7 +29,7 @@ class UserManager: RepositoryManager<User,String, List<User>,User?> {
         return listOf()
     }
 
-    override fun getItem(name: String): User? = users.find { it.username == name }
+    override fun getItem(username: String): User? = getAll().find { it.username == username }
 
     fun getUserByEmail(email: String): User? = users.find { it.email == email }
 
@@ -37,9 +38,9 @@ class UserManager: RepositoryManager<User,String, List<User>,User?> {
     }
 
     override fun addItem(item: User) {
-        users.add(item)
+        users = getAll() + item
         val file = Json.encodeToJsonElement(users).toString()
-        usersFile.writeText(file)
+        getFile().writeText(file)
     }
 
     override fun updateItem(item: User) {

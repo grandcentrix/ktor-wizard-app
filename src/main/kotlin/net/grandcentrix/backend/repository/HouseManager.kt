@@ -1,6 +1,7 @@
 package net.grandcentrix.backend.repository;
 
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
 import net.grandcentrix.backend.models.House
 import java.io.File
 
@@ -10,13 +11,17 @@ class HouseManager: RepositoryManager<House,String, List<House>,House?> {
         val HouseManagerInstance: HouseManager = HouseManager()
     }
 
+    var houses = listOf<House>()
+
+    private fun getFile() = File("houses.json")
+
+
     override fun getAll(): List<House> {
-        val housesFile = File("houses.json")
-        if (!housesFile.exists()) {
-            housesFile.createNewFile()
+        if (!getFile().exists()) {
+            getFile().createNewFile()
         }
 
-        val fileText = housesFile.readText()
+        val fileText = getFile().readText()
         if (fileText != "[]") {
             val housesList = Json.decodeFromString<List<House>>(fileText)
 
@@ -33,7 +38,9 @@ class HouseManager: RepositoryManager<House,String, List<House>,House?> {
     }
 
     override fun addItem(item: House) {
-        TODO("Not yet implemented")
+        houses = getAll() + item
+        val file = Json.encodeToJsonElement(houses).toString()
+        getFile().writeText(file)
     }
 
     override fun updateItem(item: House) {
