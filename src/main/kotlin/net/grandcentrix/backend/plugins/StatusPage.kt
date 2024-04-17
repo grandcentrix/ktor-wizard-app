@@ -25,6 +25,21 @@ fun Application.configureStatusPage() {
                     call.respondRedirect("/login")
                 }
 
+                is UserAlreadyExistsException -> {
+                    call.respondTemplate(
+                        "error.ftl",
+                        mapOf("errorMessage" to "Error: ${cause.message}")
+                    )
+                }
+
+                is UserAlreadyExistsException -> { // Handle UserAlreadyExistsException
+                    call.respondTemplate(
+                        "error.ftl",
+                        mapOf("errorMessage" to "Error: ${cause.message}")
+                    )
+                }
+
+
                 else -> call.respondTemplate(
                     "error.ftl",
                     mapOf("errorMessage" to "500: Server error - $cause")
@@ -42,3 +57,4 @@ fun Application.configureStatusPage() {
 
 //implements a custom exception class
 class AuthorizationException(override val message: String?): Exception()
+class UserAlreadyExistsException(message: String?) : Exception(message)

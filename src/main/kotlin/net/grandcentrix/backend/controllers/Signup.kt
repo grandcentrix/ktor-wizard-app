@@ -3,6 +3,7 @@ package net.grandcentrix.backend.controllers
 import io.ktor.http.*
 import io.ktor.server.plugins.*
 import net.grandcentrix.backend.models.User
+import net.grandcentrix.backend.plugins.UserAlreadyExistsException
 import net.grandcentrix.backend.repository.HouseManager.Companion.HouseManagerInstance
 import net.grandcentrix.backend.repository.UserManager.Companion.UserManagerInstance
 
@@ -32,6 +33,17 @@ class Signup {
             status = "Required fields cannot be empty!"
             throw MissingRequestParameterException("Missing required fields!")
         }
+
+        if (UserManagerInstance.getUserByEmail(email) != null) {
+            status = "Email is already in use!"
+            throw UserAlreadyExistsException("Email is already in use!")
+        }
+
+        if (UserManagerInstance.getUserByUsername(username) != null) {
+            status = "Username is already in use!"
+            throw UserAlreadyExistsException("Username is already in use!")
+        }
+
 
         if (house.isNullOrBlank()) {
             val user = User(
