@@ -31,7 +31,7 @@ class UserManager: RepositoryManager<User,String, List<User>,User?> {
 
     override fun getItem(username: String): User? = getAll().find { it.username == username }
 
-    fun getUserByEmail(email: String): User? = users.find { it.email == email }
+    fun getUserByEmail(email: String): User? = getAll().find { it.email == email }
 
     override fun deleteItem(name: String) {
         TODO("Not yet implemented")
