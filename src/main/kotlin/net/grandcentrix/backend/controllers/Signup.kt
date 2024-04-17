@@ -16,6 +16,7 @@ class Signup {
     var status = ""
 
     fun createUser(formParameters: Parameters) {
+
         val name = formParameters["name"]
         val surname = formParameters["surname"]
         val email = formParameters["email"]
@@ -34,16 +35,7 @@ class Signup {
             throw MissingRequestParameterException("Missing required fields!")
         }
 
-        if (UserManagerInstance.getUserByEmail(email) != null) {
-            status = "Email is already in use!"
-            throw UserAlreadyExistsException("Email is already in use!")
-        }
-
-        if (UserManagerInstance.getUserByUsername(username) != null) {
-            status = "Username is already in use!"
-            throw UserAlreadyExistsException("Username is already in use!")
-        }
-
+        verifyDuplicates(email, username)
 
         if (house.isNullOrBlank()) {
             val user = User(
@@ -71,5 +63,17 @@ class Signup {
 
         status = "Account created with success!"
 
+    }
+
+    private fun verifyDuplicates(email: String, username: String) {
+        if (UserManagerInstance.getUserByEmail(email) != null) {
+            status = "Email is already in use!"
+            throw UserAlreadyExistsException("Email is already in use!")
+        }
+
+        if (UserManagerInstance.getItem(username) != null) {
+            status = "Username is already in use!"
+            throw UserAlreadyExistsException("Username is already in use!")
+        }
     }
 }

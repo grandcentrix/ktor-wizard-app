@@ -1,6 +1,5 @@
 package net.grandcentrix.backend.plugins
 
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.freemarker.*
@@ -52,7 +51,6 @@ fun Application.configureRouting() {
                 }
             }
 
-
             get("/signup") {
                 call.respond(FreeMarkerContent(
                     "signup.ftl",
@@ -62,11 +60,6 @@ fun Application.configureRouting() {
                     )
                 ))
             }
-
-
-
-
-
 
             post("/signup") {
                 val formParameters = call.receiveParameters()

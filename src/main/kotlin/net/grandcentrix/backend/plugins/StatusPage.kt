@@ -7,6 +7,7 @@ import io.ktor.server.http.content.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 
 fun Application.configureStatusPage() {
     routing {
@@ -16,33 +17,23 @@ fun Application.configureStatusPage() {
     install(StatusPages) {
         exception<Exception> { call, cause ->
             when (cause) {
-                is AuthorizationException -> call.respondTemplate(
+                is AuthorizationException ->
+                    call.respondTemplate(
                     "error.ftl",
-                    mapOf("errorMessage" to "Error 403. Forbidden.")
+                    mapOf("errorMessage" to "Error 403: Forbidden - ${cause.message}.")
                 )
 
-                is UnauthorizedException -> {
-                    call.respondRedirect("/login")
-                }
+                is UnauthorizedException -> call.respondRedirect("/login")
 
                 is UserAlreadyExistsException -> {
-                    call.respondTemplate(
-                        "error.ftl",
-                        mapOf("errorMessage" to "Error: ${cause.message}")
-                    )
+                    SignupInstance.status = cause.message.toString()
+                    call.respondRedirect("/signup")
                 }
 
-                is UserAlreadyExistsException -> { // Handle UserAlreadyExistsException
+                else ->
                     call.respondTemplate(
-                        "error.ftl",
-                        mapOf("errorMessage" to "Error: ${cause.message}")
-                    )
-                }
-
-
-                else -> call.respondTemplate(
                     "error.ftl",
-                    mapOf("errorMessage" to "500: Server error - $cause")
+                    mapOf("errorMessage" to "500: Server error - ${cause.message}")
                 )
             }
         }
@@ -57,4 +48,4 @@ fun Application.configureStatusPage() {
 
 //implements a custom exception class
 class AuthorizationException(override val message: String?): Exception()
-class UserAlreadyExistsException(message: String?) : Exception(message)
+class UserAlreadyExistsException(override val message: String?) : Exception()
