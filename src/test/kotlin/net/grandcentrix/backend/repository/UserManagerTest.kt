@@ -21,7 +21,7 @@ class UserManagerTest {
         private const val FILE_NAME = "src/main/resources/testFile.json"
     }
 
-    val userManager = spyk(UserManagerInstance, recordPrivateCalls = true)
+    private val userManager = spyk(UserManagerInstance, recordPrivateCalls = true)
 
     @Before
     fun beforeTests() {
@@ -50,7 +50,7 @@ class UserManagerTest {
         val usersJson = Json.encodeToJsonElement(users).toString()
         File(FILE_NAME).writeText(usersJson)
 
-        every { userManager.getFile() } returns File(FILE_NAME)
+        every { userManager["getFile"]() } returns File(FILE_NAME)
     }
 
     @AfterTest

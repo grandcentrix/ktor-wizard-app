@@ -11,7 +11,7 @@ class HouseManager: RepositoryManager<House,String, List<House>,House?> {
         val HouseManagerInstance: HouseManager = HouseManager()
     }
 
-    var houses = listOf<House>()
+    private var houses = listOf<House>()
 
     private fun getFile() = File("houses.json")
 

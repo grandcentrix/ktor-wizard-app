@@ -11,9 +11,9 @@ class UserManager: RepositoryManager<User,String, List<User>,User?> {
         val UserManagerInstance: UserManager = UserManager()
     }
 
-    var users = listOf<User>()
+    private var users = listOf<User>()
 
-    fun getFile() = File("users.json")
+    private fun getFile() = File("users.json")
 
     override fun getAll(): List<User> {
         if (!getFile().exists()) {
