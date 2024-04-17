@@ -14,11 +14,11 @@ class Login {
     fun verifyLogin(credential: UserPasswordCredential): Boolean {
         UserManagerInstance.getAll().forEach {
             if (it.username == credential.name && it.password == credential.password) {
-                LoginInstance.status = "Login successful"
+//                LoginInstance.status = "Login successful"
                 return true
             }
         }
-        LoginInstance.status = "Username and password didn't match!"
+//        LoginInstance.status = "Username and password didn't match!"
         return false
     }
 

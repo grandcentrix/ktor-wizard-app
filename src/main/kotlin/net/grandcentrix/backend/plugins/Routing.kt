@@ -64,6 +64,7 @@ fun Application.configureRouting() {
             post("/signup") {
                 val formParameters = call.receiveParameters()
                 SignupInstance.createUser(formParameters)
+                LoginInstance.status = "Please login with your account"
                 call.respondRedirect("/login")
             }
         }

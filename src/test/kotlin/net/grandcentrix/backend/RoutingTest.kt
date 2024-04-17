@@ -4,7 +4,17 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
+import io.mockk.every
+import io.mockk.mockkObject
+import io.mockk.unmockkAll
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
+import net.grandcentrix.backend.models.User
+import net.grandcentrix.backend.repository.UserManager.Companion.UserManagerInstance
 import org.junit.Test
+import java.io.File
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
@@ -12,6 +22,25 @@ class RoutingTest {
 
     companion object {
         private const val FILE_NAME = "src/main/resources/testFile.json"
+    }
+
+    @BeforeTest
+    fun beforeTest() {
+        // copy all users from users.json to a testFile.json
+        val users = UserManagerInstance.getAll()
+        val usersJson = Json.encodeToJsonElement<List<User>>(users).toString()
+        File(FILE_NAME).writeText(usersJson)
+
+        // mock the repository class and mock the return file to be the test file
+        mockkObject(UserManagerInstance, recordPrivateCalls = true)
+        every { UserManagerInstance["getFile"]() } returns File(FILE_NAME)
+    }
+
+    @AfterTest
+    fun afterTest() {
+        unmockkAll()
+        // reset test file
+        File(FILE_NAME).writeText("[]")
     }
 
     @Test
@@ -41,7 +70,7 @@ class RoutingTest {
         // Sending a GET request to the URL obtained from the 'Location' header
         val redirectedResponse = client.get(location).bodyAsText()
         // Asserting that the redirected response body contains the expected message "Login not authorized"
-        assertContains(redirectedResponse, "Login not authorized")
+        assertContains(redirectedResponse, "Login is invalid!")
         // Asserting that the response status code is HttpStatusCode.Found (302)
         assertEquals(HttpStatusCode.Found, response.status)
     }

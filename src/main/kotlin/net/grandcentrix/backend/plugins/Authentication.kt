@@ -17,7 +17,7 @@ fun Application.configureAuthentication() {
                 if (LoginInstance.verifyLogin(credentials)) {
                     UserIdPrincipal(credentials.name)
                 } else {
-                    LoginInstance.status = "Login not authorized"
+                    LoginInstance.status = "Login is invalid!"
                     throw UnauthorizedException("Login not authorized")
                 }
             }
