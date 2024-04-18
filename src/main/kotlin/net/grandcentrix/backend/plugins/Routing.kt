@@ -11,6 +11,7 @@ import io.ktor.server.sessions.*
 import net.grandcentrix.backend.controllers.Login.Companion.LoginInstance
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
+import net.grandcentrix.backend.repository.BooksManager.Companion.BooksManagerInstance
 import net.grandcentrix.backend.repository.HouseManager.Companion.HouseManagerInstance
 
 fun Application.configureRouting() {
@@ -66,6 +67,11 @@ fun Application.configureRouting() {
                 SignupInstance.createUser(formParameters)
                 LoginInstance.status = "Please login with your account"
                 call.respondRedirect("/login")
+            }
+
+            get("/books") {
+                val books = BooksManagerInstance.getAll()
+                call.respondText(books.toString())
             }
         }
     }
