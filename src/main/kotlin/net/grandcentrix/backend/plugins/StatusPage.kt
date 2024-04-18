@@ -7,7 +7,6 @@ import io.ktor.server.http.content.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 
 fun Application.configureStatusPage() {
     routing {
@@ -26,7 +25,7 @@ fun Application.configureStatusPage() {
                 is UnauthorizedException -> call.respondRedirect("/login")
 
                 is UserAlreadyExistsException -> {
-                    SignupInstance.status = cause.message.toString()
+//                    SignupInstance.status = cause.message.toString()
                     call.respondRedirect("/signup")
                 }
 
