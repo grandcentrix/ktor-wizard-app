@@ -1,12 +1,8 @@
 package net.grandcentrix.backend.repository;
 
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.encodeToJsonElement
-import net.grandcentrix.backend.dao.FetchAPIData.fetchBooks
+import kotlinx.coroutines.runBlocking
 import net.grandcentrix.backend.models.Book
-import net.grandcentrix.backend.models.House
-import net.grandcentrix.backend.plugins.requestBooks
-import java.io.File
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBooks
 
 class BooksManager: RepositoryManager<Book,String, List<Book>, Book?> {
 
@@ -20,7 +16,10 @@ class BooksManager: RepositoryManager<Book,String, List<Book>, Book?> {
 
 
     override fun getAll(): List<Book> {
-        val books = fetchBooks()
+        var books: List<Book>
+        runBlocking {
+            books = fetchBooks()
+        }
         return books
     }
 

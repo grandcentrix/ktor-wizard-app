@@ -70,8 +70,10 @@ fun Application.configureRouting() {
             }
 
             get("/books") {
-                val books = BooksManagerInstance.getAll()
-                call.respondText(books.toString())
+                call.respondTemplate(
+                    "books.ftl",
+                    mapOf("books" to BooksManagerInstance.getAll())
+                )
             }
         }
     }

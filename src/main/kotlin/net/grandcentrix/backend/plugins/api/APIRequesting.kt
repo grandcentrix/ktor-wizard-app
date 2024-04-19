@@ -1,19 +1,37 @@
-package net.grandcentrix.backend.dao
+package net.grandcentrix.backend.plugins.api
 
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import net.grandcentrix.backend.models.Book
-import net.grandcentrix.backend.plugins.requestBooks
 
-object FetchAPIData {
-    suspend fun fetchBooks(): List<Book> {
-        val resJson = requestBooks()
+object APIRequesting {
+    private val client = HttpClient(CIO) {
+        install(ContentNegotiation) {
+            json(Json {
+                ignoreUnknownKeys = true
+                isLenient = true
+            })
+        }
+    }
+
+     suspend fun fetchBooks(): List<Book> {
+        // Make a GET request to the external API
+        val resJson: JsonElement = client.get("https://api.potterdb.com/v1/books?page[size]=25").body()
+
         val jsonData = resJson.jsonObject["data"]?.jsonArray
         val attributes = jsonData?.map {
             it.jsonObject["attributes"]
         }
 
-        val books = attributes?.map { attribute ->
+        return attributes?.map { attribute ->
             val id = attribute?.jsonObject?.get("id").toString()
             val author = attribute?.jsonObject?.get("author").toString()
             val coverUrl = attribute?.jsonObject?.get("cover").toString()
@@ -27,7 +45,5 @@ object FetchAPIData {
             Book(id, author, coverUrl, pages, releaseDate, summary, slug, title)
 
         }?.toList() ?: emptyList()
-
-        return books
     }
 }
