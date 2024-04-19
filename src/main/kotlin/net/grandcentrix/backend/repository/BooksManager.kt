@@ -4,7 +4,7 @@ import kotlinx.coroutines.runBlocking
 import net.grandcentrix.backend.models.Book
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBooks
 
-class BooksManager: RepositoryManager<Book,String, List<Book>, Book?> {
+class BooksManager: ManagerFacade<Book,String, List<Book>, Book?> {
 
     companion object {
         val BooksManagerInstance: BooksManager = BooksManager()

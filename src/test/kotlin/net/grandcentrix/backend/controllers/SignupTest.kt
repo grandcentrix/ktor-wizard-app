@@ -11,7 +11,6 @@ import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.models.House
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.plugins.UserAlreadyExistsException
-import net.grandcentrix.backend.repository.UserManager.Companion.UserManagerInstance
 import org.junit.Test
 import java.io.File
 import kotlin.test.*

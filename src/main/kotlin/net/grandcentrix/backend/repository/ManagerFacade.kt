@@ -1,6 +1,6 @@
 package net.grandcentrix.backend.repository;
 
-interface RepositoryManager<in I,T, out O,E> {
+interface ManagerFacade<in I,T, out O,E> {
 
     // return all elements
     fun getAll(): O

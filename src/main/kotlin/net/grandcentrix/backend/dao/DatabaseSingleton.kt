@@ -1,7 +1,9 @@
 package net.grandcentrix.backend.dao
 
 import io.ktor.server.config.*
+import net.grandcentrix.backend.models.Users
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.sql.DriverManager
 
@@ -20,7 +22,7 @@ object DatabaseSingleton {
 
         transaction(database) {
             // creates the tables
-//            SchemaUtils.create(Users)
+            SchemaUtils.create(Users)
         }
     }
 }

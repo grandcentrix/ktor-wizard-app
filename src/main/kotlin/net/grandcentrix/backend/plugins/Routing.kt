@@ -20,15 +20,11 @@ fun Application.configureRouting() {
 
         route("/") {
 
-            authenticate("auth-session") {
-                get {
-                    val userSession = call.principal<UserSession>()
-                    call.sessions.set(userSession?.copy())
-                    call.respond(FreeMarkerContent(
-                        "index.ftl",
-                        mapOf("loginStatus" to LoginInstance.status)
-                    ))
-                }
+            get {
+                call.respond(FreeMarkerContent(
+                    "index.ftl",
+                    mapOf("loginStatus" to LoginInstance.status)
+                ))
             }
 
             get("/login") {
@@ -43,6 +39,8 @@ fun Application.configureRouting() {
                 }
             }
 
+            // TODO("logout route")
+
             authenticate("auth-session") {
                 get("/profile") {
                     val userSession = call.sessions.get<UserSession>()
@@ -52,6 +50,7 @@ fun Application.configureRouting() {
                 }
             }
 
+            // TODO("when user is already logged in this page should redirect to home")
             get("/signup") {
                 call.respond(FreeMarkerContent(
                     "signup.ftl",

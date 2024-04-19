@@ -5,7 +5,7 @@ import kotlinx.serialization.json.encodeToJsonElement
 import net.grandcentrix.backend.models.House
 import java.io.File
 
-class HouseManager: RepositoryManager<House,String, List<House>,House?> {
+class HouseManager: ManagerFacade<House,String, List<House>,House?> {
 
     companion object {
         val HouseManagerInstance: HouseManager = HouseManager()

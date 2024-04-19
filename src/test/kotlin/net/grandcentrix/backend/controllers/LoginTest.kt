@@ -8,7 +8,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import net.grandcentrix.backend.controllers.Login.Companion.LoginInstance
 import net.grandcentrix.backend.models.User
-import net.grandcentrix.backend.repository.UserManager.Companion.UserManagerInstance
 import java.io.File
 import kotlin.test.*
 
