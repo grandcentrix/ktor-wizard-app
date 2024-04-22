@@ -3,6 +3,7 @@ package net.grandcentrix.backend
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.server.plugins.*
 import io.ktor.server.testing.*
 import io.mockk.every
 import io.mockk.mockkObject
@@ -10,17 +11,13 @@ import io.mockk.unmockkAll
 import junit.framework.TestCase.assertTrue
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
+import net.grandcentrix.backend.controllers.Signup
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.repository.UserManager.Companion.UserManagerInstance
 import org.junit.Test
 import java.io.File
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-
-
+import kotlin.test.*
 
 
 class RoutingTest {
@@ -60,6 +57,15 @@ class RoutingTest {
         // Asserting that the response status code is HttpStatusCode.Found (302)
         assertEquals(HttpStatusCode.Found, response.status)
     }
+
+    @Test
+    fun getLoginPage() = testApplication {
+        // Sending a GET request to "/login" endpoint
+        val response = client.get("/login")
+        // Asserting that the response status code is HttpStatusCode.OK (200)
+        assertEquals(HttpStatusCode.OK, response.status)
+    }
+
 
     @Test
     fun testLoginWithInvalidCredentials() = testApplication {
@@ -116,6 +122,26 @@ class RoutingTest {
 
         // Asserting that the Location header redirects to "/login"
         assertEquals("/login", location)
+    }
+
+    @Test
+    fun createUserWithMissingParameters() {
+        // Simulating form parameters for signup with missing data
+        val formParameters = Parameters.build {
+            append("name", "John")
+            append("surname", "")
+            append("email", "john@example.com")
+            append("username", "")
+            append("password", "testpassword")
+        }
+
+        // Asserting that createUser throws MissingRequestParameterException
+        val exception = assertFailsWith<MissingRequestParameterException> {
+            Signup.SignupInstance.createUser(formParameters)
+        }
+
+        // Asserting the exception message
+        assertEquals("Request parameter Missing required fields! is missing", exception.message)
     }
 
     @Test
