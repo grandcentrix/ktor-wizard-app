@@ -17,6 +17,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
+
 class RoutingTest {
 
     companion object {
@@ -54,6 +55,15 @@ class RoutingTest {
         // Asserting that the response status code is HttpStatusCode.Found (302)
         assertEquals(HttpStatusCode.Found, response.status)
     }
+
+    @Test
+    fun getLoginPage() = testApplication {
+        // Sending a GET request to "/login" endpoint
+        val response = client.get("/login")
+        // Asserting that the response status code is HttpStatusCode.OK (200)
+        assertEquals(HttpStatusCode.OK, response.status)
+    }
+
 
     @Test
     fun testLoginWithInvalidCredentials() = testApplication {
@@ -111,4 +121,39 @@ class RoutingTest {
         // Asserting that the Location header redirects to "/login"
         assertEquals("/login", location)
     }
+
+    @Test
+    fun createUserWithMissingParameters() {
+        // Simulating form parameters for signup with missing data
+        val formParameters = Parameters.build {
+            append("name", "John")
+            append("surname", "")
+            append("email", "john@example.com")
+            append("username", "")
+            append("password", "testpassword")
+        }
+
+        // TODO
+    }
+
+    @Test
+    fun accessProfilePageAuthenticated() = testApplication {
+        // Define a username for the test user
+        val username = "testuser"
+
+        // Send a GET request to "/profile" endpoint with authenticated session
+        val response = client.get("/profile") {
+            // Add a session cookie to the request header
+            cookie("auth-session", username)
+        }
+
+        // Assert that the response status code is HttpStatusCode.OK (200)
+        assertEquals(HttpStatusCode.OK, response.status)
+    }
+
 }
+
+
+
+
+

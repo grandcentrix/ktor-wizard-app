@@ -1,11 +1,11 @@
 <#import "_layout.ftl" as layout />
 <@layout.base>
 
-<h1>
-    <span class="material-symbols-outlined">edit_square</span>
-    Sign-up
-</h1>
-<section class="content">
+    <h1>
+        <span class="material-symbols-outlined">edit_square</span>
+        Sign-up
+    </h1>
+
     <form class="form form-signup" action="/signup" method="POST">
         <div class="register-fields">
             <label>
@@ -45,6 +45,5 @@
         <input class="register-button button" type="submit" value="Register">
         <p>${signUpStatus}</p>
     </form>
-</section>
 
 </@layout.base>
