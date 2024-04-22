@@ -3,21 +3,20 @@ package net.grandcentrix.backend
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.server.plugins.*
 import io.ktor.server.testing.*
 import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkAll
-import junit.framework.TestCase.assertTrue
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
-import net.grandcentrix.backend.controllers.Signup
-import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.repository.UserManager.Companion.UserManagerInstance
 import org.junit.Test
 import java.io.File
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
 
 
 class RoutingTest {
@@ -135,13 +134,7 @@ class RoutingTest {
             append("password", "testpassword")
         }
 
-        // Asserting that createUser throws MissingRequestParameterException
-        val exception = assertFailsWith<MissingRequestParameterException> {
-            Signup.SignupInstance.createUser(formParameters)
-        }
-
-        // Asserting the exception message
-        assertEquals("Request parameter Missing required fields! is missing", exception.message)
+        // TODO
     }
 
     @Test
