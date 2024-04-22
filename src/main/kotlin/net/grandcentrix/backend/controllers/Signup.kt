@@ -15,14 +15,14 @@ class Signup {
 
     var status = ""
 
-    suspend fun createUser(formParameters: Parameters) {
+     fun createUser(formParameters: Parameters) {
 
         val name = formParameters["name"]
         val surname = formParameters["surname"]
         val email = formParameters["email"]
         val username = formParameters["username"]
         val password = formParameters["password"]
-        val house = formParameters["house"]
+        val house = formParameters["houses"]
 
         if (
             name.isNullOrBlank() ||
@@ -67,7 +67,7 @@ class Signup {
 
     }
 
-    private suspend fun verifyDuplicates(email: String, username: String) {
+    private fun verifyDuplicates(email: String, username: String) {
         if (daoUsers.getByEmail(email) != null) {
             status = "Email is already in use!"
             throw UserAlreadyExistsException("Email is already in use!")

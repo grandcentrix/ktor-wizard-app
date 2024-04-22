@@ -1,6 +1,5 @@
 package net.grandcentrix.backend.repository;
 
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import net.grandcentrix.backend.models.House
@@ -18,13 +17,7 @@ class HouseManager: ManagerFacade<House,String, List<House>,House?> {
     private fun getFile() = File("houses.json")
 
 
-    override fun getAll(): List<House> {
-        var houses: List<House>
-        runBlocking {
-            houses = fetchHouses()
-        }
-        return houses
-    }
+    override fun getAll(): List<House> = fetchHouses()
 
     override fun getItem(name: String): House? = getAll().find { it.name == name }
 

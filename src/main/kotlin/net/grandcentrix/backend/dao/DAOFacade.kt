@@ -1,20 +1,22 @@
 package net.grandcentrix.backend.dao
 
-interface DAOFacade<in I,N, out O,E> {
+import net.grandcentrix.backend.models.User
+
+interface DAOFacade {
     // return all elements
-    suspend fun getAll(): O
+    fun getAll(): List<User>
 
     // return a single element
-    suspend fun getItem(name: N): E
+    fun getItem(name: String): User?
 
     //add element
-    suspend fun addItem(item: I)
+    fun addItem(item: User)
 
     //update element
-    suspend fun updateItem(item: I)
+    fun updateItem(item: User)
 
     //delete element
-    suspend fun deleteItem(name: N)
+    fun deleteItem(name: String)
 //    abstract suspend fun getByEmail(email: N): E
 
 }

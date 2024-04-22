@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class DAOUsers: DAOFacade<User,String, List<User>, User?> {
+class DAOUsers: DAOFacade {
 
     private fun resultRowToUser(row: ResultRow) = User(
         id = row[Users.id],
@@ -23,19 +23,19 @@ class DAOUsers: DAOFacade<User,String, List<User>, User?> {
         favouriteItems = row[Users.favouriteItems].split(",").toMutableList()
     )
 
-    override suspend fun getAll(): List<User> = transaction {
+    override fun getAll(): List<User> = transaction {
         Users.selectAll().map(::resultRowToUser)
     }
 
-    override suspend fun deleteItem(name: String) {
+    override fun deleteItem(name: String) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun updateItem(item: User) {
+    override fun updateItem(item: User) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun addItem(item: User): Unit = transaction {
+    override fun addItem(item: User): Unit = transaction {
         val insertStatement = Users.insert { users ->
             users[name] = item.name
             users[surname] = item.surname
@@ -48,14 +48,14 @@ class DAOUsers: DAOFacade<User,String, List<User>, User?> {
         insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToUser)
     }
 
-    override suspend fun getItem(username: String): User? = transaction {
+    override fun getItem(username: String): User? = transaction {
         Users
             .select { Users.username eq username }
             .map(::resultRowToUser)
             .singleOrNull()
     }
 
-    fun getByEmail(email: String): User? = transaction() {
+    fun getByEmail(email: String): User? = transaction {
         Users
             .select { Users.email eq email }
             .map(::resultRowToUser)

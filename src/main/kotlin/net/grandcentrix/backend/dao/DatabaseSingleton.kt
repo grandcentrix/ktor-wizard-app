@@ -5,6 +5,7 @@ import net.grandcentrix.backend.models.Users
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.io.File
 import java.sql.DriverManager
 
 object DatabaseSingleton {
@@ -12,17 +13,28 @@ object DatabaseSingleton {
         val driverClassName = config.property("storage.driverClassName").getString()
         val url = config.property("storage.jdbcURL").getString()
 
-        // Open a connection to the database (creates if not exists)
-        DriverManager.getConnection(url).use { connection ->
-            println("SQLite database created successfully")
+        // Check if a database exists
+        val databaseFile = File(url.substringAfter("jdbc:sqlite:"))
+        if (!databaseFile.exists()) {
+            createDatabase(url)
         }
 
         // Connects with the database
         val database = Database.connect(url, driverClassName)
 
+
         transaction(database) {
             // creates the tables
             SchemaUtils.create(Users)
+        }
+
+        println("Database initialized successfully!")
+
+    }
+
+    private fun createDatabase(url: String) {
+        DriverManager.getConnection(url).use { connection ->
+            println("SQLite database created successfully!")
         }
     }
 }

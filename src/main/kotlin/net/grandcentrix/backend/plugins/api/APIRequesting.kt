@@ -6,6 +6,7 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonArray
@@ -23,9 +24,11 @@ object APIRequesting {
         }
     }
 
-     suspend fun fetchBooks(): List<Book> {
+     fun fetchBooks(): List<Book>  {
         // Make a GET request to the external API
-        val resJson: JsonElement = client.get("https://api.potterdb.com/v1/books?page[size]=25").body()
+         val resJson = runBlocking {
+              client.get("https://api.potterdb.com/v1/books?page[size]=25").body<JsonElement>()
+         }
 
         val jsonData = resJson.jsonObject["data"]?.jsonArray
         val books = jsonData?.map {
@@ -48,9 +51,11 @@ object APIRequesting {
         }?.toList() ?: emptyList()
     }
 
-    suspend fun fetchHouses(): List<House> {
+    fun fetchHouses(): List<House> {
         // Make a GET request to the external API
-        val resJson: List<JsonElement> = client.get("https://wizard-world-api.herokuapp.com/Houses").body()
+        val resJson = runBlocking {
+            client.get("https://wizard-world-api.herokuapp.com/Houses").body<List<JsonElement>>()
+        }
 
         return resJson.map { house ->
             val id = Json.decodeFromString<String>(house.jsonObject["id"].toString())
@@ -69,19 +74,19 @@ object APIRequesting {
         }
     }
 
-    suspend fun fetchCharacters() {
+    fun fetchCharacters() {
 
     }
 
-    suspend fun fetchMovies() {
+    fun fetchMovies() {
 
     }
 
-    suspend fun fetchPotions() {
+    fun fetchPotions() {
 
     }
 
-    suspend fun fetchSpells() {
+    fun fetchSpells() {
 
     }
 
