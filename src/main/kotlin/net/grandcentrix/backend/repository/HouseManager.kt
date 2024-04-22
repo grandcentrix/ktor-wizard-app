@@ -1,8 +1,10 @@
 package net.grandcentrix.backend.repository;
 
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import net.grandcentrix.backend.models.House
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouses
 import java.io.File
 
 class HouseManager: ManagerFacade<House,String, List<House>,House?> {
@@ -17,18 +19,11 @@ class HouseManager: ManagerFacade<House,String, List<House>,House?> {
 
 
     override fun getAll(): List<House> {
-        if (!getFile().exists()) {
-            getFile().createNewFile()
+        var houses: List<House>
+        runBlocking {
+            houses = fetchHouses()
         }
-
-        val fileText = getFile().readText()
-        if (fileText != "[]") {
-            val housesList = Json.decodeFromString<List<House>>(fileText)
-
-            return housesList
-        }
-
-        return listOf()
+        return houses
     }
 
     override fun getItem(name: String): House? = getAll().find { it.name == name }

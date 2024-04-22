@@ -74,6 +74,13 @@ fun Application.configureRouting() {
                     mapOf("books" to BooksManagerInstance.getAll())
                 )
             }
+
+            get("/houses") {
+                call.respondTemplate(
+                    "houses.ftl",
+                    mapOf("houses" to HouseManagerInstance.getAll())
+                )
+            }
         }
     }
 }

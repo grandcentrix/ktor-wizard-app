@@ -7,7 +7,7 @@ import java.util.*
 @Serializable
 data class Character(
     @Contextual
-    val id: UUID,
+    val id: String,
     val name: String,
     val aliasName: String,
     val animagus: String,
