@@ -17,6 +17,5 @@ interface DAOFacade {
 
     //delete element
     fun deleteItem(name: String)
-//    abstract suspend fun getByEmail(email: N): E
 
 }

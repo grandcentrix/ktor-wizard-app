@@ -11,7 +11,7 @@ class Login {
 
     var status = ""
 
-    suspend fun verifyLogin(credential: UserPasswordCredential): Boolean {
+    fun verifyLogin(credential: UserPasswordCredential): Boolean {
         daoUsers.getAll().forEach {
             if (it.username == credential.name && it.password == credential.password.hashCode()) {
 //                LoginInstance.status = "Login successful"
