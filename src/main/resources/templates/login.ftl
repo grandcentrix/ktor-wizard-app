@@ -5,7 +5,6 @@
     <span class="material-symbols-outlined">login</span>
     Login
 </h1>
-<section class="content">
 
     <form class="form" action="/login" method="POST">
 
@@ -25,6 +24,5 @@
         Create account
         <span class="material-symbols-outlined">north_east</span>
     </a>
-</section>
 
 </@layout.base>
