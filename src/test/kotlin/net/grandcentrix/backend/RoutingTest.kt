@@ -152,7 +152,7 @@ class RoutingTest {
 
     @Test
     fun accessProfilePageNotAuthenticated() = testApplication {
-        // Send a GET request to "/profile" endpoint without an authenticated session
+
         val response = client.get("/profile") {
             // No session cookie added
         }
