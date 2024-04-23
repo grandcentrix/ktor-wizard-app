@@ -15,6 +15,8 @@
             <li><a href="">Home</a></li>
             <li style="padding: 0 10px;">//</li>
             <li><a href="/profile">My account</a></li>
+            <li style="padding: 0 10px;">//</li>
+            <li><a href="/logout">Logout</a></li>
         </menu>
         <label class="search-bar">
             <span class="material-symbols-outlined">search</span>

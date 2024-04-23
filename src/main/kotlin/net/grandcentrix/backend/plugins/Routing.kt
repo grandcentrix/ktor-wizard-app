@@ -67,7 +67,12 @@ fun Application.configureRouting() {
                 LoginInstance.status = "Please login with your account"
                 call.respondRedirect("/login")
             }
+            get("/logout") {
+                call.sessions.clear<UserSession>()
+                call.respondRedirect("/login")
+        }
         }
     }
 }
+
 
