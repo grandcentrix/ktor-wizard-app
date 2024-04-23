@@ -34,9 +34,9 @@ class UserManager: RepositoryManager<User,String, List<User>,User?> {
 
     fun getUserByEmail(email: String): User? = getAll().find { it.email == email }
 
-    override fun deleteItem(name: String) {
+    override fun deleteItem(username: String) {
         val users = getAll().toMutableList()
-        val userToDelete = users.find { it.username == name }
+        val userToDelete = users.find { it.username == username }
         if (userToDelete != null) {
             users.remove(userToDelete)
             getFile().writeText(Json.encodeToString(users))
