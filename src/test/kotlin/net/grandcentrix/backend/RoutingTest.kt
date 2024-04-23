@@ -125,39 +125,59 @@ class RoutingTest {
     }
 
     @Test
-    fun createUserWithMissingParameters() {
-        // Simulating form parameters for signup with missing data
+    fun createAccountWithInvalidSignup() = testApplication {
+        // Simulating form parameters for signup with invalid data
         val formParameters = Parameters.build {
-            append("name", "John")
-            append("surname", "")
-            append("email", "john@example.com")
-            append("username", "")
+            // Appending all parameters with one being empty
+            append("name", "")
+            append("surname", "Doe")
+            append("email", "testemail@email.com")
+            append("username", "testuser")
             append("password", "testpassword")
         }
 
-        // Asserting that createUser throws MissingRequestParameterException
-        val exception = assertFailsWith<MissingRequestParameterException> {
-            Signup.SignupInstance.createUser(formParameters)
+        // Sending a POST request to "/signup" endpoint with form parameters
+        val signupResponse = client.post("/signup") {
+            // Setting the content type header to application
+            header(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
+            // Setting the request body with form parameters encoded in form-url-encoded format
+            setBody(formParameters.formUrlEncode())
         }
 
-        // Asserting the exception message
-        assertEquals("Request parameter Missing required fields! is missing", exception.message)
+        assertEquals(HttpStatusCode.OK, signupResponse.status)
+
+        // Asserting that the Location header is not present, indicating that it's not a redirect
+        assertFalse(signupResponse.headers.contains("Location"))
     }
 
+    @Test
+    fun accessProfilePageNotAuthenticated() = testApplication {
+        // Send a GET request to "/profile" endpoint without an authenticated session
+        val response = client.get("/profile") {
+            // No session cookie added
+        }
+
+        // Assert that the response status code is HttpStatusCode.Found (302),
+        // indicating a redirection to another page
+        assertEquals(HttpStatusCode.Found, response.status)
+
+        // Assert that the Location header redirects to "/login"
+        val location = response.headers["Location"].toString()
+        assertEquals("/login", location)
+    }
     @Test
     fun accessProfilePageAuthenticated() = testApplication {
         // Define a username for the test user
         val username = "testuser"
-
         // Send a GET request to "/profile" endpoint with authenticated session
         val response = client.get("/profile") {
             // Add a session cookie to the request header
             cookie("auth-session", username)
         }
-
         // Assert that the response status code is HttpStatusCode.OK (200)
         assertEquals(HttpStatusCode.OK, response.status)
     }
+
 
 }
 
