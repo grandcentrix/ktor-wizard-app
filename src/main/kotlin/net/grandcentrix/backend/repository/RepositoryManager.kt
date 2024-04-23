@@ -17,4 +17,5 @@ interface RepositoryManager<in I,T, out O,E> {
     //delete element
     fun deleteItem(name: T)
 
+
 }

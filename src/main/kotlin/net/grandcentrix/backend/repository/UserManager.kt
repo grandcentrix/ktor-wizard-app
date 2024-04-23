@@ -1,5 +1,6 @@
 package net.grandcentrix.backend.repository
 
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import net.grandcentrix.backend.models.User
@@ -34,8 +35,14 @@ class UserManager: RepositoryManager<User,String, List<User>,User?> {
     fun getUserByEmail(email: String): User? = getAll().find { it.email == email }
 
     override fun deleteItem(name: String) {
-        TODO("Not yet implemented")
+        val users = getAll().toMutableList()
+        val userToDelete = users.find { it.username == name }
+        if (userToDelete != null) {
+            users.remove(userToDelete)
+            getFile().writeText(Json.encodeToString(users))
+        }
     }
+
 
     override fun addItem(item: User) {
         users = getAll() + item
