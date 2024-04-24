@@ -148,6 +148,8 @@ class RoutingTest {
 
         // Asserting that the Location header is not present, indicating that it's not a redirect
         assertFalse(signupResponse.headers.contains("Location"))
+
+
     }
 
     @Test
@@ -174,16 +176,22 @@ class RoutingTest {
 
     @Test
     fun accessProfilePageAuthenticated() = testApplication {
-        // Define a username for the test user
-        val username = "testuser"
+        // Retrieve username from storage
+        val username = UserManagerInstance.getAll().firstOrNull()?.username ?: ""
+
         // Send a GET request to "/profile" endpoint with authenticated session
         val response = client.get("/profile") {
             // Add a session cookie to the request header
             cookie("auth-session", username)
         }
+
         // Assert that the response status code is HttpStatusCode.OK (200)
         assertEquals(HttpStatusCode.OK, response.status)
+
+        // Assert that the response location header is null
+        assertNull(response.headers["Location"])
     }
+
 
 
 }
