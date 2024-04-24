@@ -8,11 +8,13 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
+import net.grandcentrix.backend.controllers.Login
 import net.grandcentrix.backend.controllers.Login.Companion.LoginInstance
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
-import net.grandcentrix.backend.repository.BooksManager.Companion.BooksManagerInstance
-import net.grandcentrix.backend.repository.HouseManager.Companion.HouseManagerInstance
+import net.grandcentrix.backend.repository.BooksRepository.Companion.BooksRepositoryInstance
+import net.grandcentrix.backend.repository.HouseRepository.Companion.HouseRepositoryInstance
+import net.grandcentrix.backend.repository.UserRepository.Companion.UserRepositoryInstance
 
 fun Application.configureRouting() {
     routing {
@@ -21,10 +23,13 @@ fun Application.configureRouting() {
         route("/") {
 
             get {
-                call.respond(FreeMarkerContent(
-                    "index.ftl",
-                    mapOf("loginStatus" to LoginInstance.status)
-                ))
+                call.respond(
+                    FreeMarkerContent(
+                        "index.ftl",
+                        mapOf("loginStatus" to LoginInstance.status)
+                    )
+                )
+                LoginInstance.status = ""
             }
 
             get("/login") {
@@ -35,18 +40,22 @@ fun Application.configureRouting() {
                 post("/login") {
                     val username = call.principal<UserIdPrincipal>()?.name.toString()
                     call.sessions.set(UserSession(username))
+                    LoginInstance.status = "Logged in with success!"
                     call.respondRedirect("/")
                 }
             }
-
-            // TODO("logout route")
 
             authenticate("auth-session") {
                 get("/profile") {
                     val userSession = call.sessions.get<UserSession>()
                     val username = userSession?.username
                     call.sessions.set(userSession?.copy())
-                    call.respond(FreeMarkerContent("profile.ftl", mapOf("username" to username, "uploadButton" to true)))
+                    call.respond(
+                        FreeMarkerContent(
+                            "profile.ftl",
+                            mapOf("username" to username, "uploadButton" to true)
+                        )
+                    )
                 }
             }
 
@@ -56,7 +65,7 @@ fun Application.configureRouting() {
                     "signup.ftl",
                     mapOf(
                         "signUpStatus" to SignupInstance.status,
-                        "houses" to HouseManagerInstance.getAll().map { it.name }
+                        "houses" to HouseRepositoryInstance.getAll().map { it.name }
                     )
                 ))
             }
@@ -71,17 +80,41 @@ fun Application.configureRouting() {
             get("/books") {
                 call.respondTemplate(
                     "books.ftl",
-                    mapOf("books" to BooksManagerInstance.getAll())
+                    mapOf("books" to BooksRepositoryInstance.getAll())
                 )
             }
 
             get("/houses") {
                 call.respondTemplate(
                     "houses.ftl",
-                    mapOf("houses" to HouseManagerInstance.getAll())
+                    mapOf("houses" to HouseRepositoryInstance.getAll())
                 )
+            }
+
+            get("/logout") {
+                call.sessions.clear<UserSession>()
+                LoginInstance.status = "Logged out with success!"
+                call.respondRedirect("/")
+            }
+
+            // TODO("try a way to use delete verb instead of post")
+            post("/delete-account") {
+                // Retrieve the user session
+                val userSession = call.sessions.get<UserSession>()
+
+                // Check if the user session is not null
+                if (userSession != null) {
+                    // Logic to delete the user's account
+                    // For example:
+                    UserRepositoryInstance.deleteItem(userSession.username)
+                }
+
+                // Clear the session
+                call.sessions.clear<UserSession>()
+                call.respondRedirect("/login")
             }
         }
     }
 }
+
 

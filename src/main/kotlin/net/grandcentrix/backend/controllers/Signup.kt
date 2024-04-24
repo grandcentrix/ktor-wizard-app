@@ -5,7 +5,7 @@ import io.ktor.server.plugins.*
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.plugins.UserAlreadyExistsException
-import net.grandcentrix.backend.repository.HouseManager.Companion.HouseManagerInstance
+import net.grandcentrix.backend.repository.HouseRepository.Companion.HouseRepositoryInstance
 
 class Signup {
 
@@ -58,7 +58,7 @@ class Signup {
                 email,
                 username,
                 hashedPassword,
-                HouseManagerInstance.getItem(house)
+                HouseRepositoryInstance.getItem(house)
             )
             daoUsers.addItem(user)
         }

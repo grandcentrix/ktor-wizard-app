@@ -3,7 +3,7 @@ package net.grandcentrix.backend.dao
 import kotlinx.coroutines.runBlocking
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.models.Users
-import net.grandcentrix.backend.repository.HouseManager.Companion.HouseManagerInstance
+import net.grandcentrix.backend.repository.HouseRepository.Companion.HouseRepositoryInstance
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
@@ -19,7 +19,7 @@ class DAOUsers: DAOFacade {
         email = row[Users.email],
         username = row[Users.username],
         password = row[Users.password],
-        house = HouseManagerInstance.getItem(row[Users.house]),
+        house = HouseRepositoryInstance.getItem(row[Users.house]),
         favouriteItems = row[Users.favouriteItems].split(",").toMutableList()
     )
 

@@ -14,7 +14,7 @@ import kotlin.test.AfterTest
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-class UserManagerTest {
+class UserRepositoryTest {
 
     companion object {
         private const val FILE_NAME = "src/main/resources/testFile.json"

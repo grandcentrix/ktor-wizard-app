@@ -6,10 +6,10 @@ import net.grandcentrix.backend.models.House
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouses
 import java.io.File
 
-class HouseManager: ManagerFacade<House,String, List<House>,House?> {
+class HouseRepository: RepositoryFacade<House,String, List<House>,House?> {
 
     companion object {
-        val HouseManagerInstance: HouseManager = HouseManager()
+        val HouseRepositoryInstance: HouseRepository = HouseRepository()
     }
 
     private var houses = listOf<House>()
