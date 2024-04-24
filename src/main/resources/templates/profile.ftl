@@ -8,11 +8,20 @@
         </h1>
 
 
-    <section class="content">
-        <#if uploadButton> <!-- Checking if the 'uploadButton' variable is true -->
-            <button id="upload-button">Upload Picture</button> <!-- Creating a button for uploading a picture -->
-            <span>Upload profile picture</span> <!-- Adding text next to the button -->
-        </#if>
+    <section class="content" style="flex-direction: column">
+        <div class="user-data">
+            <p>Upload profile picture</p> <!-- Adding text next to the button -->
+            <#if uploadButton> <!-- Checking if the 'uploadButton' variable is true -->
+                <button id="upload-button">Upload Picture</button> <!-- Creating a button for uploading a picture -->
+            </#if>
+        </div>
+
+        <div class="delete-button">
+            <form class="form" action="/delete-account" method="POST" onsubmit="return confirmDelete()">
+                <input class="button" style="margin-left: 0;" type="submit" value="Delete Account">
+            </form>
+        </div>
+
     </section>
 
     <script>
@@ -44,4 +53,11 @@
             });
         });
     </script>
+
+    <script>
+        function confirmDelete() {
+            return confirm("Are you sure you want to delete your account? This action cannot be undone!");
+        }
+    </script>
+
 </@layout.base> <!-- Closing the "base" macro -->
