@@ -12,7 +12,7 @@
             <a href="/">Wizard</a>
         </h1>
         <menu class="main-menu">
-            <li><a href="">Home</a></li>
+            <li><a href="/">Home</a></li>
             <li style="padding: 0 10px;">//</li>
             <li><a href="/profile">My account</a></li>
         </menu>
