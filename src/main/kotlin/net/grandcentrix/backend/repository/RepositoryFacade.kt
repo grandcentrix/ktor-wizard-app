@@ -1,6 +1,6 @@
 package net.grandcentrix.backend.repository;
 
-interface RepositoryFacade<in I,T, out O,E> {
+interface RepositoryFacade<in T, out O,E> {
 
     // return all elements
     fun getAll(): O
@@ -9,13 +9,13 @@ interface RepositoryFacade<in I,T, out O,E> {
     fun getItem(name: T): E
 
     //update element
-    fun updateItem(item: I)
+//    fun updateItem(item: I)
 
     //add element
-    fun addItem(item: I)
+//    fun addItem(item: I)
 
     //delete element
-    fun deleteItem(name: T)
+//    fun deleteItem(name: T)
 
 
 }

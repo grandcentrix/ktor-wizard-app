@@ -1,0 +1,18 @@
+package net.grandcentrix.backend.repository
+
+import net.grandcentrix.backend.models.Movie
+
+class MoviesRepository: RepositoryFacade<String, List<Movie>, Movie?> {
+
+    companion object {
+        val MoviesRepositoryInstance: MoviesRepository = MoviesRepository()
+    }
+
+    override fun getAll(): List<Movie> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getItem(name: String): Movie? {
+        TODO("Not yet implemented")
+    }
+}
