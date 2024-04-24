@@ -163,13 +163,11 @@ class RoutingTest {
         // indicating a redirection to another page
         assertEquals(HttpStatusCode.OK, response.status)
 
-        // Assert that the Location header redirects to "/login"
-        val location = response.headers["Location"]
-
-        // If Location header is null, assume redirection to "/login"
-        val expectedLocation = location ?: "/login"
-        assertEquals("/login", expectedLocation)
+        // Assert that the URL of the request is "/login", indicating redirection
+        val url = response.request.url.encodedPath
+        assertEquals("/login", url)
     }
+
 
 
 
