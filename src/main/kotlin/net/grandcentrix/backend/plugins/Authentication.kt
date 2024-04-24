@@ -6,7 +6,7 @@ import io.ktor.server.response.*
 import io.ktor.server.sessions.*
 import net.grandcentrix.backend.controllers.Login.Companion.LoginInstance
 import net.grandcentrix.backend.controllers.UserSession
-import net.grandcentrix.backend.repository.UserManager.Companion.UserManagerInstance
+import net.grandcentrix.backend.dao.daoUsers
 
 fun Application.configureAuthentication() {
     install(Authentication) {
@@ -24,7 +24,7 @@ fun Application.configureAuthentication() {
         }
         session<UserSession>("auth-session") {
             validate { session ->
-                if(UserManagerInstance.getItem(session.username) != null) {
+                if(daoUsers.getItem(session.username) != null) {
                     session
                 } else {
                     null

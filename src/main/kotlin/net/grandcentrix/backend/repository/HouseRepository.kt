@@ -3,12 +3,13 @@ package net.grandcentrix.backend.repository;
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import net.grandcentrix.backend.models.House
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouses
 import java.io.File
 
-class HouseManager: RepositoryManager<House,String, List<House>,House?> {
+class HouseRepository: RepositoryFacade<House,String, List<House>,House?> {
 
     companion object {
-        val HouseManagerInstance: HouseManager = HouseManager()
+        val HouseRepositoryInstance: HouseRepository = HouseRepository()
     }
 
     private var houses = listOf<House>()
@@ -16,20 +17,7 @@ class HouseManager: RepositoryManager<House,String, List<House>,House?> {
     private fun getFile() = File("houses.json")
 
 
-    override fun getAll(): List<House> {
-        if (!getFile().exists()) {
-            getFile().createNewFile()
-        }
-
-        val fileText = getFile().readText()
-        if (fileText != "[]") {
-            val housesList = Json.decodeFromString<List<House>>(fileText)
-
-            return housesList
-        }
-
-        return listOf()
-    }
+    override fun getAll(): List<House> = fetchHouses()
 
     override fun getItem(name: String): House? = getAll().find { it.name == name }
 
