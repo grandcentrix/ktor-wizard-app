@@ -9,7 +9,7 @@
     <body>
     <header>
         <h1 class="logo">
-            <a href="/">Wizard</a>‚
+            <a href="/">Wizard</a>
         </h1>
         <menu class="main-menu">
             <li><a href="/">Home</a></li>

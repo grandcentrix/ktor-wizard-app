@@ -228,7 +228,7 @@ menu.main-menu li:target {
 }
 
 .form input.button {
-    width: 130px;
+    width: auto;
     height: 50px;
     color: #dab5bd;
     background-color: #984d5d;
@@ -236,7 +236,7 @@ menu.main-menu li:target {
     letter-spacing: 0.3px;
     border-radius: 100px;
     margin-left: 10px;
-    padding: 0;
+    padding: 10px 20px;
     /* background-color: transparent; */
     /* border: 1px solid #dab5bd; */
 }
@@ -357,4 +357,5 @@ menu.main-menu li:target {
 
 .user-data {
     width:100%;
+    margin-bottom: 30PX;
 }
