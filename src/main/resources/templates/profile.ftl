@@ -46,7 +46,19 @@
             });
         </script>
     </#if>
+    <div class="delete-button-container">
+        <form class="form" action="/delete-account" method="POST" onsubmit="return confirmDelete()">
+            <input class="button" type="submit" value="Delete Account">
+        </form>
+    </div>
+
+    <script>
+        function confirmDelete() {
+            return confirm("Are you sure you want to delete your account? This action cannot be undone.");
+        }
+    </script>
     </body>
+
     </html>
 
 </@layout.base> <!-- Closing the "base" macro -->

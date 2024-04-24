@@ -12,6 +12,7 @@ import net.grandcentrix.backend.controllers.Login.Companion.LoginInstance
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.repository.HouseManager.Companion.HouseManagerInstance
+import net.grandcentrix.backend.repository.UserManager.Companion.UserManagerInstance
 
 fun Application.configureRouting() {
     routing {
@@ -71,6 +72,21 @@ fun Application.configureRouting() {
                 call.sessions.clear<UserSession>()
                 call.respondRedirect("/login")
         }
+        }
+        post("/delete-account") {
+            // Retrieve the user session
+            val userSession = call.sessions.get<UserSession>()
+
+            // Check if the user session is not null
+            if (userSession != null) {
+                // Logic to delete the user's account
+                // For example:
+                UserManagerInstance.deleteItem(userSession.username)
+            }
+
+            // Clear the session
+            call.sessions.clear<UserSession>()
+            call.respondRedirect("/login")
         }
     }
 }
