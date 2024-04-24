@@ -84,9 +84,7 @@ fun Application.configureRouting() {
                 UserManagerInstance.deleteItem(userSession.username)
             }
 
-            // Clear the session
-            call.sessions.clear<UserSession>()
-            call.respondRedirect("/login")
+            call.respondRedirect("/logout")
         }
     }
 }
