@@ -360,3 +360,44 @@ menu.main-menu li:target {
     left: 0;
     padding: 20px;
 }
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+/* Ensure the dropdown remains open when hovering over it */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+/* Hide the dropdown content when the mouse leaves the dropdown area */
+.dropdown-content {
+    position: absolute;
+    z-index: 1;
+}
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+/* Allow user to interact with dropdown content */
+.dropdown-content:hover {
+    display: block;
+}
+/* Hide dropdown content when mouse leaves the dropdown area */
+.dropdown:hover .dropdown-content:not(:hover) {
+    display: none;
+}

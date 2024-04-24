@@ -5,50 +5,6 @@
         <title>Wizard</title>
         <link href="/static/style.css" rel="stylesheet" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-        <style>
-            /* Dropdown Menu Styles */
-            .dropdown {
-                position: relative;
-                display: inline-block;
-            }
-            .dropdown-content {
-                display: none;
-                position: absolute;
-                background-color: #f9f9f9;
-                min-width: 160px;
-                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-                z-index: 1;
-            }
-            .dropdown-content a {
-                color: black;
-                padding: 12px 16px;
-                text-decoration: none;
-                display: block;
-            }
-            .dropdown-content a:hover {
-                background-color: #f1f1f1;
-            }
-            /* Ensure the dropdown remains open when hovering over it */
-            .dropdown:hover .dropdown-content {
-                display: block;
-            }
-            /* Hide the dropdown content when the mouse leaves the dropdown area */
-            .dropdown-content {
-                position: absolute;
-                z-index: 1;
-            }
-            .dropdown:hover .dropdown-content {
-                display: block;
-            }
-            /* Allow user to interact with dropdown content */
-            .dropdown-content:hover {
-                display: block;
-            }
-            /* Hide dropdown content when mouse leaves the dropdown area */
-            .dropdown:hover .dropdown-content:not(:hover) {
-                display: none;
-            }
-        </style>
     </head>
     <body>
     <header>
@@ -59,8 +15,6 @@
             <li><a href="/">Home</a></li>
             <li style="padding: 0 10px;">//</li>
             <li><a href="/profile">My account</a></li>
-            <li style="padding: 0 10px;">//</li>
-            <li><a href="/logout">Logout</a></li>
         </menu>
         <label class="search-bar">
             <span class="material-symbols-outlined">search</span>
@@ -85,23 +39,37 @@
 
     <!-- JavaScript for Dropdown Functionality -->
     <script>
+        // This event listener waits for the DOMContentLoaded event, which starts when the initial HTML document has been completely loaded and parsed.
         document.addEventListener('DOMContentLoaded', function() {
+            // This line selects the dropdown content element using its class name.
             var dropdownContent = document.querySelector('.dropdown-content');
+
+            // This line adds a click event listener to the profile picture element.
             document.getElementById('profile-pic').addEventListener('click', function(event) {
-                event.stopPropagation(); // Prevents the click event from propagating to the document
+                // This line prevents the click event from propagating to the document, which avoids closing the dropdown when clicking inside it.
+                event.stopPropagation();
+                // This line toggles the display style of the dropdown content between 'block' and 'none' when the profile picture is clicked.
                 dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
             });
+
+            // This line adds a click event listener to the profile dropdown element.
             document.getElementById('profile-dropdown').addEventListener('click', function(event) {
-                event.stopPropagation(); // Prevents the click event from propagating to the document
+                // This line prevents the click event from propagating to the document, which avoids closing the dropdown when clicking inside it.
+                event.stopPropagation();
             });
 
+            // This comment indicates the purpose of the following code block.
             // Close dropdown when clicking outside
+            // This line adds a click event listener to the entire document.
             document.addEventListener('click', function(event) {
+                // This line checks if the clicked element is not within the profile picture element.
                 if (!document.getElementById('profile-pic').contains(event.target)) {
+                    // This line hides the dropdown content if the clicked element is not within the profile picture element.
                     dropdownContent.style.display = 'none';
                 }
             });
         });
+
     </script>
     </body>
     </html>
