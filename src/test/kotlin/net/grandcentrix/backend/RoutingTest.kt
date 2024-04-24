@@ -3,20 +3,21 @@ package net.grandcentrix.backend
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.server.plugins.*
 import io.ktor.server.testing.*
 import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkAll
+import junit.framework.TestCase.assertTrue
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
+import net.grandcentrix.backend.controllers.Signup
+import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.repository.UserManager.Companion.UserManagerInstance
 import org.junit.Test
 import java.io.File
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
+import kotlin.test.*
 
 
 class RoutingTest {
@@ -124,23 +125,57 @@ class RoutingTest {
     }
 
     @Test
-    fun createUserWithMissingParameters() {
-        // Simulating form parameters for signup with missing data
+    fun createAccountWithInvalidSignup() = testApplication {
+        // Simulating form parameters for signup with invalid data
         val formParameters = Parameters.build {
-            append("name", "John")
-            append("surname", "")
-            append("email", "john@example.com")
-            append("username", "")
+            // Appending all parameters with one being empty
+            append("name", "")
+            append("surname", "Doe")
+            append("email", "testemail@email.com")
+            append("username", "testuser")
             append("password", "testpassword")
         }
 
-        // TODO
+        // Sending a POST request to "/signup" endpoint with form parameters
+        val signupResponse = client.post("/signup") {
+            // Setting the content type header to application
+            header(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
+            // Setting the request body with form parameters encoded in form-url-encoded format
+            setBody(formParameters.formUrlEncode())
+        }
+
+        assertEquals(HttpStatusCode.OK, signupResponse.status)
+
+        // Asserting that the Location header is not present, indicating that it's not a redirect
+        assertFalse(signupResponse.headers.contains("Location"))
+
+
     }
 
     @Test
+    fun accessProfilePageNotAuthenticated() = testApplication {
+
+        val response = client.get("/profile") {
+            // No session cookie added
+        }
+
+        // Assert that the response status code is HttpStatusCode.Found (302),
+        // indicating a redirection to another page
+        assertEquals(HttpStatusCode.OK, response.status)
+
+        // Assert that the URL of the request is "/login", indicating redirection
+        val url = response.request.url.encodedPath
+        assertEquals("/login", url)
+    }
+
+
+
+
+
+    @Test
     fun accessProfilePageAuthenticated() = testApplication {
-        // Define a username for the test user
-        val username = "testuser"
+        // Retrieve username from storage
+        val username = UserManagerInstance.getAll().firstOrNull()?.username ?: ""
 
         // Send a GET request to "/profile" endpoint with authenticated session
         val response = client.get("/profile") {
@@ -150,7 +185,12 @@ class RoutingTest {
 
         // Assert that the response status code is HttpStatusCode.OK (200)
         assertEquals(HttpStatusCode.OK, response.status)
+
+        // Assert that the response location header is null
+        assertNull(response.headers["Location"])
     }
+
+
 
 }
 
