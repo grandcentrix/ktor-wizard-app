@@ -6,9 +6,9 @@
         Houses
     </h1>
     <section class="content">
-        <ul>
+        <ul class="content-list">
             <#list houses as house>
-                <li>${house.name}</li>
+                <li><a href="/houses/${house.name}">${house.name}</a></li>
             </#list>
         </ul>
     </section>
