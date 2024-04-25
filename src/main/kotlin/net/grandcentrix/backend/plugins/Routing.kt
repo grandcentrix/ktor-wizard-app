@@ -20,35 +20,49 @@ fun Application.configureRouting() {
 
         route("/") {
 
-            authenticate("auth-session") {
+            // auxiliary storing if there's a session (user is logged in)
+            var userSession: UserSession? = null
+
+//            authenticate("auth-session") {
                 get {
-                    val userSession = call.principal<UserSession>()
-                    call.sessions.set(userSession?.copy())
+//                    call.sessions.set(userSession?.copy())
                     call.respond(FreeMarkerContent(
                         "index.ftl",
-                        mapOf("loginStatus" to LoginInstance.status)
+                        mapOf(
+                            "loginStatus" to LoginInstance.status,
+                            "userSession" to userSession.toString()
+                        )
                     ))
-                }
+//                }
             }
 
             get("/login") {
-                call.respond(FreeMarkerContent("login.ftl", mapOf("loginStatus" to LoginInstance.status)))
+                call.respond(FreeMarkerContent(
+                    "login.ftl",
+                    mapOf(
+                        "loginStatus" to LoginInstance.status,
+                        "userSession" to "null"
+                    )
+                ))
             }
 
             authenticate("auth-form") {
                 post("/login") {
                     val username = call.principal<UserIdPrincipal>()?.name.toString()
                     call.sessions.set(UserSession(username))
+                    userSession = call.sessions.get<UserSession>()
                     call.respondRedirect("/")
                 }
             }
 
             authenticate("auth-session") {
                 get("/profile") {
-                    val userSession = call.sessions.get<UserSession>()
+                    userSession = call.sessions.get<UserSession>()
                     val username = userSession?.username
                     call.sessions.set(userSession?.copy())
-                    call.respond(FreeMarkerContent("profile.ftl", mapOf("username" to username, "uploadButton" to true)))
+                    call.respond(FreeMarkerContent(
+                        "profile.ftl",
+                        mapOf("username" to username, "uploadButton" to true)))
                 }
             }
 
@@ -57,7 +71,8 @@ fun Application.configureRouting() {
                     "signup.ftl",
                     mapOf(
                         "signUpStatus" to SignupInstance.status,
-                        "houses" to HouseManagerInstance.getAll().map { it.name }
+                        "houses" to HouseManagerInstance.getAll().map { it.name },
+                        "userSession" to "null"
                     )
                 ))
             }
@@ -68,23 +83,29 @@ fun Application.configureRouting() {
                 LoginInstance.status = "Please login with your account"
                 call.respondRedirect("/login")
             }
+
             get("/logout") {
                 call.sessions.clear<UserSession>()
+                userSession = null
                 call.respondRedirect("/login")
-        }
-        }
-        post("/delete-account") {
-            // Retrieve the user session
-            val userSession = call.sessions.get<UserSession>()
-
-            // Check if the user session is not null
-            if (userSession != null) {
-                // Logic to delete the user's account
-                // For example:
-                UserManagerInstance.deleteItem(userSession.username)
             }
 
-            call.respondRedirect("/logout")
+            authenticate("auth-session") {
+                post("/delete-account") {
+                    // Retrieve the user session
+                    userSession = call.sessions.get<UserSession>()
+
+                    // Check if the user session is not null
+                    if (userSession != null) {
+                        // Logic to delete the user's account
+                        // For example:
+                        UserManagerInstance.deleteItem(userSession!!.username)
+                    }
+
+                    call.respondRedirect("/logout")
+                }
+            }
+
         }
     }
 }

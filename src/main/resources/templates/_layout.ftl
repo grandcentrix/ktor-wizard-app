@@ -1,3 +1,4 @@
+<#assign userSession = "null">
 <#macro base>
     <!DOCTYPE html>
     <html lang="en">
@@ -8,6 +9,22 @@
     </head>
     <body>
     <header>
+        <#if userSession == "null">
+        <#else>
+            <nav class="user-menu">
+                <!-- Profile Picture Dropdown Section -->
+                <div class="dropdown" id="profile-dropdown">
+                    <img class="profile-picture" id="profile-pic" src="https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg" alt="Profile Picture">
+                    <div class="dropdown-content">
+                        <a href="/profile#favourites">Favourites</a>
+                        <a href="/logout">Logout</a>
+                        <!-- Add more options here -->
+                    </div>
+                    <!-- End of Profile Picture Dropdown Section -->
+                </div>
+            </nav>
+        </#if>
+
         <h1 class="logo">
             <a href="/">Wizard</a>
         </h1>
@@ -24,16 +41,6 @@
     </header>
 
     <section class="container">
-        <!-- Profile Picture Dropdown Section -->
-        <div class="dropdown" id="profile-dropdown">
-            <img class="profile-picture" id="profile-pic" src="https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg" alt="Profile Picture">
-            <div class="dropdown-content">
-                <a href="/profile">Profile</a>
-                <a href="/logout">Logout</a>
-                <!-- Add more options here -->
-            </div>
-        </div>
-        <!-- End of Profile Picture Dropdown Section -->
         <#nested>
     </section>
 
