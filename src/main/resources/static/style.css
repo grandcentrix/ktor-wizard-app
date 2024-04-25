@@ -225,7 +225,7 @@ menu.main-menu li:target {
 }
 
 .form input.button {
-    width: 130px;
+    width: auto;
     height: 50px;
     color: #dab5bd;
     background-color: #984d5d;
@@ -233,7 +233,13 @@ menu.main-menu li:target {
     letter-spacing: 0.3px;
     border-radius: 100px;
     margin-left: 10px;
+<<<<<<< HEAD
     padding: 0;
+=======
+    padding: 10px 20px;
+    /* background-color: transparent; */
+    /* border: 1px solid #dab5bd; */
+>>>>>>> main
 }
 
 .form ::placeholder {
@@ -415,4 +421,9 @@ nav.user-menu {
 .dropdown-content a:last-child {
     border-radius: 0 0 10px 10px;
     border-bottom: none;
+}
+
+.user-data {
+    width:100%;
+    margin-bottom: 30PX;
 }

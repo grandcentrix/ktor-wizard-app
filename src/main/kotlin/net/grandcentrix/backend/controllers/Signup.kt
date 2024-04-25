@@ -2,10 +2,10 @@ package net.grandcentrix.backend.controllers
 
 import io.ktor.http.*
 import io.ktor.server.plugins.*
+import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.plugins.UserAlreadyExistsException
-import net.grandcentrix.backend.repository.HouseManager.Companion.HouseManagerInstance
-import net.grandcentrix.backend.repository.UserManager.Companion.UserManagerInstance
+import net.grandcentrix.backend.repository.HouseRepository.Companion.HouseRepositoryInstance
 
 class Signup {
 
@@ -15,14 +15,14 @@ class Signup {
 
     var status = ""
 
-    fun createUser(formParameters: Parameters) {
+     fun createUser(formParameters: Parameters) {
 
         val name = formParameters["name"]
         val surname = formParameters["surname"]
         val email = formParameters["email"]
         val username = formParameters["username"]
         val password = formParameters["password"]
-        val house = formParameters["house"]
+        val house = formParameters["houses"]
 
         if (
             name.isNullOrBlank() ||
@@ -35,6 +35,8 @@ class Signup {
             throw MissingRequestParameterException("Missing required fields!")
         }
 
+        val hashedPassword = password.hashCode()
+
         verifyDuplicates(email, username)
 
         if (house.isNullOrBlank()) {
@@ -44,10 +46,10 @@ class Signup {
                 surname,
                 email,
                 username,
-                password,
+                hashedPassword,
                 null
             )
-            UserManagerInstance.addItem(user)
+            daoUsers.addItem(user)
         } else {
             val user = User(
                 2,
@@ -55,10 +57,10 @@ class Signup {
                 surname,
                 email,
                 username,
-                password,
-                HouseManagerInstance.getItem(house)
+                hashedPassword,
+                HouseRepositoryInstance.getItem(house)
             )
-            UserManagerInstance.addItem(user)
+            daoUsers.addItem(user)
         }
 
         status = "Account created with success!"
@@ -66,12 +68,12 @@ class Signup {
     }
 
     private fun verifyDuplicates(email: String, username: String) {
-        if (UserManagerInstance.getUserByEmail(email) != null) {
+        if (daoUsers.getByEmail(email) != null) {
             status = "Email is already in use!"
             throw UserAlreadyExistsException("Email is already in use!")
         }
 
-        if (UserManagerInstance.getItem(username) != null) {
+        if (daoUsers.getItem(username) != null) {
             status = "Username is already in use!"
             throw UserAlreadyExistsException("Username is already in use!")
         }

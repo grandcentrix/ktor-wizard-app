@@ -1,7 +1,7 @@
 package net.grandcentrix.backend.controllers
 
 import io.ktor.server.auth.*
-import net.grandcentrix.backend.repository.UserManager.Companion.UserManagerInstance
+import net.grandcentrix.backend.dao.daoUsers
 
 
 class Login {
@@ -12,8 +12,8 @@ class Login {
     var status = ""
 
     fun verifyLogin(credential: UserPasswordCredential): Boolean {
-        UserManagerInstance.getAll().forEach {
-            if (it.username == credential.name && it.password == credential.password) {
+        daoUsers.getAll().forEach {
+            if (it.username == credential.name && it.password == credential.password.hashCode()) {
 //                LoginInstance.status = "Login successful"
                 return true
             }
