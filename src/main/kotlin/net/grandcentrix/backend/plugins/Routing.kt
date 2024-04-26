@@ -8,13 +8,16 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
-import net.grandcentrix.backend.controllers.Login
 import net.grandcentrix.backend.controllers.Login.Companion.LoginInstance
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
+import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.repository.BooksRepository.Companion.BooksRepositoryInstance
-import net.grandcentrix.backend.repository.HouseRepository.Companion.HouseRepositoryInstance
-import net.grandcentrix.backend.repository.UserRepository.Companion.UserRepositoryInstance
+import net.grandcentrix.backend.repository.CharactersRepository.Companion.CharactersRepositoryInstance
+import net.grandcentrix.backend.repository.HousesRepository.Companion.HousesRepositoryInstance
+import net.grandcentrix.backend.repository.MoviesRepository.Companion.MoviesRepositoryInstance
+import net.grandcentrix.backend.repository.PotionsRepository.Companion.PotionsRepositoryInstance
+import net.grandcentrix.backend.repository.SpellsRepository.Companion.SpellsRepositoryInstance
 
 fun Application.configureRouting() {
     routing {
@@ -76,7 +79,7 @@ fun Application.configureRouting() {
                     mapOf(
                         "signUpStatus" to SignupInstance.status,
                         "userSession" to "null",
-                        "houses" to HouseRepositoryInstance.getAll().map { it.name }
+                        "houses" to HousesRepositoryInstance.getAll().map { it.name }
                     )
                 ))
             }
@@ -104,7 +107,35 @@ fun Application.configureRouting() {
             get("/houses") {
                 call.respondTemplate(
                     "houses.ftl",
-                    mapOf("houses" to HouseRepositoryInstance.getAll())
+                    mapOf("houses" to HousesRepositoryInstance.getAll())
+                )
+            }
+
+            get("/characters") {
+                call.respondTemplate(
+                    "characters.ftl",
+                    mapOf("characters" to CharactersRepositoryInstance.getAll())
+                )
+            }
+
+            get("/movies") {
+                call.respondTemplate(
+                    "movies.ftl",
+                    mapOf("movies" to MoviesRepositoryInstance.getAll())
+                )
+            }
+
+            get("/potions") {
+                call.respondTemplate(
+                    "potions.ftl",
+                    mapOf("potions" to PotionsRepositoryInstance.getAll())
+                )
+            }
+
+            get("/spells") {
+                call.respondTemplate(
+                    "spells.ftl",
+                    mapOf("spells" to SpellsRepositoryInstance.getAll())
                 )
             }
 
@@ -121,8 +152,8 @@ fun Application.configureRouting() {
 
                 // Check if the user session is not null
                 if (userSession != null) {
-                    // Logic to delete the user's account
-                    UserRepositoryInstance.deleteItem(userSession.username)
+                    // Delete user from repository
+                    daoUsers.deleteItem(userSession.username)
                 }
                 call.respondRedirect("/logout")
             }
