@@ -16,7 +16,7 @@ class HousesRepository: RepositoryFacade<House,House?> {
 
     override fun getAll(): List<House> = fetchHouses()
 
-    override fun getItem(id: String): House? = getAll().find { it.name == name }
+    override fun getItem(id: String): House? = getAll().find { it.id == id }
 
 //    override fun deleteItem(name: String){
 //        TODO("Not yet implemented")
