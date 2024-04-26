@@ -25,24 +25,37 @@ fun Application.configureRouting() {
 
         route("/") {
 
-            get {
-                call.respond(
-                    FreeMarkerContent(
+            // auxiliary storing if there's a session (user is logged in)
+            var userSession: UserSession? = null
+
+//            authenticate("auth-session") {
+                get {
+//                    call.sessions.set(userSession?.copy())
+                    call.respond(FreeMarkerContent(
                         "index.ftl",
-                        mapOf("loginStatus" to LoginInstance.status)
-                    )
-                )
+                        mapOf(
+                            "loginStatus" to LoginInstance.status,
+                            "userSession" to userSession.toString()
+                        )
+                    ))
                 LoginInstance.status = ""
             }
 
             get("/login") {
-                call.respond(FreeMarkerContent("login.ftl", mapOf("loginStatus" to LoginInstance.status)))
+                call.respond(FreeMarkerContent(
+                    "login.ftl",
+                    mapOf(
+                        "loginStatus" to LoginInstance.status,
+                        "userSession" to "null"
+                    )
+                ))
             }
 
             authenticate("auth-form") {
                 post("/login") {
                     val username = call.principal<UserIdPrincipal>()?.name.toString()
                     call.sessions.set(UserSession(username))
+                    userSession = call.sessions.get<UserSession>()
                     LoginInstance.status = "Logged in with success!"
                     call.respondRedirect("/")
                 }
@@ -50,15 +63,12 @@ fun Application.configureRouting() {
 
             authenticate("auth-session") {
                 get("/profile") {
-                    val userSession = call.sessions.get<UserSession>()
                     val username = userSession?.username
                     call.sessions.set(userSession?.copy())
-                    call.respond(
-                        FreeMarkerContent(
-                            "profile.ftl",
-                            mapOf("username" to username, "uploadButton" to true)
-                        )
-                    )
+                    userSession = call.sessions.get<UserSession>()
+                    call.respond(FreeMarkerContent(
+                        "profile.ftl",
+                        mapOf("username" to username, "uploadButton" to true)))
                 }
             }
 
@@ -68,6 +78,7 @@ fun Application.configureRouting() {
                     "signup.ftl",
                     mapOf(
                         "signUpStatus" to SignupInstance.status,
+                        "userSession" to "null",
                         "houses" to HousesRepositoryInstance.getAll().map { it.name }
                     )
                 ))
@@ -77,6 +88,12 @@ fun Application.configureRouting() {
                 val formParameters = call.receiveParameters()
                 SignupInstance.createUser(formParameters)
                 LoginInstance.status = "Please login with your account"
+                call.respondRedirect("/login")
+            }
+
+            get("/logout") {
+                call.sessions.clear<UserSession>()
+                userSession = null
                 call.respondRedirect("/login")
             }
 
@@ -138,10 +155,7 @@ fun Application.configureRouting() {
                     // Delete user from repository
                     daoUsers.deleteItem(userSession.username)
                 }
-
-                // Clear the session
-                call.sessions.clear<UserSession>()
-                call.respondRedirect("/login")
+                call.respondRedirect("/logout")
             }
         }
     }
