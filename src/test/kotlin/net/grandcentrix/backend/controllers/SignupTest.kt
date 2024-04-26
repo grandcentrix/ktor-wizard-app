@@ -2,12 +2,12 @@ package net.grandcentrix.backend.controllers
 
 import io.ktor.http.*
 import io.ktor.server.plugins.*
-import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkAll
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
+import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.House
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.plugins.UserAlreadyExistsException
@@ -24,13 +24,13 @@ class SignupTest {
     @BeforeTest
     fun beforeTest() {
         // copy all users from users.json to a testFile.json
-        val users = UserManagerInstance.getAll()
+        val users = daoUsers.getAll()
         val usersJson = Json.encodeToJsonElement<List<User>>(users).toString()
         File(FILE_NAME).writeText(usersJson)
 
         // mock the repository class and mock the return file to be the test file
-        mockkObject(UserManagerInstance, recordPrivateCalls = true)
-        every { UserManagerInstance["getFile"]() } returns File(FILE_NAME)
+        mockkObject(daoUsers, recordPrivateCalls = true)
+//        every { daoUsers["getFile"]() } returns File(FILE_NAME)
     }
 
     @AfterTest
@@ -61,7 +61,7 @@ class SignupTest {
 
     @Test
     fun testCreateUserWitDuplicatedUsername() {
-        val duplicatedUsername = UserManagerInstance.getAll().first().username
+        val duplicatedUsername = daoUsers.getAll().first().username
         val formParameters = Parameters.build {
             append("name", "Person")
             append("surname", "One")
@@ -81,7 +81,7 @@ class SignupTest {
 
     @Test
     fun testCreateUserWitDuplicatedEmail() {
-        val duplicatedEmail = UserManagerInstance.getAll().first().email
+        val duplicatedEmail = daoUsers.getAll().first().email
         val formParameters = Parameters.build {
             append("name", "Person")
             append("surname", "One")
@@ -111,7 +111,7 @@ class SignupTest {
         }
 
         SignupInstance.createUser(formParameters)
-        val user = UserManagerInstance.getItem(formParameters["username"]!!)
+        val user = daoUsers.getItem(formParameters["username"]!!)
 
         assertNull(user!!.house)
     }
@@ -128,7 +128,7 @@ class SignupTest {
         }
 
         SignupInstance.createUser(formParameters)
-        val user = UserManagerInstance.getItem(formParameters["username"]!!)
+        val user = daoUsers.getItem(formParameters["username"]!!)
 
         assertNotNull(user!!.house)
         assertIs<House>(user.house)

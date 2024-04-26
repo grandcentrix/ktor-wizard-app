@@ -24,9 +24,9 @@ class HouseRepositoryTest {
     @Before
     fun beforeTests() {
         val house = House(
-            1,
+            1.toString(),
             "Gryffindor",
-            colors = listOf(),
+            "",
             "",
             "",
             "",
@@ -66,9 +66,9 @@ class HouseRepositoryTest {
     @Test
     fun addHouse() {
         val newHouse = House(
-            2,
+            2.toString(),
             "Ravenclaw",
-            colors = listOf(),
+            "",
             "",
             "",
             "",

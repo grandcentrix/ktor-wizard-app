@@ -66,6 +66,5 @@ class DAOUsers: DAOFacade {
 
 val daoUsers = DAOUsers().apply {
     runBlocking {
-
     }
 }
