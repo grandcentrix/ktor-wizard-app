@@ -63,9 +63,8 @@ fun Application.configureRouting() {
 
             authenticate("auth-session") {
                 get("/profile") {
-                    val username = userSession?.username
-                    call.sessions.set(userSession?.copy())
-                    userSession = call.sessions.get<UserSession>()
+//                    userSession = call.sessions.get<UserSession>()
+                    val username = call.sessions.get<UserSession>()?.username
                     call.respond(FreeMarkerContent(
                         "profile.ftl",
                         mapOf("username" to username, "uploadButton" to true)))
@@ -100,42 +99,60 @@ fun Application.configureRouting() {
             get("/books") {
                 call.respondTemplate(
                     "books.ftl",
-                    mapOf("books" to BooksRepositoryInstance.getAll())
+                    mapOf(
+                        "books" to BooksRepositoryInstance.getAll(),
+                        "userSession" to userSession.toString()
+                    )
                 )
             }
 
             get("/houses") {
                 call.respondTemplate(
                     "houses.ftl",
-                    mapOf("houses" to HousesRepositoryInstance.getAll())
+                    mapOf(
+                        "houses" to HousesRepositoryInstance.getAll(),
+                        "userSession" to userSession.toString()
+                    )
                 )
             }
 
             get("/characters") {
                 call.respondTemplate(
                     "characters.ftl",
-                    mapOf("characters" to CharactersRepositoryInstance.getAll())
+                    mapOf(
+                        "characters" to CharactersRepositoryInstance.getAll(),
+                        "userSession" to userSession.toString()
+                    )
                 )
             }
 
             get("/movies") {
                 call.respondTemplate(
                     "movies.ftl",
-                    mapOf("movies" to MoviesRepositoryInstance.getAll())
+                    mapOf(
+                        "movies" to MoviesRepositoryInstance.getAll(),
+                        "userSession" to userSession.toString()
+                    )
                 )
             }
 
             get("/potions") {
                 call.respondTemplate(
                     "potions.ftl",
-                    mapOf("potions" to PotionsRepositoryInstance.getAll())
+                    mapOf(
+                        "potions" to PotionsRepositoryInstance.getAll(),
+                        "userSession" to userSession.toString()
+                    )
                 )
             }
 
             get("/spells") {
                 call.respondTemplate(
                     "spells.ftl",
-                    mapOf("spells" to SpellsRepositoryInstance.getAll())
+                    mapOf(
+                        "spells" to SpellsRepositoryInstance.getAll(),
+                        "userSession" to userSession.toString()
+                    )
                 )
             }
 
@@ -148,12 +165,12 @@ fun Application.configureRouting() {
             // TODO("try a way to use delete verb instead of post")
             post("/delete-account") {
                 // Retrieve the user session
-                val userSession = call.sessions.get<UserSession>()
+//                val userSession = call.sessions.get<UserSession>()
 
                 // Check if the user session is not null
                 if (userSession != null) {
                     // Delete user from repository
-                    daoUsers.deleteItem(userSession.username)
+                    daoUsers.deleteItem(userSession!!.username)
                 }
                 call.respondRedirect("/logout")
             }
