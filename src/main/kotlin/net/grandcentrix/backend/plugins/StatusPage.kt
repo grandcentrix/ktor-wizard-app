@@ -34,6 +34,7 @@ fun Application.configureStatusPage() {
                     call.respondRedirect(call.request.local.uri)
                 }
 
+
                 else ->
                     call.respondTemplate(
                     "error.ftl",
