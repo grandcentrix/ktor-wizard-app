@@ -6,9 +6,9 @@
         Books
     </h1>
     <section class="content">
-        <ul>
+        <ul class="content-list">
             <#list books as book>
-                <li>${book.title}</li>
+                <li><a href="/books/${book.slug}">${book.title}</a></li>
             </#list>
         </ul>
     </section>
