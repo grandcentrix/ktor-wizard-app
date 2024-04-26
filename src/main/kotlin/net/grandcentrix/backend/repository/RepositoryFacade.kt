@@ -1,12 +1,12 @@
 package net.grandcentrix.backend.repository;
 
-interface RepositoryFacade<in T, out O,E> {
+interface RepositoryFacade<O,T> {
 
     // return all elements
-    fun getAll(): O
+    fun getAll(): List<O>
 
     // return a single element
-    fun getItem(name: T): E
+    fun getItem(id: String): T
 
     //update element
 //    fun updateItem(item: I)

@@ -3,7 +3,7 @@ package net.grandcentrix.backend.repository;
 import net.grandcentrix.backend.models.House
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouses
 
-class HousesRepository: RepositoryFacade<String, List<House>,House?> {
+class HousesRepository: RepositoryFacade<House,House?> {
 
     companion object {
         val HousesRepositoryInstance: HousesRepository = HousesRepository()
@@ -16,7 +16,7 @@ class HousesRepository: RepositoryFacade<String, List<House>,House?> {
 
     override fun getAll(): List<House> = fetchHouses()
 
-    override fun getItem(name: String): House? = getAll().find { it.name == name }
+    override fun getItem(id: String): House? = getAll().find { it.name == name }
 
 //    override fun deleteItem(name: String){
 //        TODO("Not yet implemented")

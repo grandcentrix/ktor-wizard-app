@@ -2,7 +2,7 @@ package net.grandcentrix.backend.repository
 
 import net.grandcentrix.backend.models.Potion
 
-class PotionsRepository: RepositoryFacade<String, List<Potion>, Potion?> {
+class PotionsRepository: RepositoryFacade<Potion, Potion?> {
 
     companion object {
         val PotionsRepositoryInstance: PotionsRepository = PotionsRepository()
@@ -12,7 +12,7 @@ class PotionsRepository: RepositoryFacade<String, List<Potion>, Potion?> {
         TODO("Not yet implemented")
     }
 
-    override fun getItem(name: String): Potion? {
+    override fun getItem(id: String): Potion? {
         TODO("Not yet implemented")
     }
 }

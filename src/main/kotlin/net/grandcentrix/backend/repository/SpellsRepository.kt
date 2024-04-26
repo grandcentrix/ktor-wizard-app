@@ -2,7 +2,7 @@ package net.grandcentrix.backend.repository
 
 import net.grandcentrix.backend.models.Spell
 
-class SpellsRepository: RepositoryFacade<String, List<Spell>, Spell?> {
+class SpellsRepository: RepositoryFacade<Spell, Spell?> {
 
     companion object {
         val SpellsRepositoryInstance: SpellsRepository = SpellsRepository()
@@ -12,7 +12,7 @@ class SpellsRepository: RepositoryFacade<String, List<Spell>, Spell?> {
         TODO("Not yet implemented")
     }
 
-    override fun getItem(name: String): Spell? {
+    override fun getItem(id: String): Spell? {
         TODO("Not yet implemented")
     }
 }
