@@ -3,10 +3,10 @@ package net.grandcentrix.backend.models
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Table
+import java.util.*
 
 @Serializable
 data class User(
-    val id: Int,
     val name: String,
     val surname: String,
     val email: String,
@@ -14,12 +14,13 @@ data class User(
     val password: Int,
     @Contextual
     val house: House? = null,
-    val favouriteItems: MutableList<String> = mutableListOf()
+    val favouriteItems: MutableList<String> = mutableListOf(),
+    val id: String = UUID.randomUUID().toString()
 )
 
 // define the table properties
 object Users : Table() {
-    val id = integer("id").autoIncrement()
+    val id = varchar("id", 128)
     val name = varchar("name", 128)
     val surname = varchar("surname", 128)
     val email = varchar("email", 128)

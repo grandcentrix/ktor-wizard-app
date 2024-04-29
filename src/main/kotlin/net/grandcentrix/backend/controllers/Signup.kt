@@ -38,10 +38,10 @@ class Signup {
         val hashedPassword = password.hashCode()
 
         verifyDuplicates(email, username)
+//        val id = UUID.randomUUID().toString()
 
         if (house.isNullOrBlank()) {
             val user = User(
-                2, //TODO assign unique ID automatically
                 name,
                 surname,
                 email,
@@ -52,7 +52,6 @@ class Signup {
             daoUsers.addItem(user)
         } else {
             val user = User(
-                2,
                 name,
                 surname,
                 email,
