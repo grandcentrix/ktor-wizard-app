@@ -43,7 +43,7 @@ class LoginTest {
     fun testVerifyLoginSuccess() {
         // get existing user and password
         val username = daoUsers.getAll().first().username
-        val password = daoUsers.getAll().first().password.toString()
+        val password = daoUsers.getAll().first().password.toString() //FIXME hash password
         // create credentials
         val credentials = UserPasswordCredential(username, password)
 
