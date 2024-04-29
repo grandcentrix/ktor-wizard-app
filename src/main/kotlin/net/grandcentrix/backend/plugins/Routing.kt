@@ -67,7 +67,7 @@ fun Application.configureRouting() {
                     val username = call.sessions.get<UserSession>()?.username
                     call.respond(FreeMarkerContent(
                         "profile.ftl",
-                        mapOf("username" to username, "uploadButton" to true)))
+                        mapOf("username" to username, "uploadButton" to true,"userSession" to userSession.toString())))
                 }
             }
 
