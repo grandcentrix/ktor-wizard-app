@@ -4,8 +4,10 @@ import io.ktor.http.*
 import io.ktor.server.plugins.*
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.User
+import net.grandcentrix.backend.plugins.InvalidValue
 import net.grandcentrix.backend.plugins.UserAlreadyExistsException
 import net.grandcentrix.backend.repository.HousesRepository.Companion.HousesRepositoryInstance
+import java.util.regex.Pattern;
 
 class Signup {
 
@@ -24,16 +26,18 @@ class Signup {
         val password = formParameters["password"]
         val house = formParameters["houses"]
 
-        if (
-            name.isNullOrBlank() ||
-            surname.isNullOrBlank() ||
-            username.isNullOrBlank() ||
-            password.isNullOrBlank() ||
-            email.isNullOrBlank())
-        {
-            status = "Required fields cannot be empty!"
-            throw MissingRequestParameterException("Missing required fields!")
-        }
+         if (
+             name.isNullOrBlank() ||
+             surname.isNullOrBlank() ||
+             username.isNullOrBlank() ||
+             password.isNullOrBlank() ||
+             email.isNullOrBlank()
+         ) {
+             status = "Required fields cannot be empty!"
+             throw MissingRequestParameterException("Missing required fields!")
+         }
+
+        verifyFields(name, surname, username, email)
 
         val hashedPassword = password.hashCode()
 
@@ -65,6 +69,29 @@ class Signup {
 
         status = "Account created with success!"
 
+    }
+
+    private fun verifyFields(
+        name: String,
+        surname: String,
+        username: String,
+        email: String
+    ) {
+        // regex - set of strings that matches the pattern
+        val emailPattern = Pattern.compile("^(.+)@(\\S+)$")
+        val usernamePattern = Pattern.compile("^(^[^-._,\\s])(\\S+)(\\w\$)\$")
+        val namesPattern = Pattern.compile("^[a-zA-Z]+(?:\\s+[a-zA-Z]+)*\$")
+
+        if (!emailPattern.matcher(email).matches()) {
+            status = "Please enter a valid e-mail!"
+            throw InvalidValue("Invalid value for e-mail!")
+        } else if (!usernamePattern.matcher(username).matches()) {
+            status = "Username has invalid characters!"
+            throw InvalidValue("Invalid value for username!")
+        } else if (!namesPattern.matcher(name).matches() || !namesPattern.matcher(surname).matches()) {
+            status = "Name and/or last name contain invalid characters!"
+            throw InvalidValue("Invalid value for name!")
+        }
     }
 
     private fun verifyDuplicates(email: String, username: String) {
