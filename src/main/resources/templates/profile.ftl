@@ -7,7 +7,33 @@
             <span class="material-symbols-outlined">account_box</span>
             Welcome, ${username}!
         </h1>
+<section class="content" style="flex-direction: column">
+    <!-- Form for updating username -->
+    <div class="user-data">
+        <form action="/update-username" method="POST">
+            <label for="new-username">New Username:</label>
+            <input type="text" id="new-username" name="newUsername" required>
+            <input type="submit" value="Update Username">
+        </form>
+    </div>
 
+    <!-- Form for updating email -->
+    <div class="user-data">
+        <form action="/update-email" method="POST">
+            <label for="new-email">New Email:</label>
+            <input type="email" id="new-email" name="newEmail" required>
+            <input type="submit" value="Update Email">
+        </form>
+    </div>
+
+    <div class="user-data">
+        <form action="/update-password" method="POST">
+            <label for="new-password">New Password:</label>
+            <input type="password" id="new-password" name="newPassword" required>
+            <input type="submit" value="Update Password">
+        </form>
+    </div>
+</section>
 
     <section class="content" style="flex-direction: column">
         <div class="user-data">

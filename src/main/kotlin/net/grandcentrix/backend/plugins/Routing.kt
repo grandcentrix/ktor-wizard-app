@@ -1,5 +1,6 @@
 package net.grandcentrix.backend.plugins
 
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.freemarker.*
@@ -178,8 +179,68 @@ fun Application.configureRouting() {
                 }
                 call.respondRedirect("/logout")
             }
+            authenticate("auth-session") {
+                // Route for updating username
+                post("/update-username") {
+                    val userSession = call.sessions.get<UserSession>()
+                    val parameters = call.receiveParameters()
+                    val newUsername = parameters["newUsername"]
+
+                    if (userSession != null && newUsername != null) {
+                        val username = userSession.username
+                        if (daoUsers.updateName(username, newUsername)) { // Call updateName method here
+                            call.respondRedirect("/profile")
+                        } else {
+                            call.respondText("Failed to update username")
+                        }
+                    } else {
+                        call.respondText("User session or new username is missing")
+                    }
+                }
+
+
+                post("/update-email") {
+                    val userSession = call.sessions.get<UserSession>()
+                    val parameters = call.receiveParameters()
+                    val newEmail = parameters["newEmail"]
+
+                    if (userSession != null && newEmail != null) {
+                        val username = userSession.username
+                        if (daoUsers.updateEmail(username, newEmail)) { // Call updateEmail method here
+                            call.respondRedirect("/profile")
+                        } else {
+                            call.respondText("Failed to update email")
+                        }
+                    } else {
+                        call.respondText("User session or new email is missing")
+                    }
+                }
+
+              //  post("/update-password") {
+                   // val userSession = call.sessions.get<UserSession>()
+                   // val parameters = call.receiveParameters()
+                //    val newPassword = parameters["newPassword"]
+
+                   // if (userSession != null && newPassword != null) {
+                      //  val username = userSession.username
+                       // if (daoUsers.updatePassword(username, newPassword)) { // Call updatePassword method here
+                        //    call.respondRedirect("/profile")
+                     //   } else {
+                      //      call.respondText("Failed to update password")
+                 //       }
+                  //  } else {
+                  //      call.respondText("User session or new password is missing")
+                 //   }
+               // }
+
+
+
+
+            }
+                }
+            }
         }
-    }
-}
+
+
 
 

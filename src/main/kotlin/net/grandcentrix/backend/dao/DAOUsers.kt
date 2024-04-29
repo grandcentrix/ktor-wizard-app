@@ -67,6 +67,30 @@ class DAOUsers: DAOFacade {
         } > 0
     }
 
+    // New methods for updating user information
+    fun updateName(username: String, newName: String): Boolean {
+        return transaction {
+            Users.update({ Users.username eq username }) {
+                it[name] = newName
+            } > 0
+        }
+    }
+
+   // fun updatePassword(username: String, newPassword: String): Boolean {
+      //  return transaction {
+        //    Users.update({ Users.username eq username }) {
+           //     it[password] = newPassword
+        //    } > 0
+    //    }
+  //  }
+
+    fun updateEmail(username: String, newEmail: String): Boolean {
+        return transaction {
+            Users.update({ Users.username eq username }) {
+                it[email] = newEmail
+            } > 0
+        }
+    }
 }
 
 val daoUsers = DAOUsers().apply {
