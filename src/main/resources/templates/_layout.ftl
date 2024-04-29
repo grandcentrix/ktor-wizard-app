@@ -10,6 +10,18 @@
     <body>
     <header>
         <#if userSession == "null">
+            <nav class="user-menu">
+                <!-- Profile Picture Dropdown Section -->
+                <div class="dropdown" id="profile-dropdown">
+                    <img class="profile-picture" id="profile-pic" src="https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg" alt="Profile Picture">
+                    <div class="dropdown-content">
+                        <a href="/signup">Signup</a>
+                        <a href="/login">Login</a>
+                        <!-- Add more options here -->
+                    </div>
+                    <!-- End of Profile Picture Dropdown Section -->
+                </div>
+            </nav>
         <#else>
             <nav class="user-menu">
                 <!-- Profile Picture Dropdown Section -->
