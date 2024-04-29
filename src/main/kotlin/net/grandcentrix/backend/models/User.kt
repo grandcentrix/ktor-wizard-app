@@ -11,7 +11,7 @@ data class User(
     val surname: String,
     val email: String,
     val username: String,
-    val password: Int,
+    val password: String,
     @Contextual
     val house: House? = null,
     val favouriteItems: MutableList<String> = mutableListOf()
@@ -24,7 +24,7 @@ object Users : Table() {
     val surname = varchar("surname", 128)
     val email = varchar("email", 128)
     val username = varchar("username", 128)
-    val password = integer("password")
+    val password = varchar("password", 128)
     val house = varchar("house", 128)
     val favouriteItems = varchar("favouriteItems", 128)
     override val primaryKey = PrimaryKey(id)
