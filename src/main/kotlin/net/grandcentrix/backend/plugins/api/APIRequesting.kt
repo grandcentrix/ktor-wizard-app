@@ -15,6 +15,9 @@ import net.grandcentrix.backend.models.*
 import net.grandcentrix.backend.repository.HouseRepository.Companion.HouseRepositoryInstance
 
 object APIRequesting {
+
+    private const val apiUrl = "https://api.potterdb.com/v1"
+
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
             json(Json {
@@ -27,7 +30,7 @@ object APIRequesting {
      fun fetchBooks(): List<Book>  {
         // Make a GET request to the external API
          val resJson = runBlocking {
-              client.get("https://api.potterdb.com/v1/books").body<JsonElement>()
+              client.get("$apiUrl/books").body<JsonElement>()
          }
 
         val jsonData = resJson.jsonObject["data"]?.jsonArray
@@ -77,7 +80,7 @@ object APIRequesting {
     fun fetchCharacters(): List<Character> {
         // Make a GET request to the external API
         val resJson = runBlocking {
-            client.get("https://api.potterdb.com/v1/characters").body<JsonElement>()
+            client.get("$apiUrl/characters").body<JsonElement>()
         }
 
         val jsonData = resJson.jsonObject["data"]?.jsonArray
@@ -130,7 +133,7 @@ object APIRequesting {
     fun fetchMovies(): List<Movie> {
         // Make a GET request to the external API
         val resJson = runBlocking {
-            client.get("https://api.potterdb.com/v1/movies").body<JsonElement>()
+            client.get("$apiUrl/movies").body<JsonElement>()
         }
 
         val jsonData = resJson.jsonObject["data"]?.jsonArray
@@ -176,7 +179,7 @@ object APIRequesting {
     fun fetchPotions(): List<Potion> {
         // Make a GET request to the external API
         val resJson = runBlocking {
-            client.get("https://api.potterdb.com/v1/potions").body<JsonElement>()
+            client.get("$apiUrl/potions").body<JsonElement>()
         }
 
         val jsonData = resJson.jsonObject["data"]?.jsonArray
@@ -218,7 +221,7 @@ object APIRequesting {
     fun fetchSpells(): List<Spell> {
         // Make a GET request to the external API
         val resJson = runBlocking {
-            client.get("https://api.potterdb.com/v1/spells").body<JsonElement>()
+            client.get("$apiUrl/spells").body<JsonElement>()
         }
 
         val jsonData = resJson.jsonObject["data"]?.jsonArray
