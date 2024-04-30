@@ -24,7 +24,7 @@ object Users : Table() {
     val surname = varchar("surname", 128)
     val email = varchar("email", 128)
     val username = varchar("username", 128)
-    val password = varchar("password", 128)
+    val password = varchar("password", 64)
     val house = varchar("house", 128)
     val favouriteItems = varchar("favouriteItems", 128)
     override val primaryKey = PrimaryKey(id)

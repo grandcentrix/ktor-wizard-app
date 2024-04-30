@@ -14,7 +14,7 @@ class Login {
     var status = ""
 
     fun verifyLogin(credential: UserPasswordCredential): Boolean {
-        val user = daoUsers.getAll().find {it.username == credential.name}
+        val user = daoUsers.getItem(credential.name)
         if (user == null) {
             return false
         } else if (verifyPassword(credential.password, user.password)) {
