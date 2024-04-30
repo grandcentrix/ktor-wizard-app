@@ -26,14 +26,12 @@ fun Application.configureStatusPage() {
                 is UnauthorizedException -> call.respondRedirect("/login")
 
                 is UserAlreadyExistsException -> {
-//                    SignupInstance.status = cause.message.toString()
                     call.respondRedirect("/signup")
                 }
 
-                is MissingRequestParameterException -> {
+                is MissingRequestParameterException, is InvalidValue -> {
                     call.respondRedirect(call.request.local.uri)
                 }
-
 
                 else ->
                     call.respondTemplate(
@@ -54,3 +52,4 @@ fun Application.configureStatusPage() {
 //implements a custom exception class
 class AuthorizationException(override val message: String?): Exception()
 class UserAlreadyExistsException(override val message: String?) : Exception()
+class InvalidValue(override val message: String?) : Exception()
