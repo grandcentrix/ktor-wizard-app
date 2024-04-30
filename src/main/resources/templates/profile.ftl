@@ -58,6 +58,12 @@
             var removePictureButton = document.getElementById('remove-picture');
             var profilePic = document.getElementById('profile-pic');
 
+            // Set initial profile picture URL from localStorage
+            var profilePictureUrl = localStorage.getItem('profilePictureUrl');
+            if (profilePictureUrl) {
+                profilePic.src = profilePictureUrl;
+            }
+
             uploadButton.addEventListener('click', function() {
                 var fileInput = document.createElement('input');
                 fileInput.type = 'file';
@@ -72,6 +78,8 @@
                     reader.onload = function(event) {
                         var imageDataUrl = event.target.result;
                         profilePic.src = imageDataUrl;
+                        // Store profile picture URL in localStorage
+                        localStorage.setItem('profilePictureUrl', imageDataUrl);
                     };
 
                     reader.readAsDataURL(file);
@@ -82,7 +90,8 @@
             removePictureButton.addEventListener('click', function() {
                 // Set profile picture to the standard one
                 profilePic.src = "https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg";
-                // You may need to clear any uploaded picture data stored on the server here
+                // Clear profile picture URL from localStorage
+                localStorage.removeItem('profilePictureUrl');
             });
         });
 
