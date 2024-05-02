@@ -11,7 +11,5 @@ class CharactersRepository: RepositoryFacade<Character, Character?> {
     override fun getAll(): List<Character> {
         TODO("Not yet implemented")
     }
-    override fun getItem(id: String): Character? {
-        TODO("Not yet implemented")
-    }
+    override fun getItem(id: String): Character? = getAll().find { it.id == id }
 }

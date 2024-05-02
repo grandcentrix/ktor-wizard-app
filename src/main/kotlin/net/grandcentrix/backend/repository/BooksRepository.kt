@@ -9,11 +9,7 @@ class BooksRepository: RepositoryFacade<Book, Book?> {
         val BooksRepositoryInstance: BooksRepository = BooksRepository()
     }
 
-//    private var books = listOf<Book>()
-
     override fun getAll(): List<Book> = fetchBooks()
 
-    override fun getItem(id: String): Book? {
-        TODO("Not yet implemented")
-    }
+    override fun getItem(id: String): Book? = getAll().find { it.id == id }
 }

@@ -12,7 +12,5 @@ class MoviesRepository: RepositoryFacade<Movie, Movie?> {
         TODO("Not yet implemented")
     }
 
-    override fun getItem(id: String): Movie? {
-        TODO("Not yet implemented")
-    }
+    override fun getItem(id: String): Movie? = getAll().find { it.id == id }
 }
