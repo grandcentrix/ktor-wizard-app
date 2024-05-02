@@ -8,13 +8,16 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
-import net.grandcentrix.backend.controllers.Login
 import net.grandcentrix.backend.controllers.Login.Companion.LoginInstance
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
+import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.repository.BooksRepository.Companion.BooksRepositoryInstance
-import net.grandcentrix.backend.repository.HouseRepository.Companion.HouseRepositoryInstance
-import net.grandcentrix.backend.repository.UserRepository.Companion.UserRepositoryInstance
+import net.grandcentrix.backend.repository.CharactersRepository.Companion.CharactersRepositoryInstance
+import net.grandcentrix.backend.repository.HousesRepository.Companion.HousesRepositoryInstance
+import net.grandcentrix.backend.repository.MoviesRepository.Companion.MoviesRepositoryInstance
+import net.grandcentrix.backend.repository.PotionsRepository.Companion.PotionsRepositoryInstance
+import net.grandcentrix.backend.repository.SpellsRepository.Companion.SpellsRepositoryInstance
 
 fun Application.configureRouting() {
     routing {
@@ -22,24 +25,37 @@ fun Application.configureRouting() {
 
         route("/") {
 
-            get {
-                call.respond(
-                    FreeMarkerContent(
+            // auxiliary storing if there's a session (user is logged in)
+            var userSession: UserSession? = null
+
+//            authenticate("auth-session") {
+                get {
+//                    call.sessions.set(userSession?.copy())
+                    call.respond(FreeMarkerContent(
                         "index.ftl",
-                        mapOf("loginStatus" to LoginInstance.status)
-                    )
-                )
+                        mapOf(
+                            "loginStatus" to LoginInstance.status,
+                            "userSession" to userSession.toString()
+                        )
+                    ))
                 LoginInstance.status = ""
             }
 
             get("/login") {
-                call.respond(FreeMarkerContent("login.ftl", mapOf("loginStatus" to LoginInstance.status)))
+                call.respond(FreeMarkerContent(
+                    "login.ftl",
+                    mapOf(
+                        "loginStatus" to LoginInstance.status,
+                        "userSession" to "null"
+                    )
+                ))
             }
 
             authenticate("auth-form") {
                 post("/login") {
                     val username = call.principal<UserIdPrincipal>()?.name.toString()
                     call.sessions.set(UserSession(username))
+                    userSession = call.sessions.get<UserSession>()
                     LoginInstance.status = "Logged in with success!"
                     call.respondRedirect("/")
                 }
@@ -47,28 +63,29 @@ fun Application.configureRouting() {
 
             authenticate("auth-session") {
                 get("/profile") {
-                    val userSession = call.sessions.get<UserSession>()
-                    val username = userSession?.username
-                    call.sessions.set(userSession?.copy())
-                    call.respond(
-                        FreeMarkerContent(
-                            "profile.ftl",
-                            mapOf("username" to username, "uploadButton" to true)
-                        )
-                    )
+//                    userSession = call.sessions.get<UserSession>()
+                    val username = call.sessions.get<UserSession>()?.username
+                    call.respond(FreeMarkerContent(
+                        "profile.ftl",
+                        mapOf("username" to username, "uploadButton" to true,"userSession" to userSession.toString())))
                 }
             }
 
-            // TODO("when user is already logged in this page should redirect to home")
             get("/signup") {
-                call.respond(FreeMarkerContent(
-                    "signup.ftl",
-                    mapOf(
-                        "signUpStatus" to SignupInstance.status,
-                        "houses" to HouseRepositoryInstance.getAll().map { it.name }
-                    )
-                ))
+                if (userSession != null) {
+                    call.respondRedirect("/")
+                } else {
+                    call.respond(FreeMarkerContent(
+                        "signup.ftl",
+                        mapOf(
+                            "signUpStatus" to SignupInstance.status,
+                            "userSession" to "null",
+                            "houses" to HousesRepositoryInstance.getAll().map { it.name }
+                        )
+                    ))
+                }
             }
+
 
             post("/signup") {
                 val formParameters = call.receiveParameters()
@@ -77,17 +94,69 @@ fun Application.configureRouting() {
                 call.respondRedirect("/login")
             }
 
+            get("/logout") {
+                call.sessions.clear<UserSession>()
+                userSession = null
+                call.respondRedirect("/login")
+            }
+
             get("/books") {
                 call.respondTemplate(
                     "books.ftl",
-                    mapOf("books" to BooksRepositoryInstance.getAll())
+                    mapOf(
+                        "books" to BooksRepositoryInstance.getAll(),
+                        "userSession" to userSession.toString()
+                    )
                 )
             }
 
             get("/houses") {
                 call.respondTemplate(
                     "houses.ftl",
-                    mapOf("houses" to HouseRepositoryInstance.getAll())
+                    mapOf(
+                        "houses" to HousesRepositoryInstance.getAll(),
+                        "userSession" to userSession.toString()
+                    )
+                )
+            }
+
+            get("/characters") {
+                call.respondTemplate(
+                    "characters.ftl",
+                    mapOf(
+                        "characters" to CharactersRepositoryInstance.getAll(),
+                        "userSession" to userSession.toString()
+                    )
+                )
+            }
+
+            get("/movies") {
+                call.respondTemplate(
+                    "movies.ftl",
+                    mapOf(
+                        "movies" to MoviesRepositoryInstance.getAll(),
+                        "userSession" to userSession.toString()
+                    )
+                )
+            }
+
+            get("/potions") {
+                call.respondTemplate(
+                    "potions.ftl",
+                    mapOf(
+                        "potions" to PotionsRepositoryInstance.getAll(),
+                        "userSession" to userSession.toString()
+                    )
+                )
+            }
+
+            get("/spells") {
+                call.respondTemplate(
+                    "spells.ftl",
+                    mapOf(
+                        "spells" to SpellsRepositoryInstance.getAll(),
+                        "userSession" to userSession.toString()
+                    )
                 )
             }
 
@@ -100,18 +169,14 @@ fun Application.configureRouting() {
             // TODO("try a way to use delete verb instead of post")
             post("/delete-account") {
                 // Retrieve the user session
-                val userSession = call.sessions.get<UserSession>()
+//                val userSession = call.sessions.get<UserSession>()
 
                 // Check if the user session is not null
                 if (userSession != null) {
-                    // Logic to delete the user's account
-                    // For example:
-                    UserRepositoryInstance.deleteItem(userSession.username)
+                    // Delete user from repository
+                    daoUsers.deleteItem(userSession!!.username)
                 }
-
-                // Clear the session
-                call.sessions.clear<UserSession>()
-                call.respondRedirect("/login")
+                call.respondRedirect("/logout")
             }
         }
     }

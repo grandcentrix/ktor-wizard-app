@@ -1,4 +1,5 @@
 <#import "_layout.ftl" as layout />
+<#assign userSession = userSession in layout>
 
 <@layout.base>
     <h1>
@@ -6,9 +7,9 @@
         Houses
     </h1>
     <section class="content">
-        <ul>
+        <ul class="content-list">
             <#list houses as house>
-                <li>${house.name}</li>
+                <li><a href="/houses/${house.name}">${house.name}</a></li>
             </#list>
         </ul>
     </section>

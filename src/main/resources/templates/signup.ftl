@@ -18,7 +18,7 @@
         </div>
         <div class="register-fields">
             <label>
-                <input placeholder="E-mail" required type="text" name="email">
+                <input placeholder="E-mail" required type="email" name="email">
             </label>
 
             <label>
