@@ -19,6 +19,7 @@ class DAOUsers: DAOFacade {
         password = row[Users.password],
         house = HousesRepositoryInstance.getItem(row[Users.house]),
         favouriteItems = row[Users.favouriteItems].split(",").toMutableList()
+
     )
 
     override fun getAll(): List<User> = transaction {

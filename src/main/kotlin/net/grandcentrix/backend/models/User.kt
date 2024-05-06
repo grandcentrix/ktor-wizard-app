@@ -27,5 +27,6 @@ object Users : Table() {
     val password = integer("password")
     val house = varchar("house", 128)
     val favouriteItems = varchar("favouriteItems", 128)
+    val profilePictureUrl = varchar("profilePictureUrl", 256)
     override val primaryKey = PrimaryKey(id)
 }
