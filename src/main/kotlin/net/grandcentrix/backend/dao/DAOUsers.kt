@@ -10,6 +10,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class DAOUsers: DAOFacade {
 
+
     private fun resultRowToUser(row: ResultRow) = User(
         id = row[Users.id],
         name = row[Users.name],
@@ -18,8 +19,8 @@ class DAOUsers: DAOFacade {
         username = row[Users.username],
         password = row[Users.password],
         house = HousesRepositoryInstance.getItem(row[Users.house]),
-        favouriteItems = row[Users.favouriteItems].split(",").toMutableList()
-
+        favouriteItems = row[Users.favouriteItems].split(",").toMutableList(),
+        profilePictureUrl = row[Users.profilePictureUrl] // Include profilePictureUrl
     )
 
     override fun getAll(): List<User> = transaction {
@@ -34,7 +35,8 @@ class DAOUsers: DAOFacade {
             users[username] = user.username
             users[password] = user.password
             users[house] = user.house?.name.toString()
-            users[favouriteItems] = user.favouriteItems.toString()
+            users[favouriteItems] = user.favouriteItems.joinToString(",")
+            users[profilePictureUrl] = user.profilePictureUrl ?: "" // Include profilePictureUrl
         }
         insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToUser)
     }
@@ -53,6 +55,7 @@ class DAOUsers: DAOFacade {
             .singleOrNull()
     }
 
+
     override fun deleteItem(username: String): Unit = transaction {
         Users.deleteWhere { Users.username eq username } > 0
     }
@@ -64,7 +67,8 @@ class DAOUsers: DAOFacade {
             users[email] = user.email
             users[password] = user.password
             users[house] = user.house?.name.toString()
-            users[favouriteItems] = user.favouriteItems.toString()
+            users[favouriteItems] = user.favouriteItems.joinToString(",")
+            users[profilePictureUrl] = user.profilePictureUrl ?: "" // Include profilePictureUrl
         } > 0
     }
 
@@ -76,14 +80,6 @@ class DAOUsers: DAOFacade {
             } > 0
         }
     }
-
-   // fun updatePassword(username: String, newPassword: String): Boolean {
-      //  return transaction {
-        //    Users.update({ Users.username eq username }) {
-           //     it[password] = newPassword
-        //    } > 0
-    //    }
-  //  }
 
     fun updateEmail(username: String, newEmail: String): Boolean {
         return transaction {

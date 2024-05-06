@@ -14,7 +14,8 @@ data class User(
     val password: Int,
     @Contextual
     val house: House? = null,
-    val favouriteItems: MutableList<String> = mutableListOf()
+    val favouriteItems: MutableList<String> = mutableListOf(),
+    val profilePictureUrl: String? = null // Add profilePictureUrl field
 )
 
 // define the table properties
@@ -27,6 +28,6 @@ object Users : Table() {
     val password = integer("password")
     val house = varchar("house", 128)
     val favouriteItems = varchar("favouriteItems", 128)
-    val profilePictureUrl = varchar("profilePictureUrl", 256)
+    val profilePictureUrl = varchar("profilePictureUrl", 256).nullable() // Add profilePictureUrl column
     override val primaryKey = PrimaryKey(id)
 }
