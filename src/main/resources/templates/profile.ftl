@@ -1,7 +1,7 @@
-<#import "_layout.ftl" as layout /> <!-- Importing the "_layout.ftl" template file -->
+<#import "_layout.ftl" as layout />
 <#assign userSession = userSession in layout>
 
-<@layout.base> <!-- Calling the "base" macro defined in the imported "_layout.ftl" template -->
+<@layout.base>
 
     <h1>
         <span class="material-symbols-outlined">account_box</span>
@@ -27,6 +27,7 @@
             </form>
         </div>
 
+        <!-- Form for updating password -->
         <div class="user-data">
             <form action="/update-password" method="POST">
                 <label for="new-password">New Password:</label>
@@ -40,7 +41,10 @@
         <!-- Upload profile picture -->
         <div class="user-data">
             <p>Profile Picture:</p>
-            <button id="upload-button">Upload Picture</button>
+            <form id="upload-form" enctype="multipart/form-data" action="/update-profile-picture" method="POST">
+                <input type="file" id="picture-upload" name="profilePicture" style="display: none;">
+                <button type="button" id="upload-button">Upload Picture</button>
+            </form>
             <button id="remove-picture">Remove Picture</button>
         </div>
 
@@ -58,11 +62,27 @@
             var removePictureButton = document.getElementById('remove-picture');
             var profilePic = document.getElementById('profile-pic');
 
-            // Set initial profile picture URL from localStorage
-            var profilePictureUrl = localStorage.getItem('profilePictureUrl');
-            if (profilePictureUrl) {
-                profilePic.src = profilePictureUrl;
-            }
+            // Fetch profile picture URL from the server
+            fetch('/profile-picture') // Change the endpoint to match your backend route
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Failed to fetch profile picture URL');
+                    }
+                })
+                .then(data => {
+                    if (data.profilePictureUrl) {
+                        profilePic.src = data.profilePictureUrl;
+                    } else {
+                        // Set a default profile picture if no URL is returned
+                        profilePic.src = 'default-profile-picture.jpg';
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    // Handle errors
+                });
 
             uploadButton.addEventListener('click', function() {
                 var fileInput = document.createElement('input');
@@ -78,8 +98,28 @@
                     reader.onload = function(event) {
                         var imageDataUrl = event.target.result;
                         profilePic.src = imageDataUrl;
-                        // Store profile picture URL in localStorage
-                        localStorage.setItem('profilePictureUrl', imageDataUrl);
+
+                        // Create a FormData object to send the file data
+                        var formData = new FormData();
+                        formData.append('profilePicture', file);
+
+                        // Send the image data to the backend
+                        fetch('/update-profile-picture', {
+                            method: 'POST',
+                            body: formData
+                        }).then(response => {
+                            if (response.ok) {
+                                return response.json();
+                            } else {
+                                throw new Error('Failed to upload profile picture');
+                            }
+                        }).then(data => {
+                            console.log(data); // Log response from the server
+                            // Optionally handle response data
+                        }).catch(error => {
+                            console.error(error);
+                            // Handle errors
+                        });
                     };
 
                     reader.readAsDataURL(file);
@@ -88,16 +128,26 @@
             });
 
             removePictureButton.addEventListener('click', function() {
-                // Set profile picture to the standard one
-                profilePic.src = "https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg";
-                // Clear profile picture URL from localStorage
-                localStorage.removeItem('profilePictureUrl');
+                profilePic.src = ""; // Set profile picture to blank
+                // Send request to remove profile picture
+                fetch('/remove-profile-picture', {
+                    method: 'POST'
+                }).then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Failed to remove profile picture');
+                    }
+                }).then(data => {
+                    console.log(data); // Log response from the server
+                    // Optionally handle response data
+                }).catch(error => {
+                    console.error(error);
+                    // Handle errors
+                });
             });
         });
-
-        function confirmDelete() {
-            return confirm("Are you sure you want to delete your account? This action cannot be undone!");
-        }
     </script>
 
-</@layout.base> <!-- Closing the "base" macro -->
+
+</@layout.base>

@@ -1,6 +1,7 @@
 package net.grandcentrix.backend.plugins
 
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.freemarker.*
@@ -9,6 +10,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
+import io.ktor.util.*
 import net.grandcentrix.backend.controllers.Login.Companion.LoginInstance
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
@@ -19,6 +21,9 @@ import net.grandcentrix.backend.repository.HousesRepository.Companion.HousesRepo
 import net.grandcentrix.backend.repository.MoviesRepository.Companion.MoviesRepositoryInstance
 import net.grandcentrix.backend.repository.PotionsRepository.Companion.PotionsRepositoryInstance
 import net.grandcentrix.backend.repository.SpellsRepository.Companion.SpellsRepositoryInstance
+import java.io.File
+import kotlin.text.split
+
 
 fun Application.configureRouting() {
     routing {
@@ -86,7 +91,6 @@ fun Application.configureRouting() {
                     ))
                 }
             }
-
 
             post("/signup") {
                 val formParameters = call.receiveParameters()
@@ -216,7 +220,73 @@ fun Application.configureRouting() {
                     }
                 }
 
-              //  post("/update-password") {
+                post("/update-profile-picture") {
+                    val userSession = call.sessions.get<UserSession>()
+                    val multipartData = call.receiveMultipart()
+                    val imageDataPart = multipartData.readPart() as? PartData.FileItem
+
+                    if (userSession != null && imageDataPart != null) {
+                        val username = userSession.username
+
+                        // Extract image file name
+                        val imageName = imageDataPart.originalFileName ?: ""
+
+                        // Extract image data as ByteArray
+                        val imageData = imageDataPart.streamProvider().readBytes()
+
+                        // Log received image data
+                        println("Received image data for user $username: $imageName")
+
+                        // Pass image data as ByteArray to updateProfilePicture function
+                        if (daoUsers.updateProfilePicture(username, imageData)) {
+                            call.respondText("Profile picture uploaded successfully")
+                        } else {
+                            call.respondText("Failed to upload profile picture")
+                        }
+                    } else {
+                        call.respondText("User session or image data is missing")
+                    }
+                }
+
+
+
+                post("/remove-profile-picture") {
+                    val userSession = call.sessions.get<UserSession>()
+
+                    if (userSession != null) {
+                        val username = userSession.username
+                        if (daoUsers.removeProfilePicture(username)) {
+                            call.respondText("Profile picture removed successfully")
+                        } else {
+                            call.respondText("Failed to remove profile picture")
+                        }
+                    } else {
+                        call.respondText("User session is missing")
+                    }
+                }
+
+                // Add a route to fetch the profile picture URL
+                get("/profile-picture") {
+                    val userSession = call.sessions.get<UserSession>()
+                    if (userSession != null) {
+                        val username = userSession.username
+                        val profilePictureData = daoUsers.getProfilePictureData(username)
+                        if (profilePictureData != null) {
+                            call.respondBytes(profilePictureData, ContentType.Image.JPEG)
+                        } else {
+                            call.respondText("Profile picture not found")
+                        }
+                    } else {
+                        call.respondText("User session is missing")
+                    }
+                }
+
+
+
+
+
+
+                //  post("/update-password") {
                    // val userSession = call.sessions.get<UserSession>()
                    // val parameters = call.receiveParameters()
                 //    val newPassword = parameters["newPassword"]

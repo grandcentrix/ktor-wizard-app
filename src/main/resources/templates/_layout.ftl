@@ -26,7 +26,9 @@
             <nav class="user-menu">
                 <!-- Profile Picture Dropdown Section -->
                 <div class="dropdown" id="profile-dropdown">
-                    <img class="profile-picture" id="profile-pic" src="" alt="Profile Picture">
+                    <img class="profile-picture" id="profile-pic" src="/profile-picture" alt="Profile Picture">
+
+
                     <div class="dropdown-content">
                         <a href="/profile#favourites">Favourites</a>
                         <a href="/logout">Logout</a>
@@ -60,15 +62,14 @@
     <script>
         // This event listener waits for the DOMContentLoaded event, which starts when the initial HTML document has been completely loaded and parsed.
         document.addEventListener('DOMContentLoaded', function() {
-            // Set initial profile picture URL from localStorage
+            // Set initial profile picture URL from server
             var profilePic = document.getElementById('profile-pic');
-            var profilePictureUrl = localStorage.getItem('profilePictureUrl');
-            if (profilePictureUrl && '${userSession}' !== "null") {
+            <#if userSession != "null">
+            var profilePictureUrl = "${profilePictureUrl!''}";
+            if (profilePictureUrl) {
                 profilePic.src = profilePictureUrl;
-            } else {
-                // Set default profile picture URL if not logged in
-                profilePic.src = "https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg";
             }
+            </#if>
 
             // This line selects the dropdown content element using its class name.
             var dropdownContent = document.querySelector('.dropdown-content');
