@@ -10,7 +10,6 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
-import io.ktor.util.*
 import net.grandcentrix.backend.controllers.Login.Companion.LoginInstance
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
@@ -21,8 +20,7 @@ import net.grandcentrix.backend.repository.HousesRepository.Companion.HousesRepo
 import net.grandcentrix.backend.repository.MoviesRepository.Companion.MoviesRepositoryInstance
 import net.grandcentrix.backend.repository.PotionsRepository.Companion.PotionsRepositoryInstance
 import net.grandcentrix.backend.repository.SpellsRepository.Companion.SpellsRepositoryInstance
-import java.io.File
-import kotlin.text.split
+
 
 
 fun Application.configureRouting() {
@@ -228,14 +226,10 @@ fun Application.configureRouting() {
                     if (userSession != null && imageDataPart != null) {
                         val username = userSession.username
 
-                        // Extract image file name
-                        val imageName = imageDataPart.originalFileName ?: ""
 
                         // Extract image data as ByteArray
                         val imageData = imageDataPart.streamProvider().readBytes()
 
-                        // Log received image data
-                        println("Received image data for user $username: $imageName")
 
                         // Pass image data as ByteArray to updateProfilePicture function
                         if (daoUsers.updateProfilePicture(username, imageData)) {

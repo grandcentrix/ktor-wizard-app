@@ -1,11 +1,11 @@
-<#import "_layout.ftl" as layout />
-<#assign userSession = userSession in layout>
+<#import "_layout.ftl" as layout /> <!-- Importing the layout template -->
+<#assign userSession = userSession in layout> <!-- Assigning the user session variable from the layout -->
 
-<@layout.base>
+<@layout.base> <!-- Including the base layout -->
 
     <h1>
         <span class="material-symbols-outlined">account_box</span>
-        Welcome, ${username}!
+        Welcome, ${username}! <!-- Displaying the username -->
     </h1>
 
     <section class="content" style="flex-direction: column">
@@ -56,98 +56,101 @@
         </div>
     </section>
 
+    <!-- JavaScript section -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var uploadButton = document.getElementById('upload-button');
-            var removePictureButton = document.getElementById('remove-picture');
-            var profilePic = document.getElementById('profile-pic');
+            var uploadButton = document.getElementById('upload-button'); // Get the upload button element
+            var removePictureButton = document.getElementById('remove-picture'); // Get the remove picture button element
+            var profilePic = document.getElementById('profile-pic'); // Get the profile picture element
 
             // Fetch profile picture URL from the server
-            fetch('/profile-picture') // Change the endpoint to match your backend route
+            fetch('/profile-picture') // Fetching the profile picture URL from the server
                 .then(response => {
                     if (response.ok) {
-                        return response.json();
+                        return response.json(); // Parse response as JSON
                     } else {
-                        throw new Error('Failed to fetch profile picture URL');
+                        throw new Error('Failed to fetch profile picture URL'); // Throw an error if response is not ok
                     }
                 })
                 .then(data => {
                     if (data.profilePictureUrl) {
-                        profilePic.src = data.profilePictureUrl;
+                        profilePic.src = data.profilePictureUrl; // Set profile picture source if URL is available
                     } else {
                         // Set a default profile picture if no URL is returned
-                        profilePic.src = 'default-profile-picture.jpg';
+                        profilePic.src = 'https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg';
                     }
                 })
                 .catch(error => {
-                    console.error(error);
+                    console.error(error); // Log any errors
                     // Handle errors
                 });
 
+            // Event listener for upload button
             uploadButton.addEventListener('click', function() {
-                var fileInput = document.createElement('input');
-                fileInput.type = 'file';
-                fileInput.style.display = 'none';
-                document.body.appendChild(fileInput);
-                fileInput.click();
+                var fileInput = document.createElement('input'); // Create a new input element
+                fileInput.type = 'file'; // Set input type to file
+                fileInput.style.display = 'none'; // Hide the file input
+                document.body.appendChild(fileInput); // Append input element to the body
+                fileInput.click(); // Simulate click on file input
 
                 fileInput.addEventListener('change', function(event) {
-                    var file = event.target.files[0];
-                    var reader = new FileReader();
+                    var file = event.target.files[0]; // Get the selected file
+                    var reader = new FileReader(); // Create a new FileReader object
 
                     reader.onload = function(event) {
-                        var imageDataUrl = event.target.result;
-                        profilePic.src = imageDataUrl;
+                        var imageDataUrl = event.target.result; // Get the data URL of the image
+                        profilePic.src = imageDataUrl; // Set profile picture source to the data URL
 
                         // Create a FormData object to send the file data
                         var formData = new FormData();
-                        formData.append('profilePicture', file);
+                        formData.append('profilePicture', file); // Append file to FormData
 
                         // Send the image data to the backend
                         fetch('/update-profile-picture', {
-                            method: 'POST',
-                            body: formData
+                            method: 'POST', // Use POST method
+                            body: formData // Set body of the request to FormData object
                         }).then(response => {
                             if (response.ok) {
-                                return response.json();
+                                return response.json(); // Parse response as JSON
                             } else {
-                                throw new Error('Failed to upload profile picture');
+                                throw new Error('Failed to upload profile picture'); // Throw an error if response is not ok
                             }
                         }).then(data => {
                             console.log(data); // Log response from the server
                             // Optionally handle response data
                         }).catch(error => {
-                            console.error(error);
+                            console.error(error); // Log any errors
                             // Handle errors
                         });
                     };
 
-                    reader.readAsDataURL(file);
-                    document.body.removeChild(fileInput);
+                    reader.readAsDataURL(file); // Read file as data URL
+                    document.body.removeChild(fileInput); // Remove file input element from the body
                 });
             });
 
+            // Event listener for remove picture button
             removePictureButton.addEventListener('click', function() {
-                profilePic.src = ""; // Set profile picture to blank
+                profilePic.src = "https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg"; // Set profile picture source to blank
+
                 // Send request to remove profile picture
                 fetch('/remove-profile-picture', {
-                    method: 'POST'
+                    method: 'POST' // Use POST method
                 }).then(response => {
                     if (response.ok) {
-                        return response.json();
+                        return response.json(); // Parse response as JSON
                     } else {
-                        throw new Error('Failed to remove profile picture');
+                        throw new Error('Failed to remove profile picture'); // Throw an error if response is not ok
                     }
                 }).then(data => {
                     console.log(data); // Log response from the server
                     // Optionally handle response data
                 }).catch(error => {
-                    console.error(error);
+                    console.error(error); // Log any errors
                     // Handle errors
                 });
             });
         });
     </script>
-
 
 </@layout.base>

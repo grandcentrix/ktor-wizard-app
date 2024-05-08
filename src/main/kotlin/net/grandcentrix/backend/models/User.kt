@@ -15,7 +15,7 @@ data class User(
     @Contextual
     val house: House? = null,
     val favouriteItems: MutableList<String> = mutableListOf(),
-    val profilePictureData: ByteArray? = null
+    val profilePictureData: ByteArray? = null //to store profile picture data as a ByteArray. This allows storing the image data directly in the database.
 )
 
 // define the table properties
@@ -28,6 +28,6 @@ object Users : Table() {
     val password = integer("password")
     val house = varchar("house", 128)
     val favouriteItems = varchar("favouriteItems", 128)
-    val profilePictureData = binary("profilePictureData").nullable()
+    val profilePictureData = binary("profilePictureData").nullable() //This ensures that the binary data representing the image can be stored properly in the database.
     override val primaryKey = PrimaryKey(id)
 }

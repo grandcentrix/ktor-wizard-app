@@ -26,9 +26,11 @@
             <nav class="user-menu">
                 <!-- Profile Picture Dropdown Section -->
                 <div class="dropdown" id="profile-dropdown">
-                    <img class="profile-picture" id="profile-pic" src="/profile-picture" alt="Profile Picture">
-
-
+                    <#if profile_picture??>
+                        <img class="profile-picture" id="profile-pic" src="${profile_picture}" alt="Profile Picture">
+                    <#else>
+                        <img class="profile-picture" id="profile-pic" src="https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg" alt="Profile Picture">
+                    </#if>
                     <div class="dropdown-content">
                         <a href="/profile#favourites">Favourites</a>
                         <a href="/logout">Logout</a>
@@ -88,7 +90,7 @@
                 event.stopPropagation();
             });
 
-            // This comment indicates the purpose of the following code block.
+
             // Close dropdown when clicking outside
             // This line adds a click event listener to the entire document.
             document.addEventListener('click', function(event) {

@@ -97,7 +97,7 @@ class DAOUsers : DAOFacade {
     fun updateProfilePicture(username: String, imageData: ByteArray): Boolean {
         return transaction {
             Users.update({ Users.username eq username }) {
-                it[Users.profilePictureData] = imageData
+                it[profilePictureData] = imageData
             } > 0
         }
     }
