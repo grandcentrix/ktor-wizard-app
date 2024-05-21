@@ -26,11 +26,7 @@
             <nav class="user-menu">
                 <!-- Profile Picture Dropdown Section -->
                 <div class="dropdown" id="profile-dropdown">
-                    <#if profile_picture??>
-                        <img class="profile-picture" id="profile-pic" src="${profile_picture}" alt="Profile Picture">
-                    <#else>
-                        <img class="profile-picture" id="profile-pic" src="https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg" alt="Profile Picture">
-                    </#if>
+                    <img class="profile-picture" id="profile-pic" src="https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg" alt="Profile Picture">
                     <div class="dropdown-content">
                         <a href="/profile#favourites">Favourites</a>
                         <a href="/logout">Logout</a>
@@ -66,11 +62,31 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Set initial profile picture URL from server
             var profilePic = document.getElementById('profile-pic');
+
+            // Only fetch profile picture if userSession is not null
             <#if userSession != "null">
-            var profilePictureUrl = "${profilePictureUrl!''}";
-            if (profilePictureUrl) {
-                profilePic.src = profilePictureUrl;
-            }
+            fetch('/profile-picture', {
+                method: 'GET' // Use GET method
+            }).then(response => {
+                if (response.ok) {
+                    return response.blob(); // Parse response as blob (binary data)
+                } else {
+                    throw new Error('Failed to fetch profile picture'); // Throw an error if response is not ok
+                }
+            }).then(blob => {
+                if (blob.size > 0) {
+                    // Create a URL for the blob data
+                    const imageUrl = URL.createObjectURL(blob);
+                    profilePic.src = imageUrl;
+                } else {
+                    // Set default profile picture if blob is empty
+                    profilePic.src = "https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg";
+                }
+            }).catch(error => {
+                console.error(error); // Log any errors
+                // Set default profile picture on error
+                profilePic.src = "https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg";
+            });
             </#if>
 
             // This line selects the dropdown content element using its class name.
@@ -90,7 +106,6 @@
                 event.stopPropagation();
             });
 
-
             // Close dropdown when clicking outside
             // This line adds a click event listener to the entire document.
             document.addEventListener('click', function(event) {
@@ -101,7 +116,6 @@
                 }
             });
         });
-
     </script>
     </body>
     </html>

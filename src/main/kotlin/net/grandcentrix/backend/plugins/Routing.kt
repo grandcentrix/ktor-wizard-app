@@ -33,15 +33,15 @@ fun Application.configureRouting() {
             var userSession: UserSession? = null
 
 //            authenticate("auth-session") {
-                get {
+            get {
 //                    call.sessions.set(userSession?.copy())
-                    call.respond(FreeMarkerContent(
-                        "index.ftl",
-                        mapOf(
-                            "loginStatus" to LoginInstance.status,
-                            "userSession" to userSession.toString()
-                        )
-                    ))
+                call.respond(FreeMarkerContent(
+                    "index.ftl",
+                    mapOf(
+                        "loginStatus" to LoginInstance.status,
+                        "userSession" to userSession.toString()
+                    )
+                ))
                 LoginInstance.status = ""
             }
 
@@ -281,30 +281,29 @@ fun Application.configureRouting() {
 
 
                 //  post("/update-password") {
-                   // val userSession = call.sessions.get<UserSession>()
-                   // val parameters = call.receiveParameters()
+                // val userSession = call.sessions.get<UserSession>()
+                // val parameters = call.receiveParameters()
                 //    val newPassword = parameters["newPassword"]
 
-                   // if (userSession != null && newPassword != null) {
-                      //  val username = userSession.username
-                       // if (daoUsers.updatePassword(username, newPassword)) { // Call updatePassword method here
-                        //    call.respondRedirect("/profile")
-                     //   } else {
-                      //      call.respondText("Failed to update password")
-                 //       }
-                  //  } else {
-                  //      call.respondText("User session or new password is missing")
-                 //   }
-               // }
+                // if (userSession != null && newPassword != null) {
+                //  val username = userSession.username
+                // if (daoUsers.updatePassword(username, newPassword)) { // Call updatePassword method here
+                //    call.respondRedirect("/profile")
+                //   } else {
+                //      call.respondText("Failed to update password")
+                //       }
+                //  } else {
+                //      call.respondText("User session or new password is missing")
+                //   }
+                // }
 
 
 
 
-            }
-                }
             }
         }
-
+    }
+}
 
 
 
