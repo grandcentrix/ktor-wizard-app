@@ -259,7 +259,6 @@ fun Application.configureRouting() {
                     }
                 }
 
-                // Add a route to fetch the profile picture URL
                 get("/profile-picture") {
                     val userSession = call.sessions.get<UserSession>()
                     if (userSession != null) {
@@ -268,12 +267,15 @@ fun Application.configureRouting() {
                         if (profilePictureData != null) {
                             call.respondBytes(profilePictureData, ContentType.Image.JPEG)
                         } else {
-                            call.respondText("Profile picture not found")
+                            // Respond with an empty byte array if no profile picture is set
+                            call.respondBytes(ByteArray(0), ContentType.Image.JPEG)
                         }
                     } else {
-                        call.respondText("User session is missing")
+                        call.respond(HttpStatusCode.Unauthorized, "User session is missing")
                     }
                 }
+
+
 
             }
         }

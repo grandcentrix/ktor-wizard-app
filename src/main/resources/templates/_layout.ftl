@@ -47,7 +47,7 @@
         </menu>
         <label class="search-bar">
             <span class="material-symbols-outlined">search</span>
-            <input src="" name="search" placeholder="Search something..." type="text">
+            <input name="search" placeholder="Search something..." type="text">
         </label>
         <div class="bg-effect"></div>
     </header>
@@ -58,60 +58,45 @@
 
     <!-- JavaScript for Dropdown Functionality -->
     <script>
-        // This event listener waits for the DOMContentLoaded event, which starts when the initial HTML document has been completely loaded and parsed.
         document.addEventListener('DOMContentLoaded', function() {
-            // Set initial profile picture URL from server
             var profilePic = document.getElementById('profile-pic');
+            var defaultProfilePic = "https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg";
 
-            // Only fetch profile picture if userSession is not null
             <#if userSession != "null">
             fetch('/profile-picture', {
-                method: 'GET' // Use GET method
+                method: 'GET'
             }).then(response => {
                 if (response.ok) {
-                    return response.blob(); // Parse response as blob (binary data)
+                    return response.blob();
                 } else {
-                    throw new Error('Failed to fetch profile picture'); // Throw an error if response is not ok
+                    throw new Error('Failed to fetch profile picture');
                 }
             }).then(blob => {
                 if (blob.size > 0) {
-                    // Create a URL for the blob data
                     const imageUrl = URL.createObjectURL(blob);
                     profilePic.src = imageUrl;
                 } else {
-                    // Set default profile picture if blob is empty
-                    profilePic.src = "https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg";
+                    profilePic.src = defaultProfilePic;
                 }
             }).catch(error => {
-                console.error(error); // Log any errors
-                // Set default profile picture on error
-                profilePic.src = "https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg";
+                console.error(error);
+                profilePic.src = defaultProfilePic;
             });
             </#if>
 
-            // This line selects the dropdown content element using its class name.
             var dropdownContent = document.querySelector('.dropdown-content');
 
-            // This line adds a click event listener to the profile picture element.
             profilePic.addEventListener('click', function(event) {
-                // This line prevents the click event from propagating to the document, which avoids closing the dropdown when clicking inside it.
                 event.stopPropagation();
-                // This line toggles the display style of the dropdown content between 'block' and 'none' when the profile picture is clicked.
                 dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
             });
 
-            // This line adds a click event listener to the profile dropdown element.
             document.getElementById('profile-dropdown').addEventListener('click', function(event) {
-                // This line prevents the click event from propagating to the document, which avoids closing the dropdown when clicking inside it.
                 event.stopPropagation();
             });
 
-            // Close dropdown when clicking outside
-            // This line adds a click event listener to the entire document.
             document.addEventListener('click', function(event) {
-                // This line checks if the clicked element is not within the profile picture element.
                 if (!profilePic.contains(event.target)) {
-                    // This line hides the dropdown content if the clicked element is not within the profile picture element.
                     dropdownContent.style.display = 'none';
                 }
             });
