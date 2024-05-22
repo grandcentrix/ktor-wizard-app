@@ -190,7 +190,7 @@ fun Application.configureRouting() {
 
                     if (userSession != null && newUsername != null) {
                         val username = userSession.username
-                        if (daoUsers.updateName(username, newUsername)) { // Call updateName method here
+                        if (daoUsers.updateUsername(username, newUsername)) { // Call updateName method here
                             call.respondRedirect("/profile")
                         } else {
                             call.respondText("Failed to update username")

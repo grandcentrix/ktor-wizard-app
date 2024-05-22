@@ -86,10 +86,10 @@ class DAOUsers : DAOFacade {
         } > 0
     }
 
-    fun updateName(username: String, newName: String): Boolean {
+    fun updateUsername(currentUsername: String, newUsername: String): Boolean {
         return transaction {
-            Users.update({ Users.username eq username }) {
-                it[name] = newName
+            Users.update({ Users.username eq currentUsername }) {
+                it[username] = newUsername
             } > 0
         }
     }
