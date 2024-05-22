@@ -188,17 +188,33 @@ fun Application.configureRouting() {
                     val parameters = call.receiveParameters()
                     val newUsername = parameters["newUsername"]
 
-                    if (userSession != null && newUsername != null) {
+                    try {
+                        if (userSession == null) {
+                            call.respondText("User session is missing", status = HttpStatusCode.BadRequest)
+                            return@post
+                        }
+
+                        if (newUsername.isNullOrEmpty()) {
+                            call.respondText("New username is missing or empty", status = HttpStatusCode.BadRequest)
+                            return@post
+                        }
+
                         val username = userSession.username
-                        if (daoUsers.updateUsername(username, newUsername)) { // Call updateName method here
+                        if (daoUsers.getItem(newUsername) != null) {
+                            call.respondText("New username is already taken", status = HttpStatusCode.Conflict)
+                            return@post
+                        }
+
+                        if (daoUsers.updateUsername(username, newUsername)) {
                             call.respondRedirect("/profile")
                         } else {
-                            call.respondText("Failed to update username")
+                            call.respondText("Failed to update username", status = HttpStatusCode.InternalServerError)
                         }
-                    } else {
-                        call.respondText("User session or new username is missing")
+                    } catch (e: Exception) {
+                        call.respondText("An error occurred: ${e.localizedMessage}", status = HttpStatusCode.InternalServerError)
                     }
                 }
+
 
 
                 post("/update-email") {
