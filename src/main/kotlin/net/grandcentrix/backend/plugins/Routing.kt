@@ -205,7 +205,7 @@ fun Application.configureRouting() {
                         }
 
                         if (daoUsers.updateUsername(username, newUsername)) {
-                            call.respondRedirect("/profile")
+                            call.respondRedirect("/")
                         } else {
                             call.respondText("Failed to update username", status = HttpStatusCode.InternalServerError)
                         }
@@ -226,7 +226,7 @@ fun Application.configureRouting() {
                         if (userSession != null && newEmail != null) {
                             val username = userSession.username
                             if (daoUsers.updateEmail(username, newEmail)) {
-                                call.respondRedirect("/profile")
+                                call.respondRedirect("/")
                             } else {
                                 call.respondText("Failed to update email", status = HttpStatusCode.InternalServerError)
                             }

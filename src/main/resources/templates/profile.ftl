@@ -59,28 +59,26 @@
     <!-- JavaScript section -->
     <script>
         function updateUsername(event) {
-            event.preventDefault();
-            const form = event.target;
-            const formData = new FormData(form);
-            const newUsername = formData.get("newUsername");
+            event.preventDefault(); // Prevent the default form submission behavior
+            const form = event.target; // Get the form element that triggered the event
+            const formData = new FormData(form); // Create a FormData object from the form
+            const newUsername = formData.get("newUsername"); // Extract the new username from the FormData
 
-            fetch('/user/username', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: new URLSearchParams({ newUsername: newUsername })
+            fetch('/user/username', { // Send a request to the '/user/username' endpoint
+                method: 'PUT', // Use the PUT method to update the resource
+                body: new URLSearchParams({ newUsername: newUsername }) // Set the body of the request to the new username
             }).then(response => {
-                if (response.ok) {
-                    window.location.href = '/profile';
+                if (response.ok) { // Check if the response status is OK (200-299)
+                    window.location.href = '/profile'; // Redirect to the profile page on success
                 } else {
-                    return response.text().then(text => { throw new Error(text) });
+                    return response.text().then(text => { throw new Error(text) }); // Throw an error if the response is not OK
                 }
             }).catch(error => {
-                console.error('Error:', error);
-                alert('Failed to update username: ' + error.message);
+                console.error('Error:', error); // Log any errors to the console
+                alert('Failed to update username: ' + error.message); // Show an alert with the error message
             });
         }
+
 
         function updateEmail(event) {
             event.preventDefault();
@@ -90,9 +88,6 @@
 
             fetch('/user/email', {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
                 body: new URLSearchParams({ newEmail: newEmail })
             }).then(response => {
                 if (response.ok) {
