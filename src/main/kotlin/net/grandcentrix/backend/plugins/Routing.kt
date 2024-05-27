@@ -169,21 +169,20 @@ fun Application.configureRouting() {
                 call.respondRedirect("/")
             }
 
-            // TODO("try a way to use delete verb instead of post")
-            post("/delete-account") {
+            delete("/delete-account") {
                 // Retrieve the user session
-//                val userSession = call.sessions.get<UserSession>()
+                val userSession = call.sessions.get<UserSession>()
 
                 // Check if the user session is not null
                 if (userSession != null) {
                     // Delete user from repository
-                    daoUsers.deleteItem(userSession!!.username)
+                    daoUsers.deleteItem(userSession.username)
                 }
                 call.respondRedirect("/logout")
             }
+
             authenticate("auth-session") {
-                // Route for updating username
-                post("/update-username") {
+                put("/user/username") {
                     val userSession = call.sessions.get<UserSession>()
                     val parameters = call.receiveParameters()
                     val newUsername = parameters["newUsername"]
@@ -191,18 +190,18 @@ fun Application.configureRouting() {
                     try {
                         if (userSession == null) {
                             call.respondText("User session is missing", status = HttpStatusCode.BadRequest)
-                            return@post
+                            return@put
                         }
 
                         if (newUsername.isNullOrEmpty()) {
                             call.respondText("New username is missing or empty", status = HttpStatusCode.BadRequest)
-                            return@post
+                            return@put
                         }
 
                         val username = userSession.username
                         if (daoUsers.getItem(newUsername) != null) {
                             call.respondText("New username is already taken", status = HttpStatusCode.Conflict)
-                            return@post
+                            return@put
                         }
 
                         if (daoUsers.updateUsername(username, newUsername)) {
@@ -214,25 +213,27 @@ fun Application.configureRouting() {
                         call.respondText("An error occurred: ${e.localizedMessage}", status = HttpStatusCode.InternalServerError)
                     }
                 }
+            }
 
 
 
-                post("/update-email") {
-                    val userSession = call.sessions.get<UserSession>()
-                    val parameters = call.receiveParameters()
-                    val newEmail = parameters["newEmail"]
+            authenticate("auth-session") {
+                    put("/user/email") {
+                        val userSession = call.sessions.get<UserSession>()
+                        val parameters = call.receiveParameters()
+                        val newEmail = parameters["newEmail"]
 
-                    if (userSession != null && newEmail != null) {
-                        val username = userSession.username
-                        if (daoUsers.updateEmail(username, newEmail)) { // Call updateEmail method here
-                            call.respondRedirect("/profile")
+                        if (userSession != null && newEmail != null) {
+                            val username = userSession.username
+                            if (daoUsers.updateEmail(username, newEmail)) {
+                                call.respondRedirect("/profile")
+                            } else {
+                                call.respondText("Failed to update email", status = HttpStatusCode.InternalServerError)
+                            }
                         } else {
-                            call.respondText("Failed to update email")
+                            call.respondText("User session or new email is missing", status = HttpStatusCode.BadRequest)
                         }
-                    } else {
-                        call.respondText("User session or new email is missing")
                     }
-                }
 
                 post("/update-profile-picture") {
                     val userSession = call.sessions.get<UserSession>()
@@ -260,7 +261,7 @@ fun Application.configureRouting() {
 
 
 
-                post("/remove-profile-picture") {
+                delete("/remove-profile-picture") {
                     val userSession = call.sessions.get<UserSession>()
 
                     if (userSession != null) {
@@ -274,6 +275,7 @@ fun Application.configureRouting() {
                         call.respondText("User session is missing")
                     }
                 }
+
 
                 get("/profile-picture") {
                     val userSession = call.sessions.get<UserSession>()

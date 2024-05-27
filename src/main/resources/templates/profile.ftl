@@ -11,7 +11,7 @@
     <section class="content" style="flex-direction: column">
         <!-- Form for updating username -->
         <div class="user-data">
-            <form action="/update-username" method="POST">
+            <form onsubmit="updateUsername(event)">
                 <label for="new-username">New Username:</label>
                 <input type="text" id="new-username" name="newUsername" required>
                 <input type="submit" value="Update Username">
@@ -20,7 +20,7 @@
 
         <!-- Form for updating email -->
         <div class="user-data">
-            <form action="/update-email" method="POST">
+            <form onsubmit="updateEmail(event)">
                 <label for="new-email">New Email:</label>
                 <input type="email" id="new-email" name="newEmail" required>
                 <input type="submit" value="Update Email">
@@ -29,7 +29,7 @@
 
         <!-- Form for updating password -->
         <div class="user-data">
-            <form action="/update-password" method="POST">
+            <form onsubmit="updatePassword(event)">
                 <label for="new-password">New Password:</label>
                 <input type="password" id="new-password" name="newPassword" required>
                 <input type="submit" value="Update Password">
@@ -50,7 +50,7 @@
 
         <!-- Delete Account button -->
         <div class="delete-button">
-            <form class="form" action="/delete-account" method="POST" onsubmit="return confirmDelete()">
+            <form class="form" id="delete-account-form" onsubmit="return confirmDelete(event)">
                 <input class="button" style="margin-left: 0;" type="submit" value="Delete Account">
             </form>
         </div>
@@ -58,32 +58,58 @@
 
     <!-- JavaScript section -->
     <script>
+        function updateUsername(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const newUsername = formData.get("newUsername");
+
+            fetch('/user/username', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({ newUsername: newUsername })
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = '/profile';
+                } else {
+                    return response.text().then(text => { throw new Error(text) });
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update username: ' + error.message);
+            });
+        }
+
+        function updateEmail(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const newEmail = formData.get("newEmail");
+
+            fetch('/user/email', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({ newEmail: newEmail })
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = '/profile';
+                } else {
+                    return response.text().then(text => { throw new Error(text) });
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update email: ' + error.message);
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             var uploadButton = document.getElementById('upload-button'); // Get the upload button element
             var removePictureButton = document.getElementById('remove-picture'); // Get the remove picture button element
             var profilePic = document.getElementById('profile-pic'); // Get the profile picture element
-
-            // Fetch profile picture URL from the server
-            fetch('/profile-picture') // Fetching the profile picture URL from the server
-                .then(response => {
-                    if (response.ok) {
-                        return response.json(); // Parse response as JSON
-                    } else {
-                        throw new Error('Failed to fetch profile picture URL'); // Throw an error if response is not ok
-                    }
-                })
-                .then(data => {
-                    if (data.profilePictureUrl) {
-                        profilePic.src = data.profilePictureUrl; // Set profile picture source if URL is available
-                    } else {
-                        // Set a default profile picture if no URL is returned
-                        profilePic.src = 'https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg';
-                    }
-                })
-                .catch(error => {
-                    console.error(error); // Log any errors
-                    // Handle errors
-                });
 
             // Event listener for upload button
             uploadButton.addEventListener('click', function() {
@@ -135,7 +161,7 @@
 
                 // Send request to remove profile picture
                 fetch('/remove-profile-picture', {
-                    method: 'POST' // Use POST method
+                    method: 'DELETE' // Use DELETE method
                 }).then(response => {
                     if (response.ok) {
                         return response.json(); // Parse response as JSON
@@ -150,6 +176,32 @@
                     // Handle errors
                 });
             });
+
+            // Function to confirm deletion and send DELETE request
+            function confirmDelete(event) {
+                event.preventDefault();
+                var confirmDelete = confirm('Are you sure you want to delete your account?');
+                if (confirmDelete) {
+                    fetch('/delete-account', {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(response => {
+                        if (response.ok) {
+                            window.location.href = '/logout';
+                        } else {
+                            return response.text().then(text => { throw new Error(text) });
+                        }
+                    }).catch(error => {
+                        console.error('Error:', error);
+                        alert('Failed to delete account: ' + error.message);
+                    });
+                }
+            }
+
+            var deleteAccountForm = document.getElementById('delete-account-form');
+            deleteAccountForm.addEventListener('submit', confirmDelete);
         });
     </script>
 
