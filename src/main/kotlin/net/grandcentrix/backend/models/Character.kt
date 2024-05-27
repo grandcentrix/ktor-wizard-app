@@ -1,30 +1,25 @@
 package net.grandcentrix.backend.models;
 
-import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.util.*
 
 @Serializable
 data class Character(
-    @Contextual
-    val id: String,
+    val id: String = String(), //FIXME
     val name: String,
-    val aliasName: String,
+    @SerialName("alias_names")
+    val aliasNames: List<String>,
     val animagus: String,
     val boggart: String,
     val patronus: String,
-    @Contextual
-    val birthDate: Date,
-    val birthPlace: String,
-    @Contextual
-    val deathDate: Date,
-    @Contextual
-    val deathPlace: Date,
-//    val eyeColor: String,
-    val familyMembers: List<Character>,
-//    val hairColor: String,
-//    val height: Int
-    val house: House,
+    @SerialName("born")
+    val birth: String,
+    @SerialName("died")
+    val death: String,
+    @SerialName("family_members")
+    val familyMembers: List<String>,
+    val house: House?,
+    @SerialName("image")
     val imageUrl: String,
     val jobs: List<String>,
     val nationality: String,
