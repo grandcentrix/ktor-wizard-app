@@ -3,11 +3,9 @@ package net.grandcentrix.backend.dao
 import kotlinx.coroutines.runBlocking
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.models.Users
-import net.grandcentrix.backend.repository.HouseRepository.Companion.HouseRepositoryInstance
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import net.grandcentrix.backend.repository.HousesRepository.Companion.HousesRepositoryInstance
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class DAOUsers: DAOFacade {
@@ -19,7 +17,7 @@ class DAOUsers: DAOFacade {
         email = row[Users.email],
         username = row[Users.username],
         password = row[Users.password],
-        house = HouseRepositoryInstance.getItem(row[Users.house]),
+        house = HousesRepositoryInstance.getItem(row[Users.house]),
         favouriteItems = row[Users.favouriteItems].split(",").toMutableList()
     )
 
@@ -27,23 +25,15 @@ class DAOUsers: DAOFacade {
         Users.selectAll().map(::resultRowToUser)
     }
 
-    override fun deleteItem(name: String) {
-        TODO("Not yet implemented")
-    }
-
-    override fun updateItem(item: User) {
-        TODO("Not yet implemented")
-    }
-
-    override fun addItem(item: User): Unit = transaction {
-        val insertStatement = Users.insert { users ->
-            users[name] = item.name
-            users[surname] = item.surname
-            users[email] = item.email
-            users[username] = item.username
-            users[password] = item.password
-            users[house] = item.house?.name.toString()
-            users[favouriteItems] = item.favouriteItems.toString()
+    override fun addItem(user: User): Unit = transaction {
+        val insertStatement = Users.insertIgnore { users ->
+            users[name] = user.name
+            users[surname] = user.surname
+            users[email] = user.email
+            users[username] = user.username
+            users[password] = user.password
+            users[house] = user.house?.name.toString()
+            users[favouriteItems] = user.favouriteItems.toString()
         }
         insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToUser)
     }
@@ -60,7 +50,22 @@ class DAOUsers: DAOFacade {
             .select { Users.email eq email }
             .map(::resultRowToUser)
             .singleOrNull()
-  }
+    }
+
+    override fun deleteItem(username: String): Unit = transaction {
+        Users.deleteWhere { Users.username eq username } > 0
+    }
+
+    override fun updateItem(user: User) {
+        Users.update({ Users.username eq user.username }) { users ->
+            users[name] = user.name
+            users[surname] = user.surname
+            users[email] = user.email
+            users[password] = user.password
+            users[house] = user.house?.name.toString()
+            users[favouriteItems] = user.favouriteItems.toString()
+        } > 0
+    }
 
 }
 

@@ -7,15 +7,15 @@ interface DAOFacade {
     fun getAll(): List<User>
 
     // return a single element
-    fun getItem(name: String): User?
+    fun getItem(username: String): User?
 
     //add element
-    fun addItem(item: User)
+    fun addItem(user: User)
 
     //update element
-    fun updateItem(item: User)
+    fun updateItem(user: User)
 
     //delete element
-    fun deleteItem(name: String)
+    fun deleteItem(username: String)
 
 }

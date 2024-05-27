@@ -1,18 +1,17 @@
 package net.grandcentrix.backend.models;
 
-import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.util.UUID
+
 @Serializable
 data class Spell(
-    @Contextual
-    val id: UUID,
+    val id: String = String(), //FIXME
     val name: String,
     val category: String,
-    @Contextual
-    val creator: Character,
+    val creator: String,
     val effect: String,
     val hand: String,
+    @SerialName("image")
     val imageUrl: String,
     val incantation: String,
     val light: String,

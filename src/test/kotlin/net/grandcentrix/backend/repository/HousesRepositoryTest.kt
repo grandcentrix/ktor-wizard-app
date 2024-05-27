@@ -6,7 +6,7 @@ import io.mockk.unmockkAll
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import net.grandcentrix.backend.models.House
-import net.grandcentrix.backend.repository.HouseRepository.Companion.HouseRepositoryInstance
+import net.grandcentrix.backend.repository.HousesRepository.Companion.HousesRepositoryInstance
 import org.junit.Before
 import org.junit.Test
 import java.io.File
@@ -14,12 +14,12 @@ import kotlin.test.AfterTest
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-class HouseRepositoryTest {
+class HousesRepositoryTest {
     companion object {
         private const val FILE_NAME = "src/main/resources/testFile.json"
     }
 
-    private val houseManager = spyk(HouseRepositoryInstance, recordPrivateCalls = true)
+    private val houseManager = spyk(HousesRepositoryInstance, recordPrivateCalls = true)
 
     @Before
     fun beforeTests() {

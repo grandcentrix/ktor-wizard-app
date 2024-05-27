@@ -4,6 +4,7 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.freemarker.*
 import io.ktor.server.http.content.*
+import io.ktor.server.plugins.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -25,8 +26,11 @@ fun Application.configureStatusPage() {
                 is UnauthorizedException -> call.respondRedirect("/login")
 
                 is UserAlreadyExistsException -> {
-//                    SignupInstance.status = cause.message.toString()
                     call.respondRedirect("/signup")
+                }
+
+                is MissingRequestParameterException, is InvalidValue -> {
+                    call.respondRedirect(call.request.local.uri)
                 }
 
                 else ->
@@ -48,3 +52,4 @@ fun Application.configureStatusPage() {
 //implements a custom exception class
 class AuthorizationException(override val message: String?): Exception()
 class UserAlreadyExistsException(override val message: String?) : Exception()
+class InvalidValue(override val message: String?) : Exception()
