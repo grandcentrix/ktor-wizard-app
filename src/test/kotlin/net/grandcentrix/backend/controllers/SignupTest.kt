@@ -24,7 +24,7 @@ class SignupTest {
         val config = ApplicationConfig("./src/main/resources/application.conf")
         DatabaseSingleton.init(config)
         // retrieve a small population of users
-//        users.addAll(daoUsers.getAll().subList(0, 3))
+        users.addAll(daoUsers.getAll().subList(0, 3))
     }
 
     @BeforeTest
