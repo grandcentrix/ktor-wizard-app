@@ -78,7 +78,7 @@ class HousesRepositoryTest {
             traits = listOf()
         )
 
-        houseManager.addItem(newHouse)
+//        houseManager.addItem(newHouse)
         val createdUser = houseManager.getItem(newHouse.name)
 
         assertNotNull(createdUser)

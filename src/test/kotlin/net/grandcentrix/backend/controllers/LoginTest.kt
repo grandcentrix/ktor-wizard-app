@@ -1,8 +1,10 @@
 package net.grandcentrix.backend.controllers
 
+import io.ktor.http.*
 import io.ktor.server.auth.*
 import io.ktor.server.config.*
 import net.grandcentrix.backend.controllers.Login.Companion.LoginInstance
+import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.dao.DatabaseSingleton
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.User
@@ -41,13 +43,24 @@ class LoginTest {
 
     @Test
     fun testVerifyLoginSuccess() {
-        // get existing user and password
-        val username = daoUsers.getAll().first().username
-        val password = daoUsers.getAll().first().password.toString() //FIXME hash password
-        // create credentials
-        val credentials = UserPasswordCredential(username, password)
+        // create a test user who we know the password before the hashing
+        val formParameters = Parameters.build {
+            append("name", "Test")
+            append("surname", "User")
+            append("email", "testuser@email.com")
+            append("username", "testuser")
+            append("password", "123")
+            append("house", "")
+        }
+
+        SignupInstance.createUser(formParameters)
+
+        val credentials = UserPasswordCredential(formParameters["username"]!!, formParameters["password"]!!)
 
         assertTrue(LoginInstance.verifyLogin(credentials))
+
+        // delete the created user
+        daoUsers.deleteItem("testuser")
     }
 
     @Test
