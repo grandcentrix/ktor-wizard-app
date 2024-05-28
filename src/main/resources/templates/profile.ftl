@@ -108,67 +108,67 @@
 
             // Event listener for upload button
             uploadButton.addEventListener('click', function() {
-                var fileInput = document.createElement('input'); // Create a new input element
-                fileInput.type = 'file'; // Set input type to file
-                fileInput.style.display = 'none'; // Hide the file input
-                document.body.appendChild(fileInput); // Append input element to the body
-                fileInput.click(); // Simulate click on file input
+                var fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.style.display = 'none';
+                document.body.appendChild(fileInput);
+                fileInput.click();
 
                 fileInput.addEventListener('change', function(event) {
-                    var file = event.target.files[0]; // Get the selected file
-                    var reader = new FileReader(); // Create a new FileReader object
+                    var file = event.target.files[0];
+
+                    // Check if file size is greater than 20 MB
+                    if (file.size > 20 * 1024 * 1024) {
+                        alert('The selected picture is too big. Maximum file size is 20 MB.');
+                        return; // Stop further execution
+                    }
+
+                    var reader = new FileReader();
 
                     reader.onload = function(event) {
-                        var imageDataUrl = event.target.result; // Get the data URL of the image
-                        profilePic.src = imageDataUrl; // Set profile picture source to the data URL
+                        var imageDataUrl = event.target.result;
+                        profilePic.src = imageDataUrl;
 
-                        // Create a FormData object to send the file data
                         var formData = new FormData();
-                        formData.append('profilePicture', file); // Append file to FormData
+                        formData.append('profilePicture', file);
 
-                        // Send the image data to the backend
                         fetch('/update-profile-picture', {
-                            method: 'POST', // Use POST method
-                            body: formData // Set body of the request to FormData object
+                            method: 'POST',
+                            body: formData
                         }).then(response => {
                             if (response.ok) {
-                                return response.json(); // Parse response as JSON
+                                return response.json();
                             } else {
-                                throw new Error('Failed to upload profile picture'); // Throw an error if response is not ok
+                                throw new Error('Failed to upload profile picture');
                             }
                         }).then(data => {
-                            console.log(data); // Log response from the server
-                            // Optionally handle response data
+                            console.log(data);
                         }).catch(error => {
-                            console.error(error); // Log any errors
-                            // Handle errors
+                            console.error(error);
                         });
                     };
 
-                    reader.readAsDataURL(file); // Read file as data URL
-                    document.body.removeChild(fileInput); // Remove file input element from the body
+                    reader.readAsDataURL(file);
+                    document.body.removeChild(fileInput);
                 });
             });
 
             // Event listener for remove picture button
             removePictureButton.addEventListener('click', function() {
-                profilePic.src = "https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg"; // Set profile picture source to blank
+                profilePic.src = "https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg";
 
-                // Send request to remove profile picture
                 fetch('/remove-profile-picture', {
-                    method: 'DELETE' // Use DELETE method
+                    method: 'DELETE'
                 }).then(response => {
                     if (response.ok) {
-                        return response.json(); // Parse response as JSON
+                        return response.json();
                     } else {
-                        throw new Error('Failed to remove profile picture'); // Throw an error if response is not ok
+                        throw new Error('Failed to remove profile picture');
                     }
                 }).then(data => {
-                    console.log(data); // Log response from the server
-                    // Optionally handle response data
+                    console.log(data);
                 }).catch(error => {
-                    console.error(error); // Log any errors
-                    // Handle errors
+                    console.error(error);
                 });
             });
 

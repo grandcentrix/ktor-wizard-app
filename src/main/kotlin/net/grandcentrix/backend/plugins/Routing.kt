@@ -292,9 +292,6 @@ fun Application.configureRouting() {
                         call.respond(HttpStatusCode.Unauthorized, "User session is missing")
                     }
                 }
-
-
-
             }
         }
     }
