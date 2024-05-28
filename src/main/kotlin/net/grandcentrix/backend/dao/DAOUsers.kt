@@ -54,14 +54,6 @@ class DAOUsers : DAOFacade {
             .singleOrNull()
     }
 
-    fun updateUserProfilePicture(username: String, imageData: ByteArray) {
-        transaction {
-            Users.update({ Users.username eq username }) {
-                it[Users.profilePictureData] = imageData
-            }
-        }
-    }
-
     fun getProfilePictureData(username: String): ByteArray? {
         return transaction {
             Users.select { Users.username eq username }

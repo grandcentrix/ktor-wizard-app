@@ -179,9 +179,6 @@
                 if (confirmDelete) {
                     fetch('/delete-account', {
                         method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
                     }).then(response => {
                         if (response.ok) {
                             window.location.href = '/logout';
