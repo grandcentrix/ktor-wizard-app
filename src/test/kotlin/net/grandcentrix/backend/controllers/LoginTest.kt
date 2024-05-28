@@ -1,56 +1,73 @@
 package net.grandcentrix.backend.controllers
 
+import io.ktor.http.*
 import io.ktor.server.auth.*
-import io.mockk.every
-import io.mockk.mockkObject
-import io.mockk.unmockkAll
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.encodeToJsonElement
+import io.ktor.server.config.*
 import net.grandcentrix.backend.controllers.Login.Companion.LoginInstance
+import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
+import net.grandcentrix.backend.dao.DatabaseSingleton
+import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.User
-import java.io.File
 import kotlin.test.*
 
 class LoginTest {
     companion object {
-        private const val FILE_NAME = "src/main/resources/testFile.json"
+        val users = mutableListOf<User>()
+    }
+
+    init {
+        // connect to the application database
+        val config = ApplicationConfig("./src/main/resources/application.conf")
+        DatabaseSingleton.init(config)
+        // retrieve a small population of users
+        users.addAll(daoUsers.getAll().subList(0, 3))
     }
 
     @BeforeTest
     fun beforeTest() {
-        // copy all users from users.json to a testFile.json
-        val users = UserManagerInstance.getAll()
-        val usersJson = Json.encodeToJsonElement<List<User>>(users).toString()
-        File(FILE_NAME).writeText(usersJson)
-
-        // mock the repository class and mock the return file to be the test file
-        mockkObject(UserManagerInstance, recordPrivateCalls = true)
-        every { UserManagerInstance["getFile"]() } returns File(FILE_NAME)
+        // set a test database using a configuration file for tests
+        val configTest = ApplicationConfig("./src/main/resources/test_application.conf")
+        DatabaseSingleton.init(configTest)
+        // add the small population from the app database to the test database
+        for (user in users) {
+            daoUsers.addItem(user)
+        }
     }
 
     @AfterTest
     fun afterTest() {
-        unmockkAll()
-        // reset test file
-        File(FILE_NAME).writeText("[]")
+        for (user in users) {
+            daoUsers.deleteItem(user.username)
+        }
     }
 
     @Test
     fun testVerifyLoginSuccess() {
-        // get existing user and password
-        val username = UserManagerInstance.getAll().first().username
-        val password = UserManagerInstance.getAll().first().password
-        // create credentials
-        val credentials = UserPasswordCredential(username, password)
+        // create a test user who we know the password before the hashing
+        val formParameters = Parameters.build {
+            append("name", "Test")
+            append("surname", "User")
+            append("email", "testuser@email.com")
+            append("username", "testuser")
+            append("password", "123")
+            append("house", "")
+        }
+
+        SignupInstance.createUser(formParameters)
+
+        val credentials = UserPasswordCredential(formParameters["username"]!!, formParameters["password"]!!)
 
         assertTrue(LoginInstance.verifyLogin(credentials))
+
+        // delete the created user
+        daoUsers.deleteItem("testuser")
     }
 
     @Test
     fun testVerifyLoginFails() {
         // non-matching credentials
-        val username = UserManagerInstance.getAll().first().username
-        val password = UserManagerInstance.getAll().last().password
+        val username = daoUsers.getAll().first().username
+        val password = daoUsers.getAll().last().password.toString()
         val credentials = UserPasswordCredential(username, password)
 
         assertFalse(LoginInstance.verifyLogin(credentials))

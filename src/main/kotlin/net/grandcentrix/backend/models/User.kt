@@ -13,7 +13,7 @@ data class User(
     val username: String,
     val password: Int,
     @Contextual
-    val house: House? = null,
+    val house: House?,
     val favouriteItems: MutableList<String> = mutableListOf()
 )
 

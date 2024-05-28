@@ -1,43 +1,48 @@
 package net.grandcentrix.backend.controllers
 
 import io.ktor.http.*
+import io.ktor.server.config.*
 import io.ktor.server.plugins.*
-import io.mockk.every
-import io.mockk.mockkObject
-import io.mockk.unmockkAll
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.encodeToJsonElement
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
+import net.grandcentrix.backend.dao.DatabaseSingleton
+import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.House
 import net.grandcentrix.backend.models.User
+import net.grandcentrix.backend.plugins.InvalidValue
 import net.grandcentrix.backend.plugins.UserAlreadyExistsException
 import org.junit.Test
-import java.io.File
 import kotlin.test.*
 
 class SignupTest {
 
     companion object {
-        private const val FILE_NAME = "src/main/resources/testFile.json"
+        val users = mutableListOf<User>()
+    }
+
+    init {
+        // connect to the application database
+        val config = ApplicationConfig("./src/main/resources/application.conf")
+        DatabaseSingleton.init(config)
+        // retrieve a small population of users
+        users.addAll(daoUsers.getAll().subList(0, 3))
     }
 
     @BeforeTest
     fun beforeTest() {
-        // copy all users from users.json to a testFile.json
-        val users = UserManagerInstance.getAll()
-        val usersJson = Json.encodeToJsonElement<List<User>>(users).toString()
-        File(FILE_NAME).writeText(usersJson)
-
-        // mock the repository class and mock the return file to be the test file
-        mockkObject(UserManagerInstance, recordPrivateCalls = true)
-        every { UserManagerInstance["getFile"]() } returns File(FILE_NAME)
+        // set a test database using a configuration file for tests
+        val configTest = ApplicationConfig("./src/main/resources/test_application.conf")
+        DatabaseSingleton.init(configTest)
+        // add the small population from the app database to the test database
+        for (user in users) {
+            daoUsers.addItem(user)
+        }
     }
 
     @AfterTest
     fun afterTest() {
-        unmockkAll()
-        // reset test file
-        File(FILE_NAME).writeText("[]")
+        for (user in users) {
+            daoUsers.deleteItem(user.username)
+        }
     }
 
     @Test
@@ -61,7 +66,7 @@ class SignupTest {
 
     @Test
     fun testCreateUserWitDuplicatedUsername() {
-        val duplicatedUsername = UserManagerInstance.getAll().first().username
+        val duplicatedUsername = daoUsers.getAll().first().username
         val formParameters = Parameters.build {
             append("name", "Person")
             append("surname", "One")
@@ -81,7 +86,7 @@ class SignupTest {
 
     @Test
     fun testCreateUserWitDuplicatedEmail() {
-        val duplicatedEmail = UserManagerInstance.getAll().first().email
+        val duplicatedEmail = daoUsers.getAll().first().email
         val formParameters = Parameters.build {
             append("name", "Person")
             append("surname", "One")
@@ -111,9 +116,12 @@ class SignupTest {
         }
 
         SignupInstance.createUser(formParameters)
-        val user = UserManagerInstance.getItem(formParameters["username"]!!)
+        val user = daoUsers.getItem(formParameters["username"]!!)
 
         assertNull(user!!.house)
+
+        // delete the created user
+        daoUsers.deleteItem("personone")
     }
 
     @Test
@@ -124,18 +132,84 @@ class SignupTest {
             append("email", "persontwo@email.com")
             append("username", "persontwo")
             append("password", "123")
-            append("house", "Gryffindor")
+            append("houses", "0367baf3-1cb6-4baf-bede-48e17e1cd005")
         }
 
         SignupInstance.createUser(formParameters)
-        val user = UserManagerInstance.getItem(formParameters["username"]!!)
+        val user = daoUsers.getItem(formParameters["username"].toString())
 
         assertNotNull(user!!.house)
         assertIs<House>(user.house)
         assertEquals(
-            expected = formParameters["house"]!!,
-            actual = user.house!!.name
+            expected = formParameters["houses"]!!,
+            actual = user.house!!.id
         )
+
+        // delete the created user
+        daoUsers.deleteItem("persontwo")
+    }
+
+    @Test
+    fun testInvalidEmailAddress() {
+        // delete the created user
+        daoUsers.deleteItem("personone")
+
+        val formParameters = Parameters.build {
+            append("name", "Person")
+            append("surname", "One")
+            append("email", "personone@email")
+            append("username", "personone")
+            append("password", "123")
+            append("houses", "")
+        }
+
+        assertFailsWith(
+            exceptionClass = InvalidValue::class,
+            message = "Invalid value for e-mail!"
+        )   {
+            SignupInstance.createUser(formParameters)
+        }
+
+        // delete the created user
+        daoUsers.deleteItem("personone")
+    }
+
+    @Test
+    fun testInvalidUsername() {
+        val formParameters = Parameters.build {
+            append("name", "Person")
+            append("surname", "One")
+            append("email", "personone@email")
+            append("username", "!personone!")
+            append("password", "123")
+            append("houses", "")
+        }
+
+        assertFailsWith(
+            exceptionClass = InvalidValue::class,
+            message = "Invalid value for username!"
+        )   {
+            SignupInstance.createUser(formParameters)
+        }
+    }
+
+    @Test
+    fun testInvalidName() {
+        val formParameters = Parameters.build {
+            append("name", "1234")
+            append("surname", "Person")
+            append("email", "personone@email")
+            append("username", "personone")
+            append("password", "123")
+            append("houses", "")
+        }
+
+        assertFailsWith(
+            exceptionClass = InvalidValue::class,
+            message = "Invalid value for name!"
+        )   {
+            SignupInstance.createUser(formParameters)
+        }
     }
 
 }
