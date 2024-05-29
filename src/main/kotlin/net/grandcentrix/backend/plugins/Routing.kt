@@ -67,21 +67,25 @@ fun Application.configureRouting() {
                     val username = call.sessions.get<UserSession>()?.username
                     call.respond(FreeMarkerContent(
                         "profile.ftl",
-                        mapOf("username" to username, "uploadButton" to true)))
+                        mapOf("username" to username, "uploadButton" to true,"userSession" to userSession.toString())))
                 }
             }
 
-            // TODO("when user is already logged in this page should redirect to home")
             get("/signup") {
-                call.respond(FreeMarkerContent(
-                    "signup.ftl",
-                    mapOf(
-                        "signUpStatus" to SignupInstance.status,
-                        "userSession" to "null",
-                        "houses" to HousesRepositoryInstance.getAll().map { it.name }
-                    )
-                ))
+                if (userSession != null) {
+                    call.respondRedirect("/")
+                } else {
+                    call.respond(FreeMarkerContent(
+                        "signup.ftl",
+                        mapOf(
+                            "signUpStatus" to SignupInstance.status,
+                            "userSession" to "null",
+                            "houses" to HousesRepositoryInstance.getAll().map { it.name }
+                        )
+                    ))
+                }
             }
+
 
             post("/signup") {
                 val formParameters = call.receiveParameters()

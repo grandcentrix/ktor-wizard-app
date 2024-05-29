@@ -1,4 +1,5 @@
 <#import "_layout.ftl" as layout /> <!-- Importing the "_layout.ftl" template file -->
+<#assign userSession = userSession in layout>
 
 <@layout.base> <!-- Calling the "base" macro defined in the imported "_layout.ftl" template -->
 
