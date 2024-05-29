@@ -13,7 +13,9 @@
             <nav class="user-menu">
                 <!-- Profile Picture Dropdown Section -->
                 <div class="dropdown" id="profile-dropdown">
-                    <img class="profile-picture" id="profile-pic" src="https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg" alt="Profile Picture">
+                    <a href="#">
+                        <img class="profile-picture" id="profile-pic" src="https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg" alt="Profile Picture">
+                    </a>
                     <div class="dropdown-content">
                         <a href="/signup">Signup</a>
                         <a href="/login">Login</a>
@@ -26,7 +28,9 @@
             <nav class="user-menu">
                 <!-- Profile Picture Dropdown Section -->
                 <div class="dropdown" id="profile-dropdown">
-                    <img class="profile-picture" id="profile-pic" src="https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg" alt="Profile Picture">
+                    <a href="#">
+                        <img class="profile-picture" id="profile-pic" src="https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg" alt="Profile Picture">
+                    </a>
                     <div class="dropdown-content">
                         <a href="/profile#favourites">Favourites</a>
                         <a href="/logout">Logout</a>
@@ -56,7 +60,7 @@
         <#nested>
     </section>
 
-    <!-- JavaScript for Dropdown Functionality -->
+    <!-- JavaScript for Fetching Profile Picture (if userSession is not null) -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var profilePic = document.getElementById('profile-pic');
@@ -83,23 +87,6 @@
                 profilePic.src = defaultProfilePic;
             });
             </#if>
-
-            var dropdownContent = document.querySelector('.dropdown-content');
-
-            profilePic.addEventListener('click', function(event) {
-                event.stopPropagation();
-                dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
-            });
-
-            document.getElementById('profile-dropdown').addEventListener('click', function(event) {
-                event.stopPropagation();
-            });
-
-            document.addEventListener('click', function(event) {
-                if (!profilePic.contains(event.target)) {
-                    dropdownContent.style.display = 'none';
-                }
-            });
         });
     </script>
     </body>
