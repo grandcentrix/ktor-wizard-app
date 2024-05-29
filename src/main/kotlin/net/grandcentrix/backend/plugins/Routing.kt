@@ -205,6 +205,8 @@ fun Application.configureRouting() {
                         }
 
                         if (daoUsers.updateUsername(username, newUsername)) {
+
+                            call.respondText("Username updated successfully", status = HttpStatusCode.OK)
                             call.respondRedirect("/")
                         } else {
                             call.respondText("Failed to update username", status = HttpStatusCode.InternalServerError)
@@ -214,6 +216,7 @@ fun Application.configureRouting() {
                     }
                 }
             }
+
 
 
 
