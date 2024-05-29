@@ -19,6 +19,7 @@ data class Movie(
     val rating: String,
     @SerialName("release_date")
     val releaseDate: String,
+    @SerialName("running_time")
     val duration: String,
     val slug: String,
     val trailer: String

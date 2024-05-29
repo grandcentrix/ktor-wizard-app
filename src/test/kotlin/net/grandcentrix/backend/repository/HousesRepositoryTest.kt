@@ -22,5 +22,4 @@ class HousesRepositoryTest {
         assertNotNull(house)
     }
 
-
 }
