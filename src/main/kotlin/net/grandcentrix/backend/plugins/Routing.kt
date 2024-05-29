@@ -86,17 +86,10 @@ fun Application.configureRouting() {
                 }
             }
 
-
             post("/signup") {
                 val formParameters = call.receiveParameters()
                 SignupInstance.createUser(formParameters)
                 LoginInstance.status = "Please login with your account"
-                call.respondRedirect("/login")
-            }
-
-            get("/logout") {
-                call.sessions.clear<UserSession>()
-                userSession = null
                 call.respondRedirect("/login")
             }
 
@@ -162,6 +155,7 @@ fun Application.configureRouting() {
 
             get("/logout") {
                 call.sessions.clear<UserSession>()
+                userSession = null
                 LoginInstance.status = "Logged out with success!"
                 call.respondRedirect("/")
             }

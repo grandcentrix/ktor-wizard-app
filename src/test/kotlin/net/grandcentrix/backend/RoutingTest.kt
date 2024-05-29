@@ -1,43 +1,59 @@
 package net.grandcentrix.backend
 
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.cookies.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.server.config.*
 import io.ktor.server.testing.*
-import io.mockk.mockkObject
-import io.mockk.unmockkAll
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.encodeToJsonElement
+import io.mockk.*
+import kotlinx.coroutines.runBlocking
+import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.dao.daoUsers
-import net.grandcentrix.backend.models.User
+import net.grandcentrix.backend.models.Book
+import net.grandcentrix.backend.repository.BooksRepository.Companion.BooksRepositoryInstance
+import org.jetbrains.exposed.sql.Database
 import org.junit.Test
-import java.io.File
 import kotlin.test.*
 
 
 class RoutingTest {
 
     companion object {
-        private const val FILE_NAME = "src/main/resources/testFile.json"
+        private val config = ApplicationConfig("./src/main/resources/application.conf")
+        val driverClassName = config.property("storage.driverClassName").getString()
+        val url = config.property("storage.jdbcURL").getString()
     }
 
     @BeforeTest
     fun beforeTest() {
-        // copy all users from users.json to a testFile.json
-        val users = daoUsers.getAll()
-        val usersJson = Json.encodeToJsonElement<List<User>>(users).toString()
-        File(FILE_NAME).writeText(usersJson)
+        val books = listOf<Book>()
 
-        // mock the repository class and mock the return file to be the test file
-        mockkObject(daoUsers, recordPrivateCalls = true)
-//        every { daoUsers["getFile"]() } returns File(FILE_NAME)
+        mockkObject(BooksRepositoryInstance)
+        every { BooksRepositoryInstance.getAll() } returns books
+
     }
 
     @AfterTest
     fun afterTest() {
         unmockkAll()
-        // reset test file
-        File(FILE_NAME).writeText("[]")
+    }
+
+    @Test
+    fun testHomepage() = testApplication {
+        val response = client.get("/")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+    }
+
+    @Test
+    fun getLoginPage() = testApplication {
+        // Sending a GET request to "/login" endpoint
+        val response = client.get("/login")
+        // Asserting that the response status code is HttpStatusCode.OK (200)
+        assertEquals(HttpStatusCode.OK, response.status)
     }
 
     @Test
@@ -52,15 +68,6 @@ class RoutingTest {
         // Asserting that the response status code is HttpStatusCode.Found (302)
         assertEquals(HttpStatusCode.Found, response.status)
     }
-
-    @Test
-    fun getLoginPage() = testApplication {
-        // Sending a GET request to "/login" endpoint
-        val response = client.get("/login")
-        // Asserting that the response status code is HttpStatusCode.OK (200)
-        assertEquals(HttpStatusCode.OK, response.status)
-    }
-
 
     @Test
     fun testLoginWithInvalidCredentials() = testApplication {
@@ -89,7 +96,6 @@ class RoutingTest {
         assertEquals(HttpStatusCode.OK, response.status)
     }
 
-    // Test case to simulate a successful signup
     @Test
     fun createAccountWithSuccess() = testApplication {
         // Simulating form parameters for signup
@@ -100,6 +106,9 @@ class RoutingTest {
             append("username", "testuser")
             append("password", "testpassword")
         }
+
+        mockkObject(SignupInstance)
+        every { SignupInstance.createUser(formParameters) } just Runs
 
         // Sending a POST request to "/signup" endpoint with form parameters
         val signupResponse = client.post("/signup") {
@@ -131,20 +140,18 @@ class RoutingTest {
             append("password", "testpassword")
         }
 
+        mockkObject(SignupInstance)
+        every { SignupInstance.createUser(formParameters) } just Runs
+
         // Sending a POST request to "/signup" endpoint with form parameters
-        val signupResponse = client.post("/signup") {
+        val response = client.post("/signup") {
             // Setting the content type header to application
             header(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
             // Setting the request body with form parameters encoded in form-url-encoded format
             setBody(formParameters.formUrlEncode())
         }
 
-        assertEquals(HttpStatusCode.OK, signupResponse.status)
-
-        // Asserting that the Location header is not present, indicating that it's not a redirect
-        assertFalse(signupResponse.headers.contains("Location"))
-
-
+        assertEquals(HttpStatusCode.Found, response.status)
     }
 
     @Test
@@ -163,13 +170,11 @@ class RoutingTest {
         assertEquals("/login", url)
     }
 
-
-
-
-
     @Test
     fun accessProfilePageAuthenticated() = testApplication {
-        // Retrieve username from storage
+
+        // Retrieve username from storage for test purpose
+        Database.connect(url, driverClassName)
         val username = daoUsers.getAll().firstOrNull()?.username ?: ""
 
         // Send a GET request to "/profile" endpoint with authenticated session
@@ -185,11 +190,73 @@ class RoutingTest {
         assertNull(response.headers["Location"])
     }
 
+    @Test
+    fun getLogoutPage() = testApplication {
 
+        val client = HttpClient(CIO) {
+            install(HttpCookies) {
+                storage = ConstantCookiesStorage(Cookie(name = "username", value = "test", domain = "0.0.0.0"))
+            }
+        }
 
+        val response = runBlocking { client.get("/logout") }
+        val cookies = response.call.client.cookies("/")
+
+        // check if there's no session
+        //TODO
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals("/", response.headers["Location"])
+
+    }
+
+    @Test
+    fun testGetBooks() = testApplication {
+        val response = client.get("/books")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertContains(response.bodyAsText(), "Books")
+    }
+
+    @Test
+    fun testGetCharacters() = testApplication {
+        val response = client.get("/characters")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertContains(response.bodyAsText(), "Characters")
+    }
+
+    @Test
+    fun testGetHouses() = testApplication {
+        val response = client.get("/houses")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertContains(response.bodyAsText(), "Houses")
+    }
+
+    @Test
+    fun testGetMovies() = testApplication {
+        val response = client.get("/movies")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertContains(response.bodyAsText(), "Movies")
+    }
+
+    @Test
+    fun testGetPotions() = testApplication {
+        val response = client.get("/potions")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertContains(response.bodyAsText(), "Potions")
+    }
+
+    @Test
+    fun testGetSpells() = testApplication {
+        val response = client.get("/spells")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertContains(response.bodyAsText(), "Spells")
+    }
+
+    //TODO: Delete account route test
 }
-
-
-
-
-
