@@ -5,7 +5,7 @@ build/
 !**/src/test/**/build/
 **/.DS_Store
 **/src/main/resources/test_database.db
-**/src/main/database.db
+**/src/main/resources/database.db
 
 ### STS ###
 .apt_generated
