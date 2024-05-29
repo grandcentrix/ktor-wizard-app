@@ -32,7 +32,7 @@ class DAOUsers: DAOFacade {
             users[email] = user.email
             users[username] = user.username
             users[password] = user.password
-            users[house] = user.house?.name.toString()
+            users[house] = user.house?.id.toString()
             users[favouriteItems] = user.favouriteItems.toString()
         }
         insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToUser)
@@ -71,6 +71,5 @@ class DAOUsers: DAOFacade {
 
 val daoUsers = DAOUsers().apply {
     runBlocking {
-
     }
 }

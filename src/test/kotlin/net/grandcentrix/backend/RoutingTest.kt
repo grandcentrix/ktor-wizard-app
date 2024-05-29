@@ -3,16 +3,12 @@ package net.grandcentrix.backend
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.server.plugins.*
 import io.ktor.server.testing.*
-import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkAll
-import junit.framework.TestCase.assertTrue
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
-import net.grandcentrix.backend.controllers.Signup
-import net.grandcentrix.backend.controllers.UserSession
+import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.User
 import org.junit.Test
 import java.io.File
@@ -28,13 +24,13 @@ class RoutingTest {
     @BeforeTest
     fun beforeTest() {
         // copy all users from users.json to a testFile.json
-        val users = UserManagerInstance.getAll()
+        val users = daoUsers.getAll()
         val usersJson = Json.encodeToJsonElement<List<User>>(users).toString()
         File(FILE_NAME).writeText(usersJson)
 
         // mock the repository class and mock the return file to be the test file
-        mockkObject(UserManagerInstance, recordPrivateCalls = true)
-        every { UserManagerInstance["getFile"]() } returns File(FILE_NAME)
+        mockkObject(daoUsers, recordPrivateCalls = true)
+//        every { daoUsers["getFile"]() } returns File(FILE_NAME)
     }
 
     @AfterTest
@@ -174,7 +170,7 @@ class RoutingTest {
     @Test
     fun accessProfilePageAuthenticated() = testApplication {
         // Retrieve username from storage
-        val username = UserManagerInstance.getAll().firstOrNull()?.username ?: ""
+        val username = daoUsers.getAll().firstOrNull()?.username ?: ""
 
         // Send a GET request to "/profile" endpoint with authenticated session
         val response = client.get("/profile") {

@@ -7,14 +7,13 @@ import kotlinx.serialization.Serializable
 data class Spell(
     val id: String = String(), //FIXME
     val name: String,
-    val category: String,
-    val creator: String,
-    val effect: String,
-    val hand: String,
+    val category: String?,
+    val creator: String?,
+    val effect: String?,
+    val hand: String?,
     @SerialName("image")
-    val imageUrl: String,
-    val incantation: String,
-    val light: String,
+    val imageUrl: String?,
+    val incantation: String?,
+    val light: String?,
     val slug: String,
-    val type: String
 )

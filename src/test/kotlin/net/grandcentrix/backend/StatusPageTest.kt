@@ -5,6 +5,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
+import net.grandcentrix.backend.dao.daoUsers
 import org.junit.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -18,8 +19,8 @@ class StatusPageTest {
     @Test
     fun testNotAuthorized() = testApplication {
         // non-matching existing credentials
-        val username = UserManagerInstance.getAll().first().username
-        val password = UserManagerInstance.getAll().last().password
+        val username = daoUsers.getAll().first().username
+        val password = daoUsers.getAll().last().password.toString()
 
         // login attempt
         val response = client.post("/login") {
@@ -36,8 +37,8 @@ class StatusPageTest {
     @Test
     fun testUserAlreadyExistsException() = testApplication {
         // existing credentials
-        val username = UserManagerInstance.getAll().first().username
-        val password = UserManagerInstance.getAll().first().password
+        val username = daoUsers.getAll().first().username
+        val password = daoUsers.getAll().first().password.toString()
 
         val response = client.post("/signup") {
             header(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
