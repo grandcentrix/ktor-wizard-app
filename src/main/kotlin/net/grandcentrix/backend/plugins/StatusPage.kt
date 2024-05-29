@@ -44,7 +44,7 @@ fun Application.configureStatusPage() {
         status(HttpStatusCode.NotFound) { call, _ ->
             call.respondTemplate(
                 "error.ftl",
-                mapOf("errorMessage" to "Oops! It wasn't possible to find the page, or it doesn't exist."))
+                mapOf("errorMessage" to "404 - Not found"))
         }
     }
 }

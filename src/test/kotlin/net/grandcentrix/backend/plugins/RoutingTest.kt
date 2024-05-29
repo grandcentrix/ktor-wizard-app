@@ -1,4 +1,4 @@
-package net.grandcentrix.backend
+package net.grandcentrix.backend.plugins
 
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
