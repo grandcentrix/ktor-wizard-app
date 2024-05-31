@@ -1,4 +1,6 @@
 <#assign userSession = "null">
+<#assign gravatar = "null">
+
 <#macro base>
     <!DOCTYPE html>
     <html lang="en">
@@ -13,7 +15,7 @@
             <nav class="user-menu">
                 <!-- Profile Picture Dropdown Section -->
                 <div class="dropdown" id="profile-dropdown">
-                    <img class="profile-picture" id="profile-pic" src="https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg" alt="Profile Picture">
+                    <img class="profile-picture" id="profile-pic" src="${gravatar}" alt="Profile Picture">
                     <div class="dropdown-content">
                         <a href="/signup">Signup</a>
                         <a href="/login">Login</a>

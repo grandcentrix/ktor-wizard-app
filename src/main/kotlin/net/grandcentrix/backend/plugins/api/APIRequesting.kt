@@ -9,6 +9,9 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import net.grandcentrix.backend.models.*
+import javax.crypto.SecretKey
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.SecretKeySpec
 
 object APIRequesting {
 
@@ -53,7 +56,6 @@ object APIRequesting {
         val characters = resJson.data.map { it.attributes }
         return characters
     }
-
     fun fetchMovies(): List<Movie> {
         // Make a GET request to the external API
         val resJson: ResponseData<Movie> = runBlocking {
@@ -82,6 +84,20 @@ object APIRequesting {
 
         val spells = resJson.data.map { it.attributes }
         return spells
+    }
+
+    fun fetchGravatarProfiles(email: String): GravatarProfile {
+        val factory: SecretKeyFactory = SecretKeyFactory.getInstance("SHA256")
+        val spec = SecretKeySpec(email.toByteArray(), "SHA256")
+        val emailKey: SecretKey = factory.generateSecret(spec)
+
+        val profile: GravatarProfile = runBlocking {
+            client.get("https://api.gravatar.com/v3/profiles/${emailKey}") {
+                bearerAuth("129:gk-N0JYWAg0JaYac_Bdl3ha8nadRp1rLIasSakKhP9VZMWoQzii2yBZM2VEZrsYP")
+            }.body()
+        }
+
+        return profile
     }
 
 }

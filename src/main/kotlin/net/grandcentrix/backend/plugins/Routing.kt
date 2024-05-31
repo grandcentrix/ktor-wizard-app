@@ -12,6 +12,8 @@ import net.grandcentrix.backend.controllers.Login.Companion.LoginInstance
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.dao.daoUsers
+import net.grandcentrix.backend.models.GravatarProfile
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchGravatarProfiles
 import net.grandcentrix.backend.repository.BooksRepository.Companion.BooksRepositoryInstance
 import net.grandcentrix.backend.repository.CharactersRepository.Companion.CharactersRepositoryInstance
 import net.grandcentrix.backend.repository.HousesRepository.Companion.HousesRepositoryInstance
@@ -27,6 +29,7 @@ fun Application.configureRouting() {
 
             // auxiliary storing if there's a session (user is logged in)
             var userSession: UserSession? = null
+            var gravatarProfile: GravatarProfile? = null
 
 //            authenticate("auth-session") {
                 get {
@@ -35,7 +38,8 @@ fun Application.configureRouting() {
                         "index.ftl",
                         mapOf(
                             "loginStatus" to LoginInstance.status,
-                            "userSession" to userSession.toString()
+                            "userSession" to userSession.toString(),
+                            "gravatar" to gravatarProfile?.avatarUrl
                         )
                     ))
                 LoginInstance.status = ""
@@ -56,6 +60,8 @@ fun Application.configureRouting() {
                     val username = call.principal<UserIdPrincipal>()?.name.toString()
                     call.sessions.set(UserSession(username))
                     userSession = call.sessions.get<UserSession>()
+                    val userEmail = daoUsers.getItem(username)?.email
+                    gravatarProfile = fetchGravatarProfiles(userEmail!!)
                     LoginInstance.status = "Logged in with success!"
                     call.respondRedirect("/")
                 }
