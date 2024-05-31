@@ -5,10 +5,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Book(
-    val id: String = String(), //FIXME
+    val id: String, //FIXME
     val author: String,
     @SerialName("cover")
-    val coverUrl: String,
+    val coverUrl: String?,
     val pages: Int,
     @SerialName("release_date")
     val releaseDate: String,
