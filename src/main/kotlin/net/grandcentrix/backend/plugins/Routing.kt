@@ -181,38 +181,45 @@ fun Application.configureRouting() {
                 call.respondRedirect("/logout")
             }
 
+
             authenticate("auth-session") {
                 put("/user/username") {
                     val userSession = call.sessions.get<UserSession>()
                     val parameters = call.receiveParameters()
                     val newUsername = parameters["newUsername"]
+                    var statusMessage: String
 
                     try {
                         if (userSession == null) {
-                            call.respondText("User session is missing", status = HttpStatusCode.BadRequest)
+                            statusMessage = "User session is missing"
+                            call.respondText(statusMessage, status = HttpStatusCode.BadRequest)
                             return@put
                         }
 
                         if (newUsername.isNullOrEmpty()) {
-                            call.respondText("New username is missing or empty", status = HttpStatusCode.BadRequest)
+                            statusMessage = "New username is missing or empty"
+                            call.respondText(statusMessage, status = HttpStatusCode.BadRequest)
                             return@put
                         }
 
                         val username = userSession.username
                         if (daoUsers.getItem(newUsername) != null) {
-                            call.respondText("New username is already taken", status = HttpStatusCode.Conflict)
+                            statusMessage = "New username is already taken"
+                            call.respondText(statusMessage, status = HttpStatusCode.Conflict)
                             return@put
                         }
 
                         if (daoUsers.updateUsername(username, newUsername)) {
-
-                            call.respondText("Username updated successfully", status = HttpStatusCode.OK)
-                            call.respondRedirect("/")
+                            statusMessage = "Username updated successfully"
+                            call.respondText(statusMessage, status = HttpStatusCode.OK)
                         } else {
-                            call.respondText("Failed to update username", status = HttpStatusCode.InternalServerError)
+                            statusMessage = "Failed to update username"
+                            call.respondText(statusMessage, status = HttpStatusCode.InternalServerError)
                         }
+
                     } catch (e: Exception) {
-                        call.respondText("An error occurred: ${e.localizedMessage}", status = HttpStatusCode.InternalServerError)
+                        statusMessage = "An error occurred: ${e.localizedMessage}"
+                        call.respondText(statusMessage, status = HttpStatusCode.InternalServerError)
                     }
                 }
             }

@@ -10,12 +10,12 @@
 
     <section class="content" style="flex-direction: column">
         <div class="user-data">
-            <form hx-put="/user/username" hx-trigger="submit" hx-redirect="/">
+            <form hx-put="/user/username" hx-trigger="submit" hx-target="#message-container">
                 <label for="new-username">New Username:</label>
                 <input type="text" id="new-username" name="newUsername" required>
                 <input type="submit" value="Update Username">
+                <p id="message-container" style="color: #dab6bd; margin-left:15px;">${statusMessage!""}</p>
             </form>
-
         </div>
 
         <div class="user-data">
@@ -163,8 +163,6 @@
             deleteAccountForm.addEventListener('submit', confirmDelete);
         });
     </script>
-
-    <script src="https://unpkg.com/htmx.org@1.7.0"></script>
     <div id="message-container"></div>
 
 </@layout.base>

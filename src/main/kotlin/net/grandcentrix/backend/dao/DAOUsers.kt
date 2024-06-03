@@ -78,38 +78,36 @@ class DAOUsers : DAOFacade {
         } > 0
     }
 
-    fun updateUsername(currentUsername: String, newUsername: String): Boolean {
-        return transaction {
+    fun updateUsername(currentUsername: String, newUsername: String): Boolean = transaction {
+
             Users.update({ Users.username eq currentUsername }) {
                 it[username] = newUsername
             } > 0
         }
-    }
 
-    fun updateProfilePicture(username: String, imageData: ByteArray): Boolean {
-        return transaction {
+
+    fun updateProfilePicture(username: String, imageData: ByteArray):  Boolean = transaction {
+
             Users.update({ Users.username eq username }) {
                 it[profilePictureData] = imageData
             } > 0
         }
-    }
 
-    fun removeProfilePicture(username: String): Boolean {
-        return transaction {
+
+    fun removeProfilePicture(username: String):  Boolean = transaction {
             Users.update({ Users.username eq username }) {
                 it[Users.profilePictureData] = null
             } > 0
         }
-    }
 
-    fun updateEmail(username: String, newEmail: String): Boolean {
-        return transaction {
+
+    fun updateEmail(username: String, newEmail: String):  Boolean = transaction {
             Users.update({ Users.username eq username }) {
                 it[email] = newEmail
             } > 0
         }
     }
-}
+
 
 val daoUsers = DAOUsers().apply {
     runBlocking {
