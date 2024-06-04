@@ -18,9 +18,8 @@
             </form>
         </div>
 
-        <!-- Email Update -->
         <div class="user-data">
-            <form hx-put="/user/email" hx-trigger="submit" hx-target="#message-container-email">
+            <form hx-put="/user/email" hx-trigger="submit" hx-target="#message-container-email" hx-on="htmx:afterOnLoad: if (event.detail.successful) { setTimeout(function() { location.reload(); }, 5000); }">
                 <label for="new-email">New Email:</label>
                 <input type="email" id="new-email" name="newEmail" required>
                 <input type="submit" value="Update Email">
@@ -28,7 +27,6 @@
             </form>
         </div>
 
-        <!-- Password Update -->
         <div class="user-data">
             <form hx-put="/user/password" hx-trigger="submit" hx-target="#message-container-password">
                 <label for="new-password">New Password:</label>
@@ -50,14 +48,29 @@
             <p id="message-container-picture" style="color: #dab6bd; margin-left:15px;">${statusMessage!""}</p>
         </div>
         <div class="delete-button">
-            <form hx-delete="/delete-account" hx-trigger="submit" hx-target="#message-container-delete" onsubmit="return confirm('Are you sure you want to delete your account?');">
+            <form hx-delete="/delete-account" hx-trigger="submit" hx-target="#delete-message-container" onsubmit="return confirm('Are you sure you want to delete your account?');">
                 <input class="button" style="margin-left: 0;" type="submit" value="Delete Account">
             </form>
-            <p id="message-container-delete" style="color: #dab6bd; margin-left:15px;">${statusMessage!""}</p>
         </div>
     </section>
 
     <script>
+        document.addEventListener('htmx:afterOnLoad', function(event) {
+            if (event.detail.target.id.startsWith('message-container') && event.detail.successful) {
+                setTimeout(function() {
+                    location.reload();
+                }, 1000);
+            }
+        });
+
+        document.addEventListener('htmx:afterOnLoad', function(event) {
+            if (event.detail.target.id.startsWith('delete-message-container') && event.detail.successful) {
+                setTimeout(function() {
+                    location.replace("/logout");
+                }, 1000);
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             var uploadButton = document.getElementById('upload-button');
             var profilePic = document.getElementById('profile-pic');
@@ -109,4 +122,5 @@
         });
     </script>
     <div id="message-container"></div>
+    <div id="delete-message-container"></div>
 </@layout.base>

@@ -178,7 +178,6 @@ fun Application.configureRouting() {
                     // Delete user from repository
                     daoUsers.deleteItem(userSession.username)
                 }
-                call.respondRedirect("/logout")
             }
 
 
