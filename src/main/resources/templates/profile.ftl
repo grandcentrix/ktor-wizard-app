@@ -18,18 +18,23 @@
             </form>
         </div>
 
+        <!-- Email Update -->
         <div class="user-data">
-            <form onsubmit="updateEmail(event)">
+            <form hx-put="/user/email" hx-trigger="submit" hx-target="#message-container-email">
                 <label for="new-email">New Email:</label>
                 <input type="email" id="new-email" name="newEmail" required>
                 <input type="submit" value="Update Email">
+                <p id="message-container-email" style="color: #dab6bd; margin-left:15px;">${statusMessage!""}</p>
             </form>
         </div>
+
+        <!-- Password Update -->
         <div class="user-data">
-            <form onsubmit="updatePassword(event)">
+            <form hx-put="/user/password" hx-trigger="submit" hx-target="#message-container-password">
                 <label for="new-password">New Password:</label>
                 <input type="password" id="new-password" name="newPassword" required>
                 <input type="submit" value="Update Password">
+                <p id="message-container-password" style="color: #dab6bd; margin-left:15px;">${statusMessage!""}</p>
             </form>
         </div>
     </section>
@@ -41,40 +46,20 @@
                 <input type="file" id="picture-upload" name="profilePicture" style="display: none;">
                 <button type="button" id="upload-button">Upload Picture</button>
             </form>
-            <button id="remove-picture">Remove Picture</button>
+            <button hx-delete="/remove-profile-picture" hx-target="#message-container-picture">Remove Picture</button>
+            <p id="message-container-picture" style="color: #dab6bd; margin-left:15px;">${statusMessage!""}</p>
         </div>
         <div class="delete-button">
-            <form class="form" id="delete-account-form" onsubmit="return confirmDelete(event)">
+            <form hx-delete="/delete-account" hx-trigger="submit" hx-target="#message-container-delete" onsubmit="return confirm('Are you sure you want to delete your account?');">
                 <input class="button" style="margin-left: 0;" type="submit" value="Delete Account">
             </form>
+            <p id="message-container-delete" style="color: #dab6bd; margin-left:15px;">${statusMessage!""}</p>
         </div>
     </section>
 
     <script>
-        function updateEmail(event) {
-            event.preventDefault();
-            const form = event.target;
-            const formData = new FormData(form);
-            const newEmail = formData.get("newEmail");
-
-            fetch('/user/email', {
-                method: 'PUT',
-                body: new URLSearchParams({ newEmail: newEmail })
-            }).then(response => {
-                if (response.ok) {
-                    window.location.href = '/profile';
-                } else {
-                    return response.text().then(text => { throw new Error(text) });
-                }
-            }).catch(error => {
-                console.error('Error:', error);
-                alert('Failed to update email: ' + error.message);
-            });
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
             var uploadButton = document.getElementById('upload-button');
-            var removePictureButton = document.getElementById('remove-picture');
             var profilePic = document.getElementById('profile-pic');
 
             uploadButton.addEventListener('click', function() {
@@ -121,48 +106,7 @@
                     document.body.removeChild(fileInput);
                 });
             });
-
-            removePictureButton.addEventListener('click', function() {
-                profilePic.src = "https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg";
-
-                fetch('/remove-profile-picture', {
-                    method: 'DELETE'
-                }).then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error('Failed to remove profile picture');
-                    }
-                }).then(data => {
-                    console.log(data);
-                }).catch(error => {
-                    console.error(error);
-                });
-            });
-
-            function confirmDelete(event) {
-                event.preventDefault();
-                var confirmDelete = confirm('Are you sure you want to delete your account?');
-                if (confirmDelete) {
-                    fetch('/delete-account', {
-                        method: 'DELETE',
-                    }).then(response => {
-                        if (response.ok) {
-                            window.location.href = '/logout';
-                        } else {
-                            return response.text().then(text => { throw new Error(text) });
-                        }
-                    }).catch(error => {
-                        console.error('Error:', error);
-                        alert('Failed to delete account: ' + error.message);
-                    });
-                }
-            }
-
-            var deleteAccountForm = document.getElementById('delete-account-form');
-            deleteAccountForm.addEventListener('submit', confirmDelete);
         });
     </script>
     <div id="message-container"></div>
-
 </@layout.base>

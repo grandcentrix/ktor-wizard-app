@@ -232,16 +232,21 @@ fun Application.configureRouting() {
                         val userSession = call.sessions.get<UserSession>()
                         val parameters = call.receiveParameters()
                         val newEmail = parameters["newEmail"]
+                        var statusMessage: String
 
                         if (userSession != null && newEmail != null) {
                             val username = userSession.username
                             if (daoUsers.updateEmail(username, newEmail)) {
-                                call.respondRedirect("/")
+                                statusMessage = "email updated successfully"
+                                call.respondText(statusMessage, status = HttpStatusCode.OK)
+                               // call.respondRedirect("/")
                             } else {
-                                call.respondText("Failed to update email", status = HttpStatusCode.InternalServerError)
+                                statusMessage = "Failed to update email"
+                                call.respondText(statusMessage, status = HttpStatusCode.InternalServerError)
                             }
                         } else {
-                            call.respondText("User session or new email is missing", status = HttpStatusCode.BadRequest)
+                            statusMessage = "User session or new email is missing"
+                            call.respondText(statusMessage, status = HttpStatusCode.BadRequest)
                         }
                     }
 
@@ -273,16 +278,20 @@ fun Application.configureRouting() {
 
                 delete("/remove-profile-picture") {
                     val userSession = call.sessions.get<UserSession>()
+                    var statusMessage: String
 
                     if (userSession != null) {
                         val username = userSession.username
                         if (daoUsers.removeProfilePicture(username)) {
-                            call.respondText("Profile picture removed successfully")
+                            statusMessage = "Profile picture removed successfully"
+                            call.respondText(statusMessage, status = HttpStatusCode.OK)
                         } else {
-                            call.respondText("Failed to remove profile picture")
+                            statusMessage = "Failed to remove profile picture"
+                            call.respondText(statusMessage, status = HttpStatusCode.InternalServerError)
                         }
                     } else {
-                        call.respondText("User session is missing")
+                        statusMessage = "User session is missing"
+                        call.respondText(statusMessage, status = HttpStatusCode.BadRequest)
                     }
                 }
 
