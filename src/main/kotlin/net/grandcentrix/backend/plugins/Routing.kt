@@ -39,7 +39,7 @@ fun Application.configureRouting() {
                         mapOf(
                             "loginStatus" to LoginInstance.status,
                             "userSession" to userSession.toString(),
-                            "gravatar" to gravatarProfile?.avatarUrl
+                            "avatar" to gravatarProfile?.avatarUrl.toString()
                         )
                     ))
                 LoginInstance.status = ""
@@ -73,7 +73,13 @@ fun Application.configureRouting() {
                     val username = call.sessions.get<UserSession>()?.username
                     call.respond(FreeMarkerContent(
                         "profile.ftl",
-                        mapOf("username" to username, "uploadButton" to true,"userSession" to userSession.toString())))
+                        mapOf(
+                            "username" to username,
+                            "uploadButton" to true,
+                            "userSession" to userSession.toString(),
+                            "avatar" to gravatarProfile?.avatarUrl.toString()
+                        )
+                    ))
                 }
             }
 
@@ -86,7 +92,7 @@ fun Application.configureRouting() {
                         mapOf(
                             "signUpStatus" to SignupInstance.status,
                             "userSession" to "null",
-                            "houses" to HousesRepositoryInstance.getAll().map { it.name }
+                            "houses" to HousesRepositoryInstance.getAll().map { it.name },
                         )
                     ))
                 }
@@ -111,7 +117,8 @@ fun Application.configureRouting() {
                     "books.ftl",
                     mapOf(
                         "books" to BooksRepositoryInstance.getAll(),
-                        "userSession" to userSession.toString()
+                        "userSession" to userSession.toString(),
+                        "avatar" to gravatarProfile?.avatarUrl.toString()
                     )
                 )
             }
@@ -121,7 +128,8 @@ fun Application.configureRouting() {
                     "houses.ftl",
                     mapOf(
                         "houses" to HousesRepositoryInstance.getAll(),
-                        "userSession" to userSession.toString()
+                        "userSession" to userSession.toString(),
+                        "avatar" to gravatarProfile?.avatarUrl.toString()
                     )
                 )
             }
@@ -131,7 +139,8 @@ fun Application.configureRouting() {
                     "characters.ftl",
                     mapOf(
                         "characters" to CharactersRepositoryInstance.getAll(),
-                        "userSession" to userSession.toString()
+                        "userSession" to userSession.toString(),
+                        "avatar" to gravatarProfile?.avatarUrl.toString()
                     )
                 )
             }
@@ -141,7 +150,8 @@ fun Application.configureRouting() {
                     "movies.ftl",
                     mapOf(
                         "movies" to MoviesRepositoryInstance.getAll(),
-                        "userSession" to userSession.toString()
+                        "userSession" to userSession.toString(),
+                        "avatar" to gravatarProfile?.avatarUrl.toString()
                     )
                 )
             }
@@ -151,7 +161,8 @@ fun Application.configureRouting() {
                     "potions.ftl",
                     mapOf(
                         "potions" to PotionsRepositoryInstance.getAll(),
-                        "userSession" to userSession.toString()
+                        "userSession" to userSession.toString(),
+                        "avatar" to gravatarProfile?.avatarUrl.toString()
                     )
                 )
             }
@@ -161,7 +172,8 @@ fun Application.configureRouting() {
                     "spells.ftl",
                     mapOf(
                         "spells" to SpellsRepositoryInstance.getAll(),
-                        "userSession" to userSession.toString()
+                        "userSession" to userSession.toString(),
+                        "avatar" to gravatarProfile?.avatarUrl.toString()
                     )
                 )
             }

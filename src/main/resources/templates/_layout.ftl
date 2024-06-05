@@ -1,5 +1,5 @@
 <#assign userSession = "null">
-<#assign gravatar = "null">
+<#assign avatar = "null">
 
 <#macro base>
     <!DOCTYPE html>
@@ -11,14 +11,27 @@
     </head>
     <body>
     <header>
-        <#if userSession == "null">
+        <#if userSession == "null" && avatar == "null">
             <nav class="user-menu">
                 <!-- Profile Picture Dropdown Section -->
                 <div class="dropdown" id="profile-dropdown">
-                    <img class="profile-picture" id="profile-pic" src="${gravatar}" alt="Profile Picture">
+                    <img class="profile-picture" id="profile-pic" src="https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg" alt="Profile Picture">
                     <div class="dropdown-content">
                         <a href="/signup">Signup</a>
                         <a href="/login">Login</a>
+                        <!-- Add more options here -->
+                    </div>
+                    <!-- End of Profile Picture Dropdown Section -->
+                </div>
+            </nav>
+        <#elseif userSession != "null" && avatar == "null">
+            <nav class="user-menu">
+                <!-- Profile Picture Dropdown Section -->
+                <div class="dropdown" id="profile-dropdown">
+                    <img class="profile-picture" id="profile-pic" src="https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg" alt="Profile Picture">
+                    <div class="dropdown-content">
+                        <a href="/profile#favourites">Favourites</a>
+                        <a href="/logout">Logout</a>
                         <!-- Add more options here -->
                     </div>
                     <!-- End of Profile Picture Dropdown Section -->
@@ -28,7 +41,7 @@
             <nav class="user-menu">
                 <!-- Profile Picture Dropdown Section -->
                 <div class="dropdown" id="profile-dropdown">
-                    <img class="profile-picture" id="profile-pic" src="https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg" alt="Profile Picture">
+                    <img class="profile-picture" id="profile-pic" src="${avatar}" alt="Profile Picture">
                     <div class="dropdown-content">
                         <a href="/profile#favourites">Favourites</a>
                         <a href="/logout">Logout</a>

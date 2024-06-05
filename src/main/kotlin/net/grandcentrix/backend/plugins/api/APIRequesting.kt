@@ -9,9 +9,9 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import net.grandcentrix.backend.models.*
-import javax.crypto.SecretKey
-import javax.crypto.SecretKeyFactory
-import javax.crypto.spec.SecretKeySpec
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
+
 
 object APIRequesting {
 
@@ -86,10 +86,17 @@ object APIRequesting {
         return spells
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     fun fetchGravatarProfiles(email: String): GravatarProfile {
-        val factory: SecretKeyFactory = SecretKeyFactory.getInstance("SHA256")
-        val spec = SecretKeySpec(email.toByteArray(), "SHA256")
-        val emailKey: SecretKey = factory.generateSecret(spec)
+//        val factory: SecretKeyFactory = SecretKeyFactory.getInstance("SHA256")
+//        val spec = SecretKeySpec(email.toByteArray(), "SHA256")
+//        val emailKey: SecretKey = factory.generateSecret(spec)
+
+        val digest = MessageDigest.getInstance("SHA-256")
+        val hashBytes = digest.digest(
+            email.toByteArray(StandardCharsets.UTF_8)
+        )
+        val emailKey: String = hashBytes.toHexString()
 
         val profile: GravatarProfile = runBlocking {
             client.get("https://api.gravatar.com/v3/profiles/${emailKey}") {
