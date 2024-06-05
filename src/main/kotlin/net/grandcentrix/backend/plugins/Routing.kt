@@ -79,10 +79,12 @@ fun Application.configureRouting() {
                 if (userSession != null) {
                     call.respondRedirect("/")
                 } else {
+                    val currentStatus = SignupInstance.status
+                    SignupInstance.status = "" // Reset the status after reading it
                     call.respond(FreeMarkerContent(
                         "signup.ftl",
                         mapOf(
-                            "signUpStatus" to SignupInstance.status,
+                            "signUpStatus" to currentStatus,
                             "userSession" to "null",
                             "houses" to HousesRepositoryInstance.getAll().map { it.name }
                         )
@@ -93,6 +95,8 @@ fun Application.configureRouting() {
             post("/signup") {
                 val formParameters = call.receiveParameters()
                 SignupInstance.createUser(formParameters)
+                val currentStatus = SignupInstance.status
+                SignupInstance.status = "" // Reset the status after setting it
                 LoginInstance.status = "Please login with your account"
                 call.respondRedirect("/login")
             }
