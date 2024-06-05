@@ -185,6 +185,7 @@ fun Application.configureRouting() {
                         daoUsers.deleteItem(userSession.username)
                         statusMessage = "Account deleted successfully"
                         call.sessions.clear<UserSession>()
+                        call.response.headers.append("HX-Redirect","/logout")
                         call.respondText(statusMessage, status = HttpStatusCode.OK)
                     } catch (e: Exception) {
                         statusMessage = "Failed to delete account: ${e.localizedMessage}"
@@ -227,6 +228,7 @@ fun Application.configureRouting() {
 
                         if (daoUsers.updateUsername(username, newUsername)) {
                             statusMessage = "Username updated successfully"
+                            call.response.headers.append("HX-Redirect","/logout")
                             call.respondText(statusMessage, status = HttpStatusCode.OK)
                         } else {
                             statusMessage = "Failed to update username"
@@ -257,6 +259,7 @@ fun Application.configureRouting() {
 
                         if (daoUsers.updateEmail(username, newEmail)) {
                             statusMessage = "Email updated successfully"
+                            call.response.headers.append("HX-Redirect","/profile")
                             call.respondText(statusMessage, status = HttpStatusCode.OK)
                         } else {
                             statusMessage = "Failed to update email"
@@ -304,6 +307,7 @@ fun Application.configureRouting() {
                         val username = userSession.username
                         if (daoUsers.removeProfilePicture(username)) {
                             statusMessage = "Profile picture removed successfully"
+                            call.response.headers.append("HX-Redirect","/profile")
                             call.respondText(statusMessage, status = HttpStatusCode.OK)
                         } else {
                             statusMessage = "Failed to remove profile picture"

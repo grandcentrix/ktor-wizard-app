@@ -62,23 +62,11 @@
 
             if (targetElement && event.detail.xhr.status >= 200 && event.detail.xhr.status < 300) {
                 targetElement.innerText = event.detail.xhr.responseText;
-                if (event.detail.successful) {
-                    setTimeout(function() {
-                        location.reload();
-                    }, 1000);
-                }
             } else if (targetElement) {
                 targetElement.innerText = event.detail.xhr.responseText;
             }
         });
 
-        document.addEventListener('htmx:afterOnLoad', function(event) {
-            if (event.detail.target.id.startsWith('delete-message-container') && event.detail.successful) {
-                setTimeout(function() {
-                    location.replace("/logout");
-                }, 1000);
-            }
-        });
 
         document.addEventListener('DOMContentLoaded', function() {
             var uploadButton = document.getElementById('upload-button');
