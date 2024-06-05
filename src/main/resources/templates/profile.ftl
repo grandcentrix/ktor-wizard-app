@@ -72,6 +72,14 @@
             }
         });
 
+        document.addEventListener('htmx:afterOnLoad', function(event) {
+            if (event.detail.target.id.startsWith('delete-message-container') && event.detail.successful) {
+                setTimeout(function() {
+                    location.replace("/logout");
+                }, 1000);
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             var uploadButton = document.getElementById('upload-button');
             var profilePic = document.getElementById('profile-pic');

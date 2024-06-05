@@ -172,13 +172,26 @@ fun Application.configureRouting() {
             delete("/delete-account") {
                 // Retrieve the user session
                 val userSession = call.sessions.get<UserSession>()
+                var statusMessage: String
 
                 // Check if the user session is not null
                 if (userSession != null) {
-                    // Delete user from repository
-                    daoUsers.deleteItem(userSession.username)
+                    // Try to delete the user from the repository
+                    try {
+                        daoUsers.deleteItem(userSession.username)
+                        statusMessage = "Account deleted successfully"
+                        call.sessions.clear<UserSession>()
+                        call.respondText(statusMessage, status = HttpStatusCode.OK)
+                    } catch (e: Exception) {
+                        statusMessage = "Failed to delete account: ${e.localizedMessage}"
+                        call.respondText(statusMessage, status = HttpStatusCode.InternalServerError)
+                    }
+                } else {
+                    statusMessage = "User session is missing"
+                    call.respondText(statusMessage, status = HttpStatusCode.BadRequest)
                 }
             }
+
 
 
             authenticate("auth-session") {
