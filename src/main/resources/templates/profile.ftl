@@ -10,20 +10,20 @@
 
     <section class="content" style="flex-direction: column">
         <div class="user-data">
-            <form hx-put="/user/username" hx-trigger="submit" hx-target="#message-container">
+            <form hx-put="/user/username" hx-trigger="submit" hx-target="#message-container-username">
                 <label for="new-username">New Username:</label>
                 <input type="text" id="new-username" name="newUsername" required>
                 <input type="submit" value="Update Username">
-                <p id="message-container" style="color: #dab6bd; margin-left:15px;">${statusMessage!""}</p>
+                <p id="message-container-username" style="color: #dab6bd; margin-left:15px;"></p>
             </form>
         </div>
 
         <div class="user-data">
-            <form hx-put="/user/email" hx-trigger="submit" hx-target="#message-container-email" hx-on="htmx:afterOnLoad: if (event.detail.successful) { setTimeout(function() { location.reload(); }, 5000); }">
+            <form hx-put="/user/email" hx-trigger="submit" hx-target="#message-container-email">
                 <label for="new-email">New Email:</label>
                 <input type="email" id="new-email" name="newEmail" required>
                 <input type="submit" value="Update Email">
-                <p id="message-container-email" style="color: #dab6bd; margin-left:15px;">${statusMessage!""}</p>
+                <p id="message-container-email" style="color: #dab6bd; margin-left:15px;"></p>
             </form>
         </div>
 
@@ -32,7 +32,7 @@
                 <label for="new-password">New Password:</label>
                 <input type="password" id="new-password" name="newPassword" required>
                 <input type="submit" value="Update Password">
-                <p id="message-container-password" style="color: #dab6bd; margin-left:15px;">${statusMessage!""}</p>
+                <p id="message-container-password" style="color: #dab6bd; margin-left:15px;"></p>
             </form>
         </div>
     </section>
@@ -45,29 +45,30 @@
                 <button type="button" id="upload-button">Upload Picture</button>
             </form>
             <button hx-delete="/remove-profile-picture" hx-target="#message-container-picture">Remove Picture</button>
-            <p id="message-container-picture" style="color: #dab6bd; margin-left:15px;">${statusMessage!""}</p>
+            <p id="message-container-picture" style="color: #dab6bd; margin-left:15px;"></p>
         </div>
         <div class="delete-button">
             <form hx-delete="/delete-account" hx-trigger="submit" hx-target="#delete-message-container" onsubmit="return confirm('Are you sure you want to delete your account?');">
                 <input class="button" style="margin-left: 0;" type="submit" value="Delete Account">
             </form>
+            <p id="delete-message-container" style="color: #dab6bd; margin-left:15px;"></p>
         </div>
     </section>
 
     <script>
         document.addEventListener('htmx:afterOnLoad', function(event) {
-            if (event.detail.target.id.startsWith('message-container') && event.detail.successful) {
-                setTimeout(function() {
-                    location.reload();
-                }, 1000);
-            }
-        });
+            var targetId = event.detail.target.id;
+            var targetElement = document.getElementById(targetId);
 
-        document.addEventListener('htmx:afterOnLoad', function(event) {
-            if (event.detail.target.id.startsWith('delete-message-container') && event.detail.successful) {
-                setTimeout(function() {
-                    location.replace("/logout");
-                }, 1000);
+            if (targetElement && event.detail.xhr.status >= 200 && event.detail.xhr.status < 300) {
+                targetElement.innerText = event.detail.xhr.responseText;
+                if (event.detail.successful) {
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1000);
+                }
+            } else if (targetElement) {
+                targetElement.innerText = event.detail.xhr.responseText;
             }
         });
 
@@ -121,6 +122,4 @@
             });
         });
     </script>
-    <div id="message-container"></div>
-    <div id="delete-message-container"></div>
 </@layout.base>

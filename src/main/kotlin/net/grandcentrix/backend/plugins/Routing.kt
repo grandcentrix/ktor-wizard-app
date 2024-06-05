@@ -223,33 +223,37 @@ fun Application.configureRouting() {
                 }
             }
 
-
-
-
             authenticate("auth-session") {
-                    put("/user/email") {
-                        val userSession = call.sessions.get<UserSession>()
-                        val parameters = call.receiveParameters()
-                        val newEmail = parameters["newEmail"]
-                        var statusMessage: String
+                put("/user/email") {
+                    val userSession = call.sessions.get<UserSession>()
+                    val parameters = call.receiveParameters()
+                    val newEmail = parameters["newEmail"]
+                    var statusMessage: String
 
-                        if (userSession != null && newEmail != null) {
-                            val username = userSession.username
-                            if (daoUsers.updateEmail(username, newEmail)) {
-                                statusMessage = "email updated successfully"
-                                call.respondText(statusMessage, status = HttpStatusCode.OK)
-                               // call.respondRedirect("/")
-                            } else {
-                                statusMessage = "Failed to update email"
-                                call.respondText(statusMessage, status = HttpStatusCode.InternalServerError)
-                            }
-                        } else {
-                            statusMessage = "User session or new email is missing"
-                            call.respondText(statusMessage, status = HttpStatusCode.BadRequest)
+                    if (userSession != null && newEmail != null) {
+                        val username = userSession.username
+                        if (daoUsers.getByEmail(newEmail) != null) {
+                            statusMessage = "New email is already taken"
+                            call.respondText(statusMessage, status = HttpStatusCode.Conflict)
+                            return@put
                         }
-                    }
 
-                post("/update-profile-picture") {
+                        if (daoUsers.updateEmail(username, newEmail)) {
+                            statusMessage = "Email updated successfully"
+                            call.respondText(statusMessage, status = HttpStatusCode.OK)
+                        } else {
+                            statusMessage = "Failed to update email"
+                            call.respondText(statusMessage, status = HttpStatusCode.InternalServerError)
+                        }
+                    } else {
+                        statusMessage = "User session or new email is missing"
+                        call.respondText(statusMessage, status = HttpStatusCode.BadRequest)
+                    }
+                }
+
+
+
+            post("/update-profile-picture") {
                     val userSession = call.sessions.get<UserSession>()
                     val multipartData = call.receiveMultipart()
                     val imageDataPart = multipartData.readPart() as? PartData.FileItem
