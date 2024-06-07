@@ -34,18 +34,15 @@ fun Application.configureRouting() {
                     call.respond(FreeMarkerContent(
                         "index.ftl",
                         mapOf(
-//                            "loginStatus" to LoginInstance.status,
                             "userSession" to userSession.toString()
                         )
                     ))
-//                LoginInstance.status = ""
             }
 
             get("/login") {
                 call.respond(FreeMarkerContent(
                     "login.ftl",
                     mapOf(
-//                        "loginStatus" to LoginInstance.status,
                         "userSession" to "null"
                     )
                 ))
@@ -56,7 +53,6 @@ fun Application.configureRouting() {
                     val username = call.principal<UserIdPrincipal>()?.name.toString()
                     call.sessions.set(UserSession(username))
                     userSession = call.sessions.get<UserSession>()
-//                    LoginInstance.status = "Logged in with success!"
                     call.respondRedirect("/")
                 }
             }
@@ -78,7 +74,6 @@ fun Application.configureRouting() {
                     call.respond(FreeMarkerContent(
                         "signup.ftl",
                         mapOf(
-//                            "signUpStatus" to SignupInstance.getStatusMessage(),
                             "userSession" to "null",
                             "houses" to HousesRepositoryInstance.getAll().map { it.name }
                         )
@@ -90,7 +85,6 @@ fun Application.configureRouting() {
             post("/signup") {
                 val formParameters = call.receiveParameters()
                 SignupInstance.createUser(formParameters)
-//                LoginInstance.status = "Please login with your account"
                 call.respondRedirect("/login")
             }
 
@@ -162,7 +156,6 @@ fun Application.configureRouting() {
 
             get("/logout") {
                 call.sessions.clear<UserSession>()
-//                LoginInstance.status = "Logged out with success!"
                 call.respondRedirect("/")
             }
 

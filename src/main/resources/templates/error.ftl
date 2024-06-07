@@ -1,5 +1,4 @@
 <#import "_layout.ftl" as layout />
-<#--<#assign redirectLink = "null">-->
 <#--<#assign userSession = userSession in layout>-->
 
 

@@ -5,6 +5,7 @@ import io.ktor.server.application.*
 import io.ktor.server.freemarker.*
 import io.ktor.server.http.content.*
 import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Application.configureStatusPage() {
@@ -25,21 +26,20 @@ fun Application.configureStatusPage() {
                     )
                 }
 
-//                is UnauthorizedException -> call.respondRedirect("/login")
+                is UnauthorizedException -> call.respondRedirect("/login")
 
-//                is UserAlreadyExistsException -> {
-//                    call.respondRedirect("/signup")
-//                }
-
-//                is MissingRequestParameterException, is InvalidValue -> {
-//                    call.respond(call.request.local.uri)
-//                }
+                is UserAlreadyExistsException -> {
+                    call.respondRedirect("/signup")
+                }
 
                 else ->
                     call.respondTemplate(
-                    "error.ftl",
-                    mapOf("errorMessage" to "500: Server error - ${cause.message}")
-                )
+                        "error.ftl",
+                        mapOf(
+                            "errorMessage" to cause.message,
+                            "redirectLink" to call.request.local.uri
+                        )
+                    )
             }
         }
 
@@ -55,10 +55,6 @@ fun Application.configureStatusPage() {
 }
 
 open class StatusException(override val message: String?): Exception()
-
 class RequestException(override val message: String?): StatusException(message)
-
-//class UserAlreadyExistsException(override val message: String?): StatusException(message)
-
-//class InvalidValue(override val message: String?): StatusException(message)
-
+class UserAlreadyExistsException(override val message: String?): StatusException(message)
+class UnauthorizedException(override val message: String?): StatusException(message)

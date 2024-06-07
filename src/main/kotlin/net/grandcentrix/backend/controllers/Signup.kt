@@ -4,6 +4,7 @@ import io.ktor.http.*
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.plugins.RequestException
+import net.grandcentrix.backend.plugins.UserAlreadyExistsException
 import net.grandcentrix.backend.repository.HousesRepository.Companion.HousesRepositoryInstance
 import java.util.regex.Pattern
 
@@ -29,7 +30,6 @@ class Signup {
              password.isNullOrBlank() ||
              email.isNullOrBlank()
          ) {
-//             status = "Required fields cannot be empty!"
              throw RequestException("Missing required fields!")
          }
 
@@ -62,9 +62,6 @@ class Signup {
             )
             daoUsers.addItem(user)
         }
-
-//        status = "Account created with success!"
-
     }
 
     private fun verifyFields(
@@ -79,26 +76,20 @@ class Signup {
         val namesPattern = Pattern.compile("^[a-zA-Z]+(?:\\s+[a-zA-Z]+)*\$")
 
         if (!emailPattern.matcher(email).matches()) {
-//            status = "Please enter a valid e-mail!"
             throw RequestException("Invalid value for e-mail!")
         } else if (!usernamePattern.matcher(username).matches()) {
-//            status = "Username has invalid characters!"
             throw RequestException("Invalid value for username!")
         } else if (!namesPattern.matcher(name).matches() || !namesPattern.matcher(surname).matches()) {
-//            status = "Name and/or last name contain invalid characters!"
             throw RequestException("Invalid value for name!")
         }
     }
 
     private fun verifyDuplicates(email: String, username: String) {
         if (daoUsers.getByEmail(email) != null) {
-//            status = "Email is already in use!"
-            throw RequestException("Email is already in use!")
+            throw UserAlreadyExistsException("Email is already in use!")
         }
-
         if (daoUsers.getItem(username) != null) {
-//            status = "Username is already in use!"
-            throw RequestException("Username is already in use!")
+            throw UserAlreadyExistsException("Username is already in use!")
         }
     }
 }
