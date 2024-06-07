@@ -9,16 +9,13 @@ class Login {
         val LoginInstance: Login = Login()
     }
 
-    var status = ""
 
     fun verifyLogin(credential: UserPasswordCredential): Boolean {
         daoUsers.getAll().forEach {
             if (it.username == credential.name && it.password == credential.password.hashCode()) {
-//                LoginInstance.status = "Login successful"
                 return true
             }
         }
-//        LoginInstance.status = "Username and password didn't match!"
         return false
     }
 
