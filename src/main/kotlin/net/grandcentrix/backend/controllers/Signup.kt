@@ -4,10 +4,7 @@ import io.ktor.http.*
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.plugins.RequestException
-<<<<<<< HEAD
-=======
 import net.grandcentrix.backend.plugins.UserAlreadyExistsException
->>>>>>> main
 import net.grandcentrix.backend.repository.HousesRepository.Companion.HousesRepositoryInstance
 import java.util.regex.Pattern
 
@@ -33,10 +30,6 @@ class Signup {
              password.isNullOrBlank() ||
              email.isNullOrBlank()
          ) {
-<<<<<<< HEAD
-//             status = "Required fields cannot be empty!"
-=======
->>>>>>> main
              throw RequestException("Missing required fields!")
          }
 
@@ -69,12 +62,6 @@ class Signup {
             )
             daoUsers.addItem(user)
         }
-<<<<<<< HEAD
-
-//        status = "Account created with success!"
-
-=======
->>>>>>> main
     }
 
     private fun verifyFields(
