@@ -9,7 +9,6 @@ class Login {
         val LoginInstance: Login = Login()
     }
 
-    var status = ""
 
     fun verifyLogin(credential: UserPasswordCredential): Boolean {
         daoUsers.getAll().forEach {
