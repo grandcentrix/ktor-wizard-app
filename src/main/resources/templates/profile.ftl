@@ -40,15 +40,15 @@
     <section class="content" style="flex-direction: column">
         <div class="user-data">
             <p>Profile Picture:</p>
-            <form id="upload-form" enctype="multipart/form-data" action="/update-profile-picture" method="POST">
+            <form id="upload-form" enctype="multipart/form-data">
                 <input type="file" id="picture-upload" name="profilePicture" style="display: none;">
                 <button type="button" id="upload-button">Upload Picture</button>
             </form>
-            <button hx-delete="/remove-profile-picture" hx-target="#message-container-picture">Remove Picture</button>
+            <button hx-delete="/user/profilepicture" hx-target="#message-container-picture">Remove Picture</button>
             <p id="message-container-picture" style="color: #dab6bd; margin-left:15px;"></p>
         </div>
         <div class="delete-button">
-            <form hx-delete="/delete-account" hx-trigger="submit" hx-target="#delete-message-container" onsubmit="return confirm('Are you sure you want to delete your account?');">
+            <form hx-delete="/user/account" hx-trigger="submit" hx-target="#delete-message-container" onsubmit="return confirm('Are you sure you want to delete your account?');">
                 <input class="button" style="margin-left: 0;" type="submit" value="Delete Account">
             </form>
             <p id="delete-message-container" style="color: #dab6bd; margin-left:15px;"></p>
@@ -67,10 +67,8 @@
             }
         });
 
-
         document.addEventListener('DOMContentLoaded', function() {
             var uploadButton = document.getElementById('upload-button');
-            var profilePic = document.getElementById('profile-pic');
 
             uploadButton.addEventListener('click', function() {
                 var fileInput = document.createElement('input');
@@ -91,24 +89,26 @@
 
                     reader.onload = function(event) {
                         var imageDataUrl = event.target.result;
+                        var profilePic = document.getElementById('profile-pic');
                         profilePic.src = imageDataUrl;
 
                         var formData = new FormData();
                         formData.append('profilePicture', file);
 
-                        fetch('/update-profile-picture', {
-                            method: 'POST',
+                        fetch('/user/profilepicture', {
+                            method: 'PUT',
                             body: formData
                         }).then(response => {
-                            if (response.ok) {
-                                return response.json();
-                            } else {
-                                throw new Error('Failed to upload profile picture');
-                            }
-                        }).then(data => {
-                            console.log(data);
+                            return response.text().then(text => {
+                                if (response.ok) {
+                                    document.getElementById('message-container-picture').textContent = text;
+                                } else {
+                                    throw new Error(text);
+                                }
+                            });
                         }).catch(error => {
-                            console.error(error);
+                            console.error('Error:', error);
+                            document.getElementById('message-container-picture').textContent = 'Failed to upload profile picture';
                         });
                     };
 
@@ -118,4 +118,5 @@
             });
         });
     </script>
+
 </@layout.base>

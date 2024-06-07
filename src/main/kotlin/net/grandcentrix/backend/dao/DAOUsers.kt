@@ -100,6 +100,12 @@ class DAOUsers : DAOFacade {
             } > 0
         }
 
+    fun updatePassword(username: String, newPassword: Int): Boolean = transaction {
+        Users.update({ Users.username eq username }) {
+            it[password] = newPassword
+        } > 0
+    }
+
 
     fun updateEmail(username: String, newEmail: String):  Boolean = transaction {
             Users.update({ Users.username eq username }) {

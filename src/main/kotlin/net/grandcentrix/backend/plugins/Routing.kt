@@ -14,6 +14,7 @@ import net.grandcentrix.backend.controllers.Login.Companion.LoginInstance
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.dao.daoUsers
+import net.grandcentrix.backend.models.Users.password
 import net.grandcentrix.backend.repository.BooksRepository.Companion.BooksRepositoryInstance
 import net.grandcentrix.backend.repository.CharactersRepository.Companion.CharactersRepositoryInstance
 import net.grandcentrix.backend.repository.HousesRepository.Companion.HousesRepositoryInstance
@@ -173,7 +174,7 @@ fun Application.configureRouting() {
                 call.respondRedirect("/")
             }
 
-            delete("/delete-account") {
+            delete("/user/account") {
                 // Retrieve the user session
                 val userSession = call.sessions.get<UserSession>()
                 var statusMessage: String
@@ -271,9 +272,35 @@ fun Application.configureRouting() {
                     }
                 }
 
+                authenticate("auth-session") {
+                    put("/user/password") {
+                        val userSession = call.sessions.get<UserSession>()
+                        val parameters = call.receiveParameters()
+                        val newPassword = parameters["newPassword"]
+                        var statusMessage: String
+
+                        if (userSession != null && !newPassword.isNullOrBlank()) {
+                            val username = userSession.username
+
+                            val hashedPassword = newPassword.hashCode()
+
+                            if (daoUsers.updatePassword(username, hashedPassword)) {
+                                statusMessage = "Password updated successfully"
+                                call.response.headers.append("HX-Redirect", "/logout")
+                                call.respondText(statusMessage, status = HttpStatusCode.OK)
+                            } else {
+                                statusMessage = "Failed to update password"
+                                call.respondText(statusMessage, status = HttpStatusCode.InternalServerError)
+                            }
+                        } else {
+                            statusMessage = "User session or new password is missing"
+                            call.respondText(statusMessage, status = HttpStatusCode.BadRequest)
+                        }
+                    }
+                }
 
 
-            post("/update-profile-picture") {
+            put("/user/profilepicture") {
                     val userSession = call.sessions.get<UserSession>()
                     val multipartData = call.receiveMultipart()
                     val imageDataPart = multipartData.readPart() as? PartData.FileItem
@@ -299,7 +326,7 @@ fun Application.configureRouting() {
 
 
 
-                delete("/remove-profile-picture") {
+                delete("/user/profilepicture") {
                     val userSession = call.sessions.get<UserSession>()
                     var statusMessage: String
 

@@ -79,7 +79,7 @@ class Signup {
     ) {
         // regex - set of strings that matches the pattern
         val emailPattern = Pattern.compile("^(.+)@(\\S+)$")
-        val usernamePattern = Pattern.compile("^(^[^-._,\\s])(\\S+)(\\w\$)\$")
+        val usernamePattern = Pattern.compile("^(?!.*\\.\\.)(?!.*\\.\$)[^\\W][\\w.]{0,29}\$")
         val namesPattern = Pattern.compile("^[a-zA-Z]+(?:\\s+[a-zA-Z]+)*\$")
 
         if (!emailPattern.matcher(email).matches()) {
