@@ -3,7 +3,6 @@ package net.grandcentrix.backend.dao
 import kotlinx.coroutines.runBlocking
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.models.Users
-import net.grandcentrix.backend.repository.HousesRepository.Companion.HousesRepositoryInstance
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -17,7 +16,7 @@ class DAOUsers : DAOFacade {
         email = row[Users.email],
         username = row[Users.username],
         password = row[Users.password],
-        house = HousesRepositoryInstance.getItem(row[Users.house]),
+        house = row[Users.house],
         favouriteItems = row[Users.favouriteItems].split(",").toMutableList(),
         profilePictureData = row[Users.profilePictureData]
     )
@@ -33,7 +32,7 @@ class DAOUsers : DAOFacade {
             users[email] = user.email
             users[username] = user.username
             users[password] = user.password
-            users[house] = user.house?.name.toString()
+            users[house] = user.house.toString()
             users[favouriteItems] = user.favouriteItems.joinToString(",")
             users[profilePictureData] = user.profilePictureData
         }
@@ -62,6 +61,15 @@ class DAOUsers : DAOFacade {
         }
     }
 
+    fun getHouse(username: String): String? {
+        return transaction {
+            Users.select { Users.username eq username }
+                .map { it[Users.house] }
+                .singleOrNull()
+        }
+    }
+
+
     override fun deleteItem(username: String): Unit = transaction {
         Users.deleteWhere { Users.username eq username } > 0
     }
@@ -72,7 +80,7 @@ class DAOUsers : DAOFacade {
             users[surname] = user.surname
             users[email] = user.email
             users[password] = user.password
-            users[house] = user.house?.name.toString()
+            users[house] = user.house.toString()
             users[favouriteItems] = user.favouriteItems.joinToString(",")
             users[profilePictureData] = user.profilePictureData
         } > 0

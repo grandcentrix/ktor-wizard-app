@@ -8,7 +8,7 @@
         Welcome, ${username}!
     </h1>
 
-    <section class="content" style="flex-direction: column">
+    <section class="content" style="flex-direction: column;">
         <div class="user-data">
             <form hx-put="/user/username" hx-trigger="submit" hx-target="#message-container-username">
                 <label for="new-username">New Username:</label>
@@ -35,9 +35,7 @@
                 <p id="message-container-password" style="color: #dab6bd; margin-left:15px;"></p>
             </form>
         </div>
-    </section>
 
-    <section class="content" style="flex-direction: column">
         <div class="user-data">
             <p>Profile Picture:</p>
             <form id="upload-form" enctype="multipart/form-data">
@@ -47,15 +45,54 @@
             <button hx-delete="/user/profilepicture" hx-target="#message-container-picture">Remove Picture</button>
             <p id="message-container-picture" style="color: #dab6bd; margin-left:15px;"></p>
         </div>
+
         <div class="delete-button">
             <form hx-delete="/user/account" hx-trigger="submit" hx-target="#delete-message-container" onsubmit="return confirm('Are you sure you want to delete your account?');">
                 <input class="button" style="margin-left: 0;" type="submit" value="Delete Account">
             </form>
             <p id="delete-message-container" style="color: #dab6bd; margin-left:15px;"></p>
         </div>
+
+        <div id="house-symbol-container" style="margin-top: -400px; display: flex; justify-content: flex-end;">
+            <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                <img id="house-symbol" src="" alt="House Symbol" style="width: 200px; height: 200px;"/>
+                <div id="house-name" style="color: #dab6bd;"></div>
+            </div>
+        </div>
+
     </section>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/hogwards-house')
+                .then(response => response.text())
+                .then(house => {
+                    var houseSymbol = document.getElementById('house-symbol');
+                    var houseName = document.getElementById('house-name');
+
+
+                    switch(house.trim()) {
+                        case 'Gryffindor':
+                            houseImage = 'https://i.imgur.com/aKCBbFj.png'; // Path to Gryffindor symbol
+                            break;
+                        case 'Hufflepuff':
+                            houseImage = "https://i.imgur.com/PCB2muY.png"; // Path to Hufflepuff symbol
+                            break;
+                        case 'Ravenclaw':
+                            houseImage = 'https://i.imgur.com/Qdxa0vN.png'; // Path to Ravenclaw symbol
+                            break;
+                        case 'Slytherin':
+                            houseImage = 'https://i.imgur.com/ZXKzkrx.png'; // Path to Slytherin symbol
+                            break;
+                    }
+
+                    houseSymbol.src = houseImage;
+                    houseName.textContent = 'Hogwarts House: ' + house;
+                })
+                .catch(error => console.error('Error fetching Hogwarts house:', error));
+        });
+
+
         document.addEventListener('htmx:afterOnLoad', function(event) {
             var targetId = event.detail.target.id;
             var targetElement = document.getElementById(targetId);

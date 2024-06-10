@@ -6,7 +6,6 @@ import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.plugins.InvalidValue
 import net.grandcentrix.backend.plugins.UserAlreadyExistsException
-import net.grandcentrix.backend.repository.HousesRepository.Companion.HousesRepositoryInstance
 import java.util.regex.Pattern;
 
 class Signup {
@@ -31,6 +30,7 @@ class Signup {
              surname.isNullOrBlank() ||
              username.isNullOrBlank() ||
              password.isNullOrBlank() ||
+             house.isNullOrBlank() ||
              email.isNullOrBlank()
          ) {
              status = "Required fields cannot be empty!"
@@ -62,7 +62,7 @@ class Signup {
                 email,
                 username,
                 hashedPassword,
-                HousesRepositoryInstance.getItem(house)
+                house,
             )
             daoUsers.addItem(user)
         }

@@ -12,8 +12,8 @@ data class User(
     val email: String,
     val username: String,
     val password: Int,
+    val house: String?,
     @Contextual
-    val house: House? = null,
     val favouriteItems: MutableList<String> = mutableListOf(),
     val profilePictureData: ByteArray? = null //to store profile picture data as a ByteArray. This allows storing the image data directly in the database.
 ) {

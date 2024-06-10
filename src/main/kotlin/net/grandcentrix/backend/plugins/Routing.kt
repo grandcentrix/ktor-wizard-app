@@ -346,6 +346,22 @@ fun Application.configureRouting() {
                     }
                 }
 
+                get("/hogwards-house") {
+                    val userSession = call.sessions.get<UserSession>()
+                    if (userSession != null) {
+                        val username = userSession.username
+                        val house = daoUsers.getHouse(username)
+                        if (house != null) {
+                            call.respondText(house)
+                        } else {
+                            call.respond(HttpStatusCode.NotFound, "House not found")
+                        }
+                    } else {
+                        call.respond(HttpStatusCode.Unauthorized, "User session is missing")
+                    }
+                }
+
+
 
                 get("/profile-picture") {
                     val userSession = call.sessions.get<UserSession>()
