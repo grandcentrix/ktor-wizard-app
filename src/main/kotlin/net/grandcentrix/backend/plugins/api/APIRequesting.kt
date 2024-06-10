@@ -87,11 +87,7 @@ object APIRequesting {
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    fun fetchGravatarProfiles(email: String): GravatarProfile {
-//        val factory: SecretKeyFactory = SecretKeyFactory.getInstance("SHA256")
-//        val spec = SecretKeySpec(email.toByteArray(), "SHA256")
-//        val emailKey: SecretKey = factory.generateSecret(spec)
-
+    fun fetchGravatarProfile(email: String): GravatarProfile {
         val digest = MessageDigest.getInstance("SHA-256")
         val hashBytes = digest.digest(
             email.toByteArray(StandardCharsets.UTF_8)
@@ -102,7 +98,7 @@ object APIRequesting {
             client.get("https://api.gravatar.com/v3/profiles/${emailKey}") {
                 bearerAuth("129:gk-N0JYWAg0JaYac_Bdl3ha8nadRp1rLIasSakKhP9VZMWoQzii2yBZM2VEZrsYP")
             }.body()
-        }
+        } ?: throw NoGravatarProfile("User email doesn't have a gravatar profile")
 
         return profile
     }

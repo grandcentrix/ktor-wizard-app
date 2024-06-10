@@ -13,7 +13,7 @@ import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.GravatarProfile
-import net.grandcentrix.backend.plugins.api.APIRequesting.fetchGravatarProfiles
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchGravatarProfile
 import net.grandcentrix.backend.repository.BooksRepository.Companion.BooksRepositoryInstance
 import net.grandcentrix.backend.repository.CharactersRepository.Companion.CharactersRepositoryInstance
 import net.grandcentrix.backend.repository.HousesRepository.Companion.HousesRepositoryInstance
@@ -61,7 +61,7 @@ fun Application.configureRouting() {
                     call.sessions.set(UserSession(username))
                     userSession = call.sessions.get<UserSession>()
                     val userEmail = daoUsers.getItem(username)?.email
-                    gravatarProfile = fetchGravatarProfiles(userEmail!!)
+                    gravatarProfile = fetchGravatarProfile(userEmail!!)
                     LoginInstance.status = "Logged in with success!"
                     call.respondRedirect("/")
                 }

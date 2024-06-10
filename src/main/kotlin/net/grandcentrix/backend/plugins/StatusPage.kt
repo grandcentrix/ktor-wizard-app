@@ -33,6 +33,7 @@ fun Application.configureStatusPage() {
                     call.respondRedirect(call.request.local.uri)
                 }
 
+
                 else ->
                     call.respondTemplate(
                     "error.ftl",
@@ -53,3 +54,4 @@ fun Application.configureStatusPage() {
 class AuthorizationException(override val message: String?): Exception()
 class UserAlreadyExistsException(override val message: String?) : Exception()
 class InvalidValue(override val message: String?) : Exception()
+
