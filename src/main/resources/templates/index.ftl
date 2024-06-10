@@ -4,7 +4,6 @@
 
 <@layout.base>
 
-<#--    <br/><span>${loginStatus}</span><br/>-->
     <section class="content">
 
             <article style="background-image: url('/static/img/book.png')" class="home-items">

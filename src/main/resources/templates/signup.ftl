@@ -43,7 +43,7 @@
 
 
         <input class="register-button button" type="submit" value="Register">
-<#--        <p>${signUpStatus}</p>-->
+
     </form>
 
 </@layout.base>
