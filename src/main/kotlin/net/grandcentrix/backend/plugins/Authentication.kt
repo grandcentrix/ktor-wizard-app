@@ -17,8 +17,8 @@ fun Application.configureAuthentication() {
                 if (LoginInstance.verifyLogin(credentials)) {
                     UserIdPrincipal(credentials.name)
                 } else {
-                    LoginInstance.status = "Login is invalid!"
-                    throw UnauthorizedException("Login not authorized")
+//                    LoginInstance.status = "Login is invalid!"
+                    throw RequestException("Login not authorized")
                 }
             }
         }
@@ -31,7 +31,7 @@ fun Application.configureAuthentication() {
                 }
             }
             challenge {
-                LoginInstance.status = "Please login to access this page."
+//                LoginInstance.status = "Please login to access this page."
                 call.respondRedirect("/login")
             }
         }
@@ -46,4 +46,4 @@ fun Application.configureAuthentication() {
     }
 }
 
-class UnauthorizedException(override val message: String?): Exception()
+//class UnauthorizedException(override val message: String?): Exception()

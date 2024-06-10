@@ -17,7 +17,7 @@
         </label>
 
         <input class="button" type="submit">
-        <p style="color: #dab6bd; margin-left:15px;">${loginStatus}</p>
+<#--        <p style="color: #dab6bd; margin-left:15px;">${loginStatus}</p>-->
     </form>
 
     <a class="links" href="/signup">
