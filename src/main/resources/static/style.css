@@ -311,6 +311,7 @@ menu.main-menu li:target {
     width: 50px;
     height: 50px;
     cursor: pointer;
+    float: right;
 }
 
 #upload-button {
@@ -365,9 +366,11 @@ nav.user-menu {
 
 .dropdown {
     display: inline-block;
+    position: relative; /* Position relative to its parent */
     z-index: 10;
 }
 
+/* Dropdown content */
 .dropdown-content {
     display: none;
     position: absolute;
@@ -377,8 +380,10 @@ nav.user-menu {
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
     z-index: 1;
     right: 0;
+    top: calc(100% + 10px); /* Position below the profile picture */
 }
 
+/* Dropdown links */
 .dropdown-content a {
     color: #ffcec3;
     padding: 12px 16px;
@@ -387,19 +392,32 @@ nav.user-menu {
     border-bottom: 1px solid #915b4f;
 }
 
+/* Hover effect */
 .dropdown-content a:hover {
     background-color: rgb(136, 78, 65);
     border-radius: 10px 10px 0 0;
 }
 
+/* Show dropdown content on hover or focus */
 .dropdown:hover .dropdown-content,
 .dropdown:focus-within .dropdown-content {
     display: block;
 }
 
+/* Last child styling */
 .dropdown-content a:last-child {
     border-radius: 0 0 10px 10px;
     border-bottom: none;
+}
+
+.tooltiptext {
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
 }
 
 .user-data {
