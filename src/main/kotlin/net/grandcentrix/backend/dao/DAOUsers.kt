@@ -102,11 +102,15 @@ class DAOUsers : DAOFacade {
         }
 
 
-    fun removeProfilePicture(username: String):  Boolean = transaction {
-            Users.update({ Users.username eq username }) {
-                it[Users.profilePictureData] = null
-            } > 0
+    fun removeProfilePicture(username: String): Boolean = transaction {
+        Users.update({ Users.username eq username }) {
+            it[profilePictureData] = null
         }
+
+        // Check if profilePictureData is null after the update
+        Users.select { Users.username eq username }
+            .singleOrNull()?.get(Users.profilePictureData) == null
+    }
 
     fun updatePassword(username: String, newPassword: Int): Boolean = transaction {
         Users.update({ Users.username eq username }) {
@@ -124,7 +128,5 @@ class DAOUsers : DAOFacade {
 
 
 val daoUsers = DAOUsers().apply {
-    runBlocking {
 
-    }
 }
