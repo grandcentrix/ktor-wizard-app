@@ -11,17 +11,14 @@ class Login {
         private const val SALT_LENGTH_BYTES = 16
     }
 
-    var status = ""
 
     fun verifyLogin(credential: UserPasswordCredential): Boolean {
         val user = daoUsers.getItem(credential.name)
         if (user == null) {
             return false
         } else if (verifyPassword(credential.password, user.password)) {
-            LoginInstance.status = "Login successful"
             return true
         }
-        LoginInstance.status = "Username and password didn't match!"
         return false
     }
 
