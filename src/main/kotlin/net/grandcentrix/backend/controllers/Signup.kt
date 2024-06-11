@@ -1,17 +1,28 @@
 package net.grandcentrix.backend.controllers
 
 import io.ktor.http.*
+import io.ktor.server.plugins.*
+import io.ktor.util.*
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.plugins.RequestException
 import net.grandcentrix.backend.plugins.UserAlreadyExistsException
 import net.grandcentrix.backend.repository.HousesRepository.Companion.HousesRepositoryInstance
+import java.security.SecureRandom
+import java.security.spec.KeySpec
+import javax.crypto.SecretKey
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.PBEKeySpec
+import kotlin.text.toCharArray
 import java.util.regex.Pattern
 
 class Signup {
 
     companion object {
         val SignupInstance: Signup = Signup()
+        private const val ALGORITHM = "PBKDF2WithHmacSHA512"
+        private const val ITERATIONS = 120_000
+        private const val KEY_LENGTH = 256
     }
 
     fun createUser(formParameters: Parameters) {
@@ -35,7 +46,9 @@ class Signup {
 
         verifyFields(name, surname, username, email)
 
-        val hashedPassword = password.hashCode()
+        val salt = generateRandomSalt()
+        val hashedPassword = generateHash(password, salt)
+        val hexSalt = salt.toHexString()
 
         verifyDuplicates(email, username)
 
@@ -46,7 +59,7 @@ class Signup {
                 surname,
                 email,
                 username,
-                hashedPassword,
+                hexSalt+hashedPassword,
                 null
             )
             daoUsers.addItem(user)
@@ -57,7 +70,7 @@ class Signup {
                 surname,
                 email,
                 username,
-                hashedPassword,
+                hexSalt+hashedPassword,
                 HousesRepositoryInstance.getItem(house)
             )
             daoUsers.addItem(user)
@@ -91,5 +104,23 @@ class Signup {
         if (daoUsers.getItem(username) != null) {
             throw UserAlreadyExistsException("Username is already in use!")
         }
+    }
+
+    private fun generateRandomSalt(): ByteArray {
+        val random = SecureRandom() // PRF?
+        val salt = ByteArray(16) // creates a 16-byte salt
+        random.nextBytes(salt)
+        return salt
+    }
+
+     fun ByteArray.toHexString(): String = hex(this) // convert byte array to a hex string
+
+     fun generateHash(password: String, salt: ByteArray): String {
+        // Returns a SecretKeyFactory object that converts secret keys of the specified algorithm
+        val factory: SecretKeyFactory = SecretKeyFactory.getInstance(ALGORITHM)
+        val spec: KeySpec = PBEKeySpec(password.toCharArray(), salt, ITERATIONS, KEY_LENGTH) // derived key specifications
+        val key: SecretKey = factory.generateSecret(spec) // generates the key through the chosen algorithm using the key spec
+        val hash: ByteArray = key.encoded // encodes the key to byte array
+        return hash.toHexString() // transforms the encoded key to a hex string
     }
 }
