@@ -2,13 +2,12 @@ package net.grandcentrix.backend.controllers
 
 import io.ktor.http.*
 import io.ktor.server.config.*
-import io.ktor.server.plugins.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.dao.DatabaseSingleton
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.House
 import net.grandcentrix.backend.models.User
-import net.grandcentrix.backend.plugins.InvalidValue
+import net.grandcentrix.backend.plugins.RequestException
 import net.grandcentrix.backend.plugins.UserAlreadyExistsException
 import org.junit.Test
 import kotlin.test.*
@@ -24,7 +23,7 @@ class SignupTest {
             "One",
             "personone@email.com",
             "personone",
-            123,
+            "123",
             null
         )
 
@@ -34,7 +33,7 @@ class SignupTest {
             "Two",
             "persontwo@email.com",
             "persontwo",
-            123,
+            "123",
             null
         )
 
@@ -44,7 +43,7 @@ class SignupTest {
             "Three",
             "personthree@email.com",
             "personthree",
-            123,
+            "123",
             null
         )
 
@@ -76,7 +75,7 @@ class SignupTest {
         }
 
         assertFailsWith(
-            exceptionClass = MissingRequestParameterException::class,
+            exceptionClass = RequestException::class,
             message = "Missing required fields!"
         )   {
                 SignupInstance.createUser(formParameters)
@@ -179,7 +178,7 @@ class SignupTest {
         }
 
         assertFailsWith(
-            exceptionClass = InvalidValue::class,
+            exceptionClass = RequestException::class,
             message = "Invalid value for e-mail!"
         )   {
             SignupInstance.createUser(formParameters)
@@ -198,7 +197,7 @@ class SignupTest {
         }
 
         assertFailsWith(
-            exceptionClass = InvalidValue::class,
+            exceptionClass = RequestException::class,
             message = "Invalid value for username!"
         )   {
             SignupInstance.createUser(formParameters)
@@ -217,7 +216,7 @@ class SignupTest {
         }
 
         assertFailsWith(
-            exceptionClass = InvalidValue::class,
+            exceptionClass = RequestException::class,
             message = "Invalid value for name!"
         )   {
             SignupInstance.createUser(formParameters)

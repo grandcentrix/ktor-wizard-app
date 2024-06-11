@@ -31,7 +31,7 @@ class UserRepositoryTest {
             "One",
             "personone@email.com",
             "personone",
-            123,
+            "123",
             House(
                 1.toString(),
                 "Gryffindor",
@@ -82,7 +82,7 @@ class UserRepositoryTest {
             "Two",
             "persontwo@email.com",
             "persontwo",
-            123,
+            "123",
             null,
             favouriteItems = mutableListOf()
         )
@@ -101,7 +101,7 @@ class UserRepositoryTest {
             "Three",
             "personthree@email.com",
             "personthree",
-            123,
+            "123",
             null
         )
 
