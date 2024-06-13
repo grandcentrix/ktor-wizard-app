@@ -65,10 +65,7 @@ class LoginTest {
     @Test
     fun testVerifyLoginFails() {
         // non-matching credentials
-        val username = daoUsers.getAll().first().username
-        val password = daoUsers.getAll().last().password
-        val credentials = UserPasswordCredential(username, password)
-
+        val credentials = UserPasswordCredential("personone", "102030")
         assertFalse(LoginInstance.verifyLogin(credentials))
     }
 }

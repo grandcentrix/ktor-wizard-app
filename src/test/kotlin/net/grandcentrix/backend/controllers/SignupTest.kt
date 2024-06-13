@@ -18,7 +18,6 @@ class SignupTest {
     fun beforeTest() {
       // create a population of users for test
         val user1 = User(
-            1,
             "Person",
             "One",
             "personone@email.com",
@@ -28,7 +27,6 @@ class SignupTest {
         )
 
         val user2 = User(
-            2,
             "Person",
             "Two",
             "persontwo@email.com",
@@ -38,7 +36,6 @@ class SignupTest {
         )
 
         val user3 = User(
-            3,
             "Person",
             "Three",
             "personthree@email.com",
@@ -222,4 +219,6 @@ class SignupTest {
             SignupInstance.createUser(formParameters)
         }
     }
+
+    //TODO tests for the password hashing?
 }
