@@ -1,7 +1,6 @@
 package net.grandcentrix.backend.controllers
 
 import io.ktor.http.*
-import io.ktor.server.plugins.*
 import io.ktor.util.*
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.User
@@ -10,11 +9,11 @@ import net.grandcentrix.backend.plugins.UserAlreadyExistsException
 import net.grandcentrix.backend.repository.HousesRepository.Companion.HousesRepositoryInstance
 import java.security.SecureRandom
 import java.security.spec.KeySpec
+import java.util.regex.Pattern
 import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 import kotlin.text.toCharArray
-import java.util.regex.Pattern
 
 class Signup {
 
@@ -22,7 +21,7 @@ class Signup {
         val SignupInstance: Signup = Signup()
         private const val ALGORITHM = "PBKDF2WithHmacSHA512"
         private const val ITERATIONS = 120_000
-        private const val KEY_LENGTH = 256
+        private const val KEY_LENGTH_BYTES = 32
     }
 
     fun createUser(formParameters: Parameters) {
@@ -51,7 +50,6 @@ class Signup {
         val hexSalt = salt.toHexString()
 
         verifyDuplicates(email, username)
-//        val id = UUID.randomUUID().toString()
 
         if (house.isNullOrBlank()) {
             val user = User(
@@ -106,7 +104,7 @@ class Signup {
     }
 
     private fun generateRandomSalt(): ByteArray {
-        val random = SecureRandom() // PRF?
+        val random = SecureRandom()
         val salt = ByteArray(16) // creates a 16-byte salt
         random.nextBytes(salt)
         return salt
@@ -117,7 +115,7 @@ class Signup {
      fun generateHash(password: String, salt: ByteArray): String {
         // Returns a SecretKeyFactory object that converts secret keys of the specified algorithm
         val factory: SecretKeyFactory = SecretKeyFactory.getInstance(ALGORITHM)
-        val spec: KeySpec = PBEKeySpec(password.toCharArray(), salt, ITERATIONS, KEY_LENGTH) // derived key specifications
+        val spec: KeySpec = PBEKeySpec(password.toCharArray(), salt, ITERATIONS, KEY_LENGTH_BYTES) // derived key specifications
         val key: SecretKey = factory.generateSecret(spec) // generates the key through the chosen algorithm using the key spec
         val hash: ByteArray = key.encoded // encodes the key to byte array
         return hash.toHexString() // transforms the encoded key to a hex string
