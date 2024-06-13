@@ -31,9 +31,7 @@ fun Application.configureRouting() {
             var userSession: UserSession? = null
             var gravatarProfile: GravatarProfile? = null
 
-//            authenticate("auth-session") {
                 get {
-//                    call.sessions.set(userSession?.copy())
                     call.respond(FreeMarkerContent(
                         "index.ftl",
                         mapOf(
