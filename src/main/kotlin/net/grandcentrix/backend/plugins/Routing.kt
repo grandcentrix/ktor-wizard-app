@@ -28,9 +28,7 @@ fun Application.configureRouting() {
             // auxiliary storing if there's a session (user is logged in)
             var userSession: UserSession? = null
 
-//            authenticate("auth-session") {
                 get {
-//                    call.sessions.set(userSession?.copy())
                     call.respond(FreeMarkerContent(
                         "index.ftl",
                         mapOf(
