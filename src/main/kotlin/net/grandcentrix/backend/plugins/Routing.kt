@@ -10,7 +10,6 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
-import net.grandcentrix.backend.controllers.Login.Companion.LoginInstance
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.dao.daoUsers
@@ -25,6 +24,7 @@ import net.grandcentrix.backend.repository.SpellsRepository.Companion.SpellsRepo
 
 
 fun Application.configureRouting() {
+
     routing {
         staticResources("/static", "static")
 
@@ -34,26 +34,24 @@ fun Application.configureRouting() {
             var userSession: UserSession? = null
 
 
-//            authenticate("auth-session") {
+
+           
             get {
-                val username = call.sessions.get<UserSession>()?.username
-//                    call.sessions.set(userSession?.copy())
+                val username = call.sessions.get<UserSession>()?.username       
                 call.respond(FreeMarkerContent(
                     "index.ftl",
                     mapOf(
-                        "loginStatus" to LoginInstance.status,
                         "userSession" to userSession.toString(),
                         "username" to username
                     )
                 ))
-                LoginInstance.status = ""
+
             }
 
             get("/login") {
                 call.respond(FreeMarkerContent(
                     "login.ftl",
                     mapOf(
-                        "loginStatus" to LoginInstance.status,
                         "userSession" to "null"
                     )
                 ))
@@ -64,7 +62,6 @@ fun Application.configureRouting() {
                     val username = call.principal<UserIdPrincipal>()?.name.toString()
                     call.sessions.set(UserSession(username))
                     userSession = call.sessions.get<UserSession>()
-                    LoginInstance.status = "Logged in with success!"
                     call.respondRedirect("/")
                 }
             }
@@ -83,12 +80,9 @@ fun Application.configureRouting() {
                 if (userSession != null) {
                     call.respondRedirect("/")
                 } else {
-                    val currentStatus = SignupInstance.status
-                    SignupInstance.status = "" // Reset the status after reading it
                     call.respond(FreeMarkerContent(
                         "signup.ftl",
                         mapOf(
-                            "signUpStatus" to currentStatus,
                             "userSession" to "null",
                             "houses" to HousesRepositoryInstance.getAll().map { it.name }
                         )
@@ -99,9 +93,6 @@ fun Application.configureRouting() {
             post("/signup") {
                 val formParameters = call.receiveParameters()
                 SignupInstance.createUser(formParameters)
-                val currentStatus = SignupInstance.status
-                SignupInstance.status = "" // Reset the status after setting it
-                LoginInstance.status = "Please login with your account"
                 call.respondRedirect("/login")
             }
 
@@ -185,7 +176,6 @@ fun Application.configureRouting() {
 
             get("/logout") {
                 call.sessions.clear<UserSession>()
-                LoginInstance.status = "Logged out with success!"
                 call.respondRedirect("/")
             }
 

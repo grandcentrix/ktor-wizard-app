@@ -27,6 +27,7 @@ class DAOUsers : DAOFacade {
 
     override fun addItem(user: User): Unit = transaction {
         val insertStatement = Users.insertIgnore { users ->
+            users[id] = user.id
             users[name] = user.name
             users[surname] = user.surname
             users[email] = user.email
