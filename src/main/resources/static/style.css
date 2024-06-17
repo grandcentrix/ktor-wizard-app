@@ -411,7 +411,7 @@ nav.user-menu {
 }
 
 .tooltiptext {
-    background-color: #555;
+    background-color: rgba(115, 65, 54, 0); /* Adjust alpha for desired transparency */
     color: #fff;
     text-align: center;
     border-radius: 5px;

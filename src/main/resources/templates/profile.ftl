@@ -53,14 +53,13 @@
             <p id="delete-message-container" style="color: #dab6bd; margin-left:15px;"></p>
         </div>
 
-        <div id="house-symbol-container" style="margin-top: -400px; display: flex; justify-content: flex-end;">
-            <div style="display: flex; flex-direction: column; align-items: flex-end;">
-                <img id="house-symbol" src="" alt="House Symbol" style="width: 200px; height: 200px;"/>
-                <div id="house-name" style="color: #dab6bd;"></div>
-            </div>
-        </div>
-
     </section>
+    <div id="house-symbol-container" style="margin-top: -400px; display: flex; justify-content: flex-end;">
+        <div style="display: flex; flex-direction: column; align-items: flex-end;">
+            <img id="house-symbol" src="" alt="House Symbol" style="width: 200px; height: 200px;"/>
+            <div id="house-name" style="color: #dab6bd;"></div>
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

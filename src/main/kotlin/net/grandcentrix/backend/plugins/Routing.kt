@@ -33,14 +33,17 @@ fun Application.configureRouting() {
             // auxiliary storing if there's a session (user is logged in)
             var userSession: UserSession? = null
 
+
 //            authenticate("auth-session") {
             get {
+                val username = call.sessions.get<UserSession>()?.username
 //                    call.sessions.set(userSession?.copy())
                 call.respond(FreeMarkerContent(
                     "index.ftl",
                     mapOf(
                         "loginStatus" to LoginInstance.status,
-                        "userSession" to userSession.toString()
+                        "userSession" to userSession.toString(),
+                        "username" to username
                     )
                 ))
                 LoginInstance.status = ""
@@ -109,61 +112,73 @@ fun Application.configureRouting() {
             }
 
             get("/books") {
+                val username = call.sessions.get<UserSession>()?.username
                 call.respondTemplate(
                     "books.ftl",
                     mapOf(
                         "books" to BooksRepositoryInstance.getAll(),
-                        "userSession" to userSession.toString()
+                        "userSession" to userSession.toString(),
+                        "username" to username,
                     )
                 )
             }
 
             get("/houses") {
+                val username = call.sessions.get<UserSession>()?.username
                 call.respondTemplate(
                     "houses.ftl",
                     mapOf(
                         "houses" to HousesRepositoryInstance.getAll(),
-                        "userSession" to userSession.toString()
+                        "userSession" to userSession.toString(),
+                        "username" to username
                     )
                 )
             }
 
             get("/characters") {
+                val username = call.sessions.get<UserSession>()?.username
                 call.respondTemplate(
                     "characters.ftl",
                     mapOf(
                         "characters" to CharactersRepositoryInstance.getAll(),
-                        "userSession" to userSession.toString()
+                        "userSession" to userSession.toString(),
+                        "username" to username
                     )
                 )
             }
 
             get("/movies") {
+                val username = call.sessions.get<UserSession>()?.username
                 call.respondTemplate(
                     "movies.ftl",
                     mapOf(
                         "movies" to MoviesRepositoryInstance.getAll(),
-                        "userSession" to userSession.toString()
+                        "userSession" to userSession.toString(),
+                        "username" to username
                     )
                 )
             }
 
             get("/potions") {
+                val username = call.sessions.get<UserSession>()?.username
                 call.respondTemplate(
                     "potions.ftl",
                     mapOf(
                         "potions" to PotionsRepositoryInstance.getAll(),
-                        "userSession" to userSession.toString()
+                        "userSession" to userSession.toString(),
+                        "username" to username
                     )
                 )
             }
 
             get("/spells") {
+                val username = call.sessions.get<UserSession>()?.username
                 call.respondTemplate(
                     "spells.ftl",
                     mapOf(
                         "spells" to SpellsRepositoryInstance.getAll(),
-                        "userSession" to userSession.toString()
+                        "userSession" to userSession.toString(),
+                        "username" to username
                     )
                 )
             }
