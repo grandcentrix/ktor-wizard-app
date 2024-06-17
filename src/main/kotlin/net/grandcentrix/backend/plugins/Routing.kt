@@ -21,8 +21,6 @@ import net.grandcentrix.backend.repository.MoviesRepository.Companion.MoviesRepo
 import net.grandcentrix.backend.repository.PotionsRepository.Companion.PotionsRepositoryInstance
 import net.grandcentrix.backend.repository.SpellsRepository.Companion.SpellsRepositoryInstance
 
-
-
 @OptIn(ExperimentalStdlibApi::class)
 fun Application.configureRouting() {
 
@@ -34,8 +32,6 @@ fun Application.configureRouting() {
             // auxiliary storing if there's a session (user is logged in)
             var userSession: UserSession? = null
 
-
-
             get {
                 val username = call.sessions.get<UserSession>()?.username
                 call.respond(FreeMarkerContent(
@@ -45,8 +41,6 @@ fun Application.configureRouting() {
                         "username" to username
                     )
                 ))
-
-
             }
 
             get("/login") {
@@ -69,11 +63,11 @@ fun Application.configureRouting() {
 
             authenticate("auth-session") {
                 get("/profile") {
-//                    userSession = call.sessions.get<UserSession>()
                     val username = call.sessions.get<UserSession>()?.username
                     call.respond(FreeMarkerContent(
                         "profile.ftl",
-                        mapOf("username" to username, "uploadButton" to true,"userSession" to userSession.toString())))
+                        mapOf("username" to username, "uploadButton" to true, "userSession" to userSession.toString())
+                    ))
                 }
             }
 
@@ -84,7 +78,6 @@ fun Application.configureRouting() {
                     call.respond(FreeMarkerContent(
                         "signup.ftl",
                         mapOf(
-
                             "userSession" to "null",
                             "houses" to HousesRepositoryInstance.getAll().map { it.name }
                         )
@@ -182,219 +175,71 @@ fun Application.configureRouting() {
             }
 
             delete("/user/account") {
-                // Retrieve the user session
-                val userSession = call.sessions.get<UserSession>()
-                var statusMessage: String
-
-                // Check if the user session is not null
+                val userSession = call.verifyUserSession()
                 if (userSession != null) {
-                    // Try to delete the user from the repository
-                    try {
-                        daoUsers.deleteItem(userSession.username)
-                        statusMessage = "Account deleted successfully"
-                        call.sessions.clear<UserSession>()
-                        call.response.headers.append("HX-Redirect","/logout")
-                        call.respondText(statusMessage, status = HttpStatusCode.OK)
-                    } catch (e: Exception) {
-                        statusMessage = "Failed to delete account: ${e.localizedMessage}"
-                        call.respondText(statusMessage, status = HttpStatusCode.InternalServerError)
-                    }
-                } else {
-                    statusMessage = "User session is missing"
-                    call.respondText(statusMessage, status = HttpStatusCode.BadRequest)
+                    call.deleteAccount(userSession)
                 }
             }
-
-
 
             authenticate("auth-session") {
                 put("/user/username") {
-                    val userSession = call.sessions.get<UserSession>()
+                    val userSession = call.verifyUserSession()
                     val parameters = call.receiveParameters()
                     val newUsername = parameters["newUsername"]
-                    var statusMessage: String
-
-                    try {
-                        if (userSession == null) {
-                            statusMessage = "User session is missing"
-                            call.respondText(statusMessage, status = HttpStatusCode.BadRequest)
-                            return@put
-                        }
-
-                        if (newUsername.isNullOrEmpty()) {
-                            statusMessage = "New username is missing or empty"
-                            call.respondText(statusMessage, status = HttpStatusCode.BadRequest)
-                            return@put
-                        }
-
-                        val username = userSession.username
-                        if (daoUsers.getItem(newUsername) != null) {
-                            statusMessage = "New username is already taken"
-                            call.respondText(statusMessage, status = HttpStatusCode.Conflict)
-                            return@put
-                        }
-
-                        if (daoUsers.updateUsername(username, newUsername)) {
-                            statusMessage = "Username updated successfully"
-                            call.response.headers.append("HX-Redirect","/logout")
-                            call.respondText(statusMessage, status = HttpStatusCode.OK)
-                        } else {
-                            statusMessage = "Failed to update username"
-                            call.respondText(statusMessage, status = HttpStatusCode.InternalServerError)
-                        }
-
-                    } catch (e: Exception) {
-                        statusMessage = "An error occurred: ${e.localizedMessage}"
-                        call.respondText(statusMessage, status = HttpStatusCode.InternalServerError)
+                    if (userSession != null) {
+                        call.updateUsername(userSession, newUsername)
                     }
                 }
-            }
 
-            authenticate("auth-session") {
                 put("/user/email") {
-                    val userSession = call.sessions.get<UserSession>()
+                    val userSession = call.verifyUserSession()
                     val parameters = call.receiveParameters()
                     val newEmail = parameters["newEmail"]
-                    var statusMessage: String
-
-                    if (userSession != null && newEmail != null) {
-                        val username = userSession.username
-                        if (daoUsers.getByEmail(newEmail) != null) {
-                            statusMessage = "New email is already taken"
-                            call.respondText(statusMessage, status = HttpStatusCode.Conflict)
-                            return@put
-                        }
-
-                        if (daoUsers.updateEmail(username, newEmail)) {
-                            statusMessage = "Email updated successfully"
-                            call.response.headers.append("HX-Redirect","/profile")
-                            call.respondText(statusMessage, status = HttpStatusCode.OK)
-                        } else {
-                            statusMessage = "Failed to update email"
-                            call.respondText(statusMessage, status = HttpStatusCode.InternalServerError)
-                        }
-                    } else {
-                        statusMessage = "User session or new email is missing"
-                        call.respondText(statusMessage, status = HttpStatusCode.BadRequest)
+                    if (userSession != null) {
+                        call.updateEmail(userSession, newEmail)
                     }
                 }
 
-                authenticate("auth-session") {
-                    put("/user/password") {
-                        val userSession = call.sessions.get<UserSession>()
-                        val parameters = call.receiveParameters()
-                        val newPassword = parameters["newPassword"]
-                        var statusMessage: String
-
-                        if (userSession != null && !newPassword.isNullOrBlank()) {
-                            val username = userSession.username
-
-                            // Generate a new salt for the user
-                            val salt = SignupInstance.generateRandomSalt()
-                            val hashedPassword = SignupInstance.generateHash(newPassword, salt)
-                            val hexSalt = salt.toHexString()
-
-                            // Update the password in the database
-                            if (daoUsers.updatePassword(username, hexSalt + hashedPassword)) {
-                                statusMessage = "Password updated successfully"
-                                call.response.headers.append("HX-Redirect", "/logout")
-                                call.respondText(statusMessage, status = HttpStatusCode.OK)
-                            } else {
-                                statusMessage = "Failed to update password"
-                                call.respondText(statusMessage, status = HttpStatusCode.InternalServerError)
-                            }
-                        } else {
-                            statusMessage = "User session or new password is missing"
-                            call.respondText(statusMessage, status = HttpStatusCode.BadRequest)
-                        }
+                put("/user/password") {
+                    val userSession = call.verifyUserSession()
+                    val parameters = call.receiveParameters()
+                    val newPassword = parameters["newPassword"]
+                    if (userSession != null) {
+                        call.updatePassword(userSession, newPassword)
                     }
                 }
-
-
 
                 put("/user/profilepicture") {
-                    val userSession = call.sessions.get<UserSession>()
+                    val userSession = call.verifyUserSession()
                     val multipartData = call.receiveMultipart()
                     val imageDataPart = multipartData.readPart() as? PartData.FileItem
-
-                    if (userSession != null && imageDataPart != null) {
-                        val username = userSession.username
-
-
-                        // Extract image data as ByteArray
-                        val imageData = imageDataPart.streamProvider().readBytes()
-
-
-                        // Pass image data as ByteArray to updateProfilePicture function
-                        if (daoUsers.updateProfilePicture(username, imageData)) {
-                            call.respondText("Profile picture uploaded successfully")
-                        } else {
-                            call.respondText("Failed to upload profile picture")
-                        }
-                    } else {
-                        call.respondText("User session or image data is missing")
+                    val imageData = imageDataPart?.streamProvider?.invoke()?.readBytes()
+                    if (userSession != null) {
+                        call.updateProfilePicture(userSession, imageData)
                     }
                 }
 
-
-
                 delete("/user/profilepicture") {
-                    val userSession = call.sessions.get<UserSession>()
-                    var statusMessage: String
-
+                    val userSession = call.verifyUserSession()
                     if (userSession != null) {
-                        val username = userSession.username
-                        if (daoUsers.removeProfilePicture(username)) {
-                            statusMessage = "Profile picture removed successfully"
-                            call.response.headers.append("HX-Redirect","/profile")
-                            call.respondText(statusMessage, status = HttpStatusCode.OK)
-                        } else {
-                            statusMessage = "Failed to remove profile picture"
-                            call.respondText(statusMessage, status = HttpStatusCode.InternalServerError)
-                        }
-                    } else {
-                        statusMessage = "User session is missing"
-                        call.respondText(statusMessage, status = HttpStatusCode.BadRequest)
+                        call.removeProfilePicture(userSession)
                     }
                 }
 
                 get("/hogwards-house") {
-                    val userSession = call.sessions.get<UserSession>()
+                    val userSession = call.verifyUserSession()
                     if (userSession != null) {
-                        val username = userSession.username
-                        val house = daoUsers.getHouse(username)
-                        if (house != null) {
-                            call.respondText(house)
-                        } else {
-                            call.respond(HttpStatusCode.NotFound, "House not found")
-                        }
-                    } else {
-                        call.respond(HttpStatusCode.Unauthorized, "User session is missing")
+                        call.getHogwartsHouse(userSession)
                     }
                 }
 
-
-
                 get("/profile-picture") {
-                    val userSession = call.sessions.get<UserSession>()
+                    val userSession = call.verifyUserSession()
                     if (userSession != null) {
-                        val username = userSession.username
-                        val profilePictureData = daoUsers.getProfilePictureData(username)
-                        if (profilePictureData != null) {
-                            call.respondBytes(profilePictureData, ContentType.Image.JPEG)
-                        } else {
-                            // Respond with an empty byte array if no profile picture is set
-                            call.respondBytes(ByteArray(0), ContentType.Image.JPEG)
-                        }
-                    } else {
-                        call.respond(HttpStatusCode.Unauthorized, "User session is missing")
+                        call.getProfilePicture(userSession)
                     }
                 }
             }
         }
     }
 }
-
-
-
-

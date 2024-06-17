@@ -26,7 +26,7 @@ fun Application.configureStatusPage() {
                     )
                 }
 
-                is UnauthorizedException -> call.respondRedirect("/login")
+                is UnauthorizedException -> call.respondRedirect( "/login")
 
                 is UserAlreadyExistsException -> {
                     call.respondRedirect("/signup")
