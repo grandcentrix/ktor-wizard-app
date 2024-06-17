@@ -379,8 +379,9 @@ nav.user-menu {
     border-radius: 10px;
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
     z-index: 1;
-    right: 0;
-    top: calc(100% + 10px); /* Position below the profile picture */
+    right: -10px;;
+    top: 100%;
+
 }
 
 /* Dropdown links */
