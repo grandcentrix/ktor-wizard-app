@@ -7,10 +7,8 @@ import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.plugins.RequestException
 import net.grandcentrix.backend.plugins.UserAlreadyExistsException
 import java.util.regex.Pattern;
-import net.grandcentrix.backend.repository.HousesRepository.Companion.HousesRepositoryInstance
 import java.security.SecureRandom
 import java.security.spec.KeySpec
-import java.util.regex.Pattern
 import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
@@ -35,16 +33,16 @@ class Signup {
         val password = formParameters["password"]
         val house = formParameters["houses"]
 
-         if (
-             name.isNullOrBlank() ||
-             surname.isNullOrBlank() ||
-             username.isNullOrBlank() ||
-             password.isNullOrBlank() ||
-             house.isNullOrBlank() ||
-             email.isNullOrBlank()
-         ) {
-             throw RequestException("Missing required fields!")
-         }
+        if (
+            name.isNullOrBlank() ||
+            surname.isNullOrBlank() ||
+            username.isNullOrBlank() ||
+            password.isNullOrBlank() ||
+            house.isNullOrBlank() ||
+            email.isNullOrBlank()
+        ) {
+            throw RequestException("Missing required fields!")
+        }
 
         verifyFields(name, surname, username, email)
 
@@ -60,8 +58,8 @@ class Signup {
                 surname,
                 email,
                 username,
+                null,
                 hexSalt+hashedPassword,
-                null
             )
             daoUsers.addItem(user)
         } else {
@@ -71,7 +69,7 @@ class Signup {
                 email,
                 username,
                 house,
-                hexSalt+hashedPassword,              
+                hexSalt+hashedPassword,
             )
             daoUsers.addItem(user)
         }
@@ -106,16 +104,16 @@ class Signup {
         }
     }
 
-    private fun generateRandomSalt(): ByteArray {
+     fun generateRandomSalt(): ByteArray {
         val random = SecureRandom()
         val salt = ByteArray(16) // creates a 16-byte salt
         random.nextBytes(salt)
         return salt
     }
 
-     fun ByteArray.toHexString(): String = hex(this) // convert byte array to a hex string
+    fun ByteArray.toHexString(): String = hex(this) // convert byte array to a hex string
 
-     fun generateHash(password: String, salt: ByteArray): String {
+    fun generateHash(password: String, salt: ByteArray): String {
         // Returns a SecretKeyFactory object that converts secret keys of the specified algorithm
         val factory: SecretKeyFactory = SecretKeyFactory.getInstance(ALGORITHM)
         val spec: KeySpec = PBEKeySpec(password.toCharArray(), salt, ITERATIONS, KEY_LENGTH_BYTES) // derived key specifications

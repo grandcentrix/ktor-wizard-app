@@ -23,6 +23,7 @@ import net.grandcentrix.backend.repository.SpellsRepository.Companion.SpellsRepo
 
 
 
+@OptIn(ExperimentalStdlibApi::class)
 fun Application.configureRouting() {
 
     routing {
@@ -35,9 +36,8 @@ fun Application.configureRouting() {
 
 
 
-           
             get {
-                val username = call.sessions.get<UserSession>()?.username       
+                val username = call.sessions.get<UserSession>()?.username
                 call.respond(FreeMarkerContent(
                     "index.ftl",
                     mapOf(
@@ -45,6 +45,7 @@ fun Application.configureRouting() {
                         "username" to username
                     )
                 ))
+
 
             }
 
@@ -83,6 +84,7 @@ fun Application.configureRouting() {
                     call.respond(FreeMarkerContent(
                         "signup.ftl",
                         mapOf(
+
                             "userSession" to "null",
                             "houses" to HousesRepositoryInstance.getAll().map { it.name }
                         )
@@ -287,9 +289,13 @@ fun Application.configureRouting() {
                         if (userSession != null && !newPassword.isNullOrBlank()) {
                             val username = userSession.username
 
-                            val hashedPassword = newPassword.hashCode()
+                            // Generate a new salt for the user
+                            val salt = SignupInstance.generateRandomSalt()
+                            val hashedPassword = SignupInstance.generateHash(newPassword, salt)
+                            val hexSalt = salt.toHexString()
 
-                            if (daoUsers.updatePassword(username, hashedPassword)) {
+                            // Update the password in the database
+                            if (daoUsers.updatePassword(username, hexSalt + hashedPassword)) {
                                 statusMessage = "Password updated successfully"
                                 call.response.headers.append("HX-Redirect", "/logout")
                                 call.respondText(statusMessage, status = HttpStatusCode.OK)
@@ -305,7 +311,8 @@ fun Application.configureRouting() {
                 }
 
 
-            put("/user/profilepicture") {
+
+                put("/user/profilepicture") {
                     val userSession = call.sessions.get<UserSession>()
                     val multipartData = call.receiveMultipart()
                     val imageDataPart = multipartData.readPart() as? PartData.FileItem
@@ -387,6 +394,7 @@ fun Application.configureRouting() {
         }
     }
 }
+
 
 
 

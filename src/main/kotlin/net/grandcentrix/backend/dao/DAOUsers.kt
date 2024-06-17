@@ -113,7 +113,7 @@ class DAOUsers : DAOFacade {
             .singleOrNull()?.get(Users.profilePictureData) == null
     }
 
-    fun updatePassword(username: String, newPassword: Int): Boolean = transaction {
+    fun updatePassword(username: String, newPassword: String): Boolean = transaction {
         Users.update({ Users.username eq username }) {
             it[password] = newPassword
         } > 0

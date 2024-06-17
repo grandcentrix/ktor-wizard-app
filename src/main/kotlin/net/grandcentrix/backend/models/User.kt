@@ -1,6 +1,5 @@
 package net.grandcentrix.backend.models
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Table
 import java.util.*
@@ -12,7 +11,9 @@ data class User(
     val email: String,
     val username: String,
     val house: String?,
+    val password: String,
     val favouriteItems: MutableList<String> = mutableListOf(),
+    val id: String = UUID.randomUUID().toString(),
     val profilePictureData: ByteArray? = null //to store profile picture data as a ByteArray. This allows storing the image data directly in the database.
 ) {
     override fun equals(other: Any?): Boolean {
@@ -33,12 +34,6 @@ data class User(
         return profilePictureData?.contentHashCode() ?: 0
     }
 }
-
-    val password: String,
-    val id: String = UUID.randomUUID().toString()
-)
-
-
 // define the table properties
 object Users : Table() {
     val id = varchar("id", 128)
