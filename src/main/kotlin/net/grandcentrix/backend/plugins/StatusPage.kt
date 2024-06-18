@@ -33,6 +33,17 @@ fun Application.configureStatusPage() {
                     call.respondRedirect("/signup")
                 }
 
+                is GravatarProfileError -> {
+                    call.respondRedirect("/")
+//                    call.respondTemplate(
+//                        "error.ftl",
+//                        mapOf(
+//                            "errorMessage" to cause.message,
+//                            "redirectLink" to call.request.local.uri
+//                        )
+//                    )
+                }
+
                 else ->
                     call.respondTemplate(
                         "error.ftl",
@@ -50,6 +61,16 @@ fun Application.configureStatusPage() {
                 mapOf(
                     "errorMessage" to "Oops! It wasn't possible to find the page, or it doesn't exist.",
                     "redirectLink" to "/"
+                )
+            )
+        }
+
+        status(HttpStatusCode.InternalServerError) { call, _ ->
+            call.respondTemplate(
+                "error.ftl",
+                mapOf(
+                    "errorMessage" to "Status 500 - Internal Server Error",
+                    "redirectLink" to "/"
                 ))
         }
     }
@@ -59,3 +80,4 @@ open class StatusException(override val message: String?): Exception()
 class RequestException(override val message: String?): StatusException(message)
 class UserAlreadyExistsException(override val message: String?): StatusException(message)
 class UnauthorizedException(override val message: String?): StatusException(message)
+class GravatarProfileError(override val message: String?): StatusException(message)

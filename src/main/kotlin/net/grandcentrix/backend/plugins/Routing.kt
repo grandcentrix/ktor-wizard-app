@@ -31,14 +31,14 @@ fun Application.configureRouting() {
             var userSession: UserSession? = null
             var gravatarProfile: GravatarProfile? = null
 
-                get {
-                    call.respond(FreeMarkerContent(
-                        "index.ftl",
-                        mapOf(
-                            "userSession" to userSession.toString(),
-                            "avatar" to gravatarProfile?.avatarUrl.toString()
-                        )
-                    ))
+            get {
+                call.respond(FreeMarkerContent(
+                    "index.ftl",
+                    mapOf(
+                        "userSession" to userSession.toString(),
+                        "avatar" to gravatarProfile?.avatarUrl.toString()
+                    )
+                ))
             }
 
             get("/login") {
@@ -71,7 +71,7 @@ fun Application.configureRouting() {
                             "username" to username,
                             "uploadButton" to true,
                             "userSession" to userSession.toString(),
-                            "avatar" to gravatarProfile?.avatarUrl.toString()
+                            "avatar" to gravatarProfile?.avatarUrl
                         )
                     ))
                 }
@@ -91,7 +91,6 @@ fun Application.configureRouting() {
                 }
             }
 
-
             post("/signup") {
                 val formParameters = call.receiveParameters()
                 SignupInstance.createUser(formParameters)
@@ -110,7 +109,7 @@ fun Application.configureRouting() {
                     mapOf(
                         "books" to BooksRepositoryInstance.getAll(),
                         "userSession" to userSession.toString(),
-                        "avatar" to gravatarProfile?.avatarUrl.toString()
+                        "avatar" to gravatarProfile?.avatarUrl
                     )
                 )
             }

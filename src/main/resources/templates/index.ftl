@@ -1,4 +1,4 @@
-<#import "_layout.ftl" as layout />
+<#import "_layout.ftl" as layout>
 <#assign userSession = userSession in layout>
 <#assign avatar = avatar in layout>
 
@@ -25,7 +25,6 @@
             <article style="background-image: url('/static/img/house.png')" class="home-items">
                 <h2><a href="/houses" >Houses</a></h2>
             </article>
-
 
 </@layout.base>
 

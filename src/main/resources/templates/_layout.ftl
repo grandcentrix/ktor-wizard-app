@@ -1,5 +1,5 @@
 <#assign userSession = "null">
-<#assign avatar = "null">
+<#global avatar = "null">
 
 <#macro base>
     <!DOCTYPE html>
@@ -11,7 +11,8 @@
     </head>
     <body>
     <header>
-        <#if userSession == "null" && avatar == "null">
+        <#if userSession == "null">
+            <p>${avatar}</p>
             <nav class="user-menu">
                 <!-- Profile Picture Dropdown Section -->
                 <div class="dropdown" id="profile-dropdown">
@@ -19,12 +20,12 @@
                     <div class="dropdown-content">
                         <a href="/signup">Signup</a>
                         <a href="/login">Login</a>
-                        <!-- Add more options here -->
                     </div>
                     <!-- End of Profile Picture Dropdown Section -->
                 </div>
             </nav>
-        <#elseif userSession != "null" && avatar == "null">
+        <#elseif userSession != "null" && (avatar == "null")>
+            <p>${avatar}</p>
             <nav class="user-menu">
                 <!-- Profile Picture Dropdown Section -->
                 <div class="dropdown" id="profile-dropdown">
@@ -32,7 +33,6 @@
                     <div class="dropdown-content">
                         <a href="/profile#favourites">Favourites</a>
                         <a href="/logout">Logout</a>
-                        <!-- Add more options here -->
                     </div>
                     <!-- End of Profile Picture Dropdown Section -->
                 </div>
@@ -45,7 +45,6 @@
                     <div class="dropdown-content">
                         <a href="/profile#favourites">Favourites</a>
                         <a href="/logout">Logout</a>
-                        <!-- Add more options here -->
                     </div>
                     <!-- End of Profile Picture Dropdown Section -->
                 </div>

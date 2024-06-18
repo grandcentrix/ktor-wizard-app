@@ -15,11 +15,13 @@ data class DataItem<T>(
 
 @Serializable
 data class GravatarProfile (
-    val hash: String,
+    val hash: String = String(),
     @SerialName("display_name")
-    val displayName: String,
+    val displayName: String = String(),
     @SerialName("profile_url")
-    val url: String,
+    val url: String = String(),
     @SerialName("avatar_url")
-    val avatarUrl: String
+    val avatarUrl: String = String(),
+    val error: String = String(),
+    val code: String = String()
 )
