@@ -33,11 +33,16 @@
                     <a href="#">
                         <img class="profile-picture" id="profile-pic" src="https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg" alt="Profile Picture">
                     </a>
-                    <div class="tooltiptext">
-                        Username: ${username!""}
-                        <#if houseSymbol??>
-                            <img src="${houseSymbol}" alt="House Symbol" style="width: 20px; height: 20px;">
-                        </#if>
+                    <div class="tooltip" hx-get="/hogwarts-house" hx-swap="outerHTML">
+                        <div class="tooltiptext">
+                            <#if username??>
+                                <p>Username: ${username}
+                                    <#if house??>
+                                        <img src="/static/img/${house} house symbole.png" alt="House Symbol" style="width: 20px; height: 20px; vertical-align: middle;">
+                                    </#if>
+                                </p>
+                            </#if>
+                        </div>
                     </div>
                     <div class="dropdown-content">
                         <a href="/profile#favourites">Favourites</a>
@@ -75,7 +80,7 @@
             var tooltipText = document.querySelector('.tooltiptext');
             var defaultProfilePic = "https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg";
 
-            <#if userSession != "null">
+            <#if userSession!= "null">
             fetch('/profile-picture', {
                 method: 'GET'
             }).then(response => {
@@ -96,36 +101,14 @@
                 profilePic.src = defaultProfilePic;
             });
 
-            fetch('/hogwards-house')
-                .then(response => response.text())
-                .then(house => {
-                    var houseSymbol;
-                    switch(house.trim()) {
-                        case 'Gryffindor':
-                            houseSymbol = 'https://i.imgur.com/aKCBbFj.png'; // Path to Gryffindor symbol
-                            break;
-                        case 'Hufflepuff':
-                            houseSymbol = 'https://i.imgur.com/PCB2muY.png'; // Path to Hufflepuff symbol
-                            break;
-                        case 'Ravenclaw':
-                            houseSymbol = 'https://i.imgur.com/Qdxa0vN.png'; // Path to Ravenclaw symbol
-                            break;
-                        case 'Slytherin':
-                            houseSymbol = 'https://i.imgur.com/ZXKzkrx.png'; // Path to Slytherin symbol
-                            break;
-                    }
-
-                    if (tooltipText) {
-                        tooltipText.innerHTML = 'Username: ' + '${username!""}' + '<img src="' + houseSymbol + '" alt="House Symbol" style="width: 20px; height: 20px;">';
-                        // Add CSS styles to center the tooltip text under the profile picture
-                        tooltipText.style.position = 'absolute';
-                        tooltipText.style.top = '100%'; // Position it below the parent element
-                        tooltipText.style.left = '50%'; // Center it horizontally
-                        tooltipText.style.transform = 'translateX(-50%)'; // Center it exactly under the profile picture
-                        tooltipText.style.textAlign = 'center'; // Align the text to the center
-                    }
-                })
-                .catch(error => console.error('Error fetching Hogwarts house:', error));
+            if (tooltipText) {
+                // Add CSS styles to center the tooltip text under the profile picture
+                tooltipText.style.position = 'absolute';
+                tooltipText.style.top = '100%'; // Position it below the parent element
+                tooltipText.style.left = '50%'; // Center it horizontally
+                tooltipText.style.transform = 'translateX(-50%)'; // Center it exactly under the profile picture
+                tooltipText.style.textAlign = 'center'; // Align the text to the center
+            }
             </#if>
         });
     </script>

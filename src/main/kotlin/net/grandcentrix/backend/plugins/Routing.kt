@@ -13,7 +13,9 @@ import io.ktor.server.sessions.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.dao.daoUsers
+import net.grandcentrix.backend.models.Users
 import net.grandcentrix.backend.models.Users.password
+import net.grandcentrix.backend.models.Users.username
 import net.grandcentrix.backend.repository.BooksRepository.Companion.BooksRepositoryInstance
 import net.grandcentrix.backend.repository.CharactersRepository.Companion.CharactersRepositoryInstance
 import net.grandcentrix.backend.repository.HousesRepository.Companion.HousesRepositoryInstance
@@ -38,7 +40,9 @@ fun Application.configureRouting() {
                     "index.ftl",
                     mapOf(
                         "userSession" to userSession.toString(),
-                        "username" to username
+                        "username" to username,
+                        "house" to userSession?.let { it1 -> daoUsers.getHouse(it1.username) }
+
                     )
                 ))
             }
@@ -66,7 +70,10 @@ fun Application.configureRouting() {
                     val username = call.sessions.get<UserSession>()?.username
                     call.respond(FreeMarkerContent(
                         "profile.ftl",
-                        mapOf("username" to username, "uploadButton" to true, "userSession" to userSession.toString())
+                        mapOf("username" to username, "uploadButton" to true, "userSession" to userSession.toString(),"house" to userSession?.let { it1 ->
+                            daoUsers.getHouse(
+                                it1.username)
+                        })
                     ))
                 }
             }
@@ -105,6 +112,7 @@ fun Application.configureRouting() {
                         "books" to BooksRepositoryInstance.getAll(),
                         "userSession" to userSession.toString(),
                         "username" to username,
+                        "house" to userSession?.let { it1 -> daoUsers.getHouse(it1.username) }
                     )
                 )
             }
@@ -116,7 +124,8 @@ fun Application.configureRouting() {
                     mapOf(
                         "houses" to HousesRepositoryInstance.getAll(),
                         "userSession" to userSession.toString(),
-                        "username" to username
+                        "username" to username,
+                        "house" to userSession?.let { it1 -> daoUsers.getHouse(it1.username) }
                     )
                 )
             }
@@ -128,7 +137,8 @@ fun Application.configureRouting() {
                     mapOf(
                         "characters" to CharactersRepositoryInstance.getAll(),
                         "userSession" to userSession.toString(),
-                        "username" to username
+                        "username" to username,
+                        "house" to userSession?.let { it1 -> daoUsers.getHouse(it1.username) }
                     )
                 )
             }
@@ -140,7 +150,8 @@ fun Application.configureRouting() {
                     mapOf(
                         "movies" to MoviesRepositoryInstance.getAll(),
                         "userSession" to userSession.toString(),
-                        "username" to username
+                        "username" to username,
+                        "house" to userSession?.let { it1 -> daoUsers.getHouse(it1.username) }
                     )
                 )
             }
@@ -152,7 +163,8 @@ fun Application.configureRouting() {
                     mapOf(
                         "potions" to PotionsRepositoryInstance.getAll(),
                         "userSession" to userSession.toString(),
-                        "username" to username
+                        "username" to username,
+                        "house" to userSession?.let { it1 -> daoUsers.getHouse(it1.username) }
                     )
                 )
             }
@@ -164,7 +176,8 @@ fun Application.configureRouting() {
                     mapOf(
                         "spells" to SpellsRepositoryInstance.getAll(),
                         "userSession" to userSession.toString(),
-                        "username" to username
+                        "username" to username,
+                        "house" to userSession?.let { it1 -> daoUsers.getHouse(it1.username) }
                     )
                 )
             }
@@ -235,11 +248,18 @@ fun Application.configureRouting() {
 
                 get("/profile-picture") {
                     val userSession = call.verifyUserSession()
-                    if (userSession != null) {
-                        call.getProfilePicture(userSession)
+                    if (userSession!= null) {
+                        if (userSession != null) {
+                            call.getProfilePicture(userSession)
+                        call.respond(FreeMarkerContent(
+                            "_layout.ftl",
+                            mapOf("userSession" to userSession, "username" to username, "house" to userSession?.let { it1 -> daoUsers.getHouse(it1.username)
+                            })))
                     }
                 }
             }
         }
     }
+    }
 }
+

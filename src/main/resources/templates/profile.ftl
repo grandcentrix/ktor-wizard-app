@@ -53,45 +53,22 @@
             <p id="delete-message-container" style="color: #dab6bd; margin-left:15px;"></p>
         </div>
 
-    </section>
-    <div id="house-symbol-container" style="margin-top: -400px; display: flex; justify-content: flex-end;">
-        <div style="display: flex; flex-direction: column; align-items: flex-end;">
-            <img id="house-symbol" src="" alt="House Symbol" style="width: 200px; height: 200px;"/>
-            <div id="house-name" style="color: #dab6bd;"></div>
+        <div class="user-data" hx-get="/hogwarts-house" hx-swap="outerHTML">
+            <#if house??>
+                <div class="user-data">
+                    <img
+                            src="/static/img/${house} house symbole.png"
+                            alt="${house} Symbol"
+                            style="width: 200px; height: 200px;"
+                    />
+                    <div style="color: #dab6bd;">Hogwarts House: ${house}</div>
+                </div>
+            <#else>
+                <p>No Hogwarts house assigned.</p>
+            </#if>
         </div>
-    </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            fetch('/hogwards-house')
-                .then(response => response.text())
-                .then(house => {
-                    var houseSymbol = document.getElementById('house-symbol');
-                    var houseName = document.getElementById('house-name');
-
-
-                    switch(house.trim()) {
-                        case 'Gryffindor':
-                            houseImage = 'https://i.imgur.com/aKCBbFj.png'; // Path to Gryffindor symbol
-                            break;
-                        case 'Hufflepuff':
-                            houseImage = "https://i.imgur.com/PCB2muY.png"; // Path to Hufflepuff symbol
-                            break;
-                        case 'Ravenclaw':
-                            houseImage = 'https://i.imgur.com/Qdxa0vN.png'; // Path to Ravenclaw symbol
-                            break;
-                        case 'Slytherin':
-                            houseImage = 'https://i.imgur.com/ZXKzkrx.png'; // Path to Slytherin symbol
-                            break;
-                    }
-
-                    houseSymbol.src = houseImage;
-                    houseName.textContent = 'Hogwarts House: ' + house;
-                })
-                .catch(error => console.error('Error fetching Hogwarts house:', error));
-        });
-
-
         document.addEventListener('htmx:afterOnLoad', function(event) {
             var targetId = event.detail.target.id;
             var targetElement = document.getElementById(targetId);
