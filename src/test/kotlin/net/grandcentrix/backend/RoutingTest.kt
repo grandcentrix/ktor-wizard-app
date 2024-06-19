@@ -1,47 +1,59 @@
 package net.grandcentrix.backend
 
 import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.server.plugins.*
+import io.ktor.server.config.*
 import io.ktor.server.testing.*
 import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkAll
-import junit.framework.TestCase.assertTrue
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
-import net.grandcentrix.backend.controllers.Signup
 import net.grandcentrix.backend.controllers.UserSession
+import net.grandcentrix.backend.dao.DatabaseSingleton
+import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.User
+import org.jetbrains.exposed.sql.Database
+import org.junit.BeforeClass
+import org.junit.AfterClass
 import org.junit.Test
 import java.io.File
 import kotlin.test.*
-
 
 class RoutingTest {
 
     companion object {
         private const val FILE_NAME = "src/main/resources/testFile.json"
-    }
+        private lateinit var database: Database
 
-    @BeforeTest
-    fun beforeTest() {
-        // copy all users from users.json to a testFile.json
-        val users = UserManagerInstance.getAll()
-        val usersJson = Json.encodeToJsonElement<List<User>>(users).toString()
-        File(FILE_NAME).writeText(usersJson)
+        @BeforeClass
+        @JvmStatic
+        fun beforeTest() {
+            val config = ApplicationConfig("application.conf")
+            val driverClassName = config.property("storage.driverClassName").getString()
+            val url = config.property("storage.jdbcURL").getString()
 
-        // mock the repository class and mock the return file to be the test file
-        mockkObject(UserManagerInstance, recordPrivateCalls = true)
-        every { UserManagerInstance["getFile"]() } returns File(FILE_NAME)
-    }
+            // Connects with the database
+            database = Database.connect(url, driverClassName)
 
-    @AfterTest
-    fun afterTest() {
-        unmockkAll()
-        // reset test file
-        File(FILE_NAME).writeText("[]")
+            // copy all users from users.json to a testFile.json
+            val users = daoUsers.getAll()
+            val usersJson = Json.encodeToJsonElement<List<User>>(users).toString()
+            File(FILE_NAME).writeText(usersJson)
+
+            // mock the repository class and mock the return file to be the test file
+            mockkObject(daoUsers, recordPrivateCalls = true)
+        }
+
+        @AfterClass
+        @JvmStatic
+        fun afterTest() {
+            unmockkAll()
+            // reset test file
+            File(FILE_NAME).writeText("[]")
+        }
     }
 
     @Test
@@ -65,7 +77,6 @@ class RoutingTest {
         assertEquals(HttpStatusCode.OK, response.status)
     }
 
-
     @Test
     fun testLoginWithInvalidCredentials() = testApplication {
         // Sending a POST request to "/login" endpoint with invalid username and password
@@ -79,7 +90,7 @@ class RoutingTest {
         val location = response.headers["Location"].toString()
         // Sending a GET request to the URL obtained from the 'Location' header
         val redirectedResponse = client.get(location).bodyAsText()
-        // Asserting that the redirected response body contains the expected message "Login not authorized"
+        // Asserting that the redirected response body contains the expected message "Login is invalid!"
         assertContains(redirectedResponse, "Login is invalid!")
         // Asserting that the response status code is HttpStatusCode.Found (302)
         assertEquals(HttpStatusCode.Found, response.status)
@@ -113,7 +124,8 @@ class RoutingTest {
             setBody(formParameters.formUrlEncode())
         }
 
-        val location =  signupResponse.headers["Location"].toString()
+        val location = signupResponse.headers["Location"]
+        println("Location header: $location")  // Debug logging
 
         // Asserting that the signup response status code is HttpStatusCode.Found (302)
         // as it should redirect to "/login"
@@ -147,34 +159,26 @@ class RoutingTest {
 
         // Asserting that the Location header is not present, indicating that it's not a redirect
         assertFalse(signupResponse.headers.contains("Location"))
-
-
     }
 
     @Test
     fun accessProfilePageNotAuthenticated() = testApplication {
-
         val response = client.get("/profile") {
             // No session cookie added
         }
 
         // Assert that the response status code is HttpStatusCode.Found (302),
         // indicating a redirection to another page
-        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(HttpStatusCode.Found, response.status)
 
         // Assert that the URL of the request is "/login", indicating redirection
-        val url = response.request.url.encodedPath
+        val url = response.headers["Location"]
         assertEquals("/login", url)
     }
 
-
-
-
-
     @Test
     fun accessProfilePageAuthenticated() = testApplication {
-        // Retrieve username from storage
-        val username = UserManagerInstance.getAll().firstOrNull()?.username ?: ""
+        val username = "testuser"
 
         // Send a GET request to "/profile" endpoint with authenticated session
         val response = client.get("/profile") {
@@ -189,11 +193,130 @@ class RoutingTest {
         assertNull(response.headers["Location"])
     }
 
+    @Test
+    fun deleteUserAccount() = testApplication {
+        val username = "testuser"
+        every { daoUsers.deleteItem(username) }
 
+        // Send a DELETE request to "/user/account" endpoint with authenticated session
+        val response = client.delete("/user/account") {
+            cookie("auth-session", username)
+        }
+
+        // Assert that the response status code is HttpStatusCode.OK (200)
+        assertEquals(HttpStatusCode.OK, response.status)
+    }
+
+    @Test
+    fun updateUserUsername() = testApplication {
+        val username = "testuser"
+        val newUsername = "newtestuser"
+
+        // Send a PUT request to "/user/username" endpoint with authenticated session
+        val response = client.put("/user/username") {
+            cookie("auth-session", username)
+            setBody(FormDataContent(Parameters.build {
+                append("newUsername", newUsername)
+            }))
+        }
+
+        // Assert that the response status code is HttpStatusCode.OK (200)
+        assertEquals(HttpStatusCode.Found, response.status)
+    }
+
+    @Test
+    fun updateUserEmail() = testApplication {
+        val username = "testuser"
+        val newEmail = "newemail@example.com"
+
+        // Send a PUT request to "/user/email" endpoint with authenticated session
+        val response = client.put("/user/email") {
+            cookie("auth-session", username)
+            setBody(FormDataContent(Parameters.build {
+                append("newEmail", newEmail)
+            }))
+        }
+
+        // Assert that the response status code is HttpStatusCode.OK (200)
+        assertEquals(HttpStatusCode.Found, response.status)
+    }
+
+    @Test
+    fun `update user password`() = testApplication {
+        val username = "testuser"
+        val newPassword = "newpassword"
+
+        every { daoUsers.updatePassword(username, newPassword) }
+
+        val response = client.put("/user/password") {
+            cookie("auth-session", username)
+            setBody(FormDataContent(Parameters.build {
+                append("newPassword", newPassword)
+            }))
+        }
+
+        assertEquals(HttpStatusCode.Found, response.status)
+    }
+
+    @Test
+    fun `update profile picture`() = testApplication {
+        val username = "testuser"
+        val imageData = byteArrayOf(0x01, 0x02, 0x03) // Example image data
+
+        every { daoUsers.updateProfilePicture(username, any()) }
+
+        val response = client.put("/user/profilepicture") {
+            cookie("auth-session", username)
+            setBody(MultiPartFormDataContent(formData {
+                append("imageData", "image.jpg", ContentType.Image.JPEG) {
+                   // writeBytes(imageData)
+                }
+            }))
+        }
+
+        assertEquals(HttpStatusCode.Found, response.status)
+    }
+
+    @Test
+    fun `remove profile picture`() = testApplication {
+        val username = "testuser"
+
+        every { daoUsers.removeProfilePicture(username) }
+
+        val response = client.delete("/user/profilepicture") {
+            cookie("auth-session", username)
+        }
+
+        assertEquals(HttpStatusCode.Found, response.status)
+    }
+
+    @Test
+    fun `get Hogwarts house`() = testApplication {
+        val username = "testuser"
+        val houseName = "Gryffindor" // Example house name
+
+        every { daoUsers.getHouse(username) } returns houseName
+
+        val response = client.get("/hogwards-house") {
+            cookie("auth-session", username)
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+    }
+
+    @Test
+    fun `get profile picture`() = testApplication {
+        val username = "testuser"
+        val mockImageContent = "static/img/house.png" // Example image content
+
+        every { daoUsers.getProfilePictureData(username) } returns mockImageContent.toByteArray()
+
+        val response = client.get("/profile-picture") {
+            cookie("auth-session", username)
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+    }
 
 }
-
-
-
-
 
