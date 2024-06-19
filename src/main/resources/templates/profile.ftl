@@ -70,15 +70,13 @@
 
     <script>
         document.addEventListener('htmx:afterOnLoad', function(event) {
-            var targetId = event.detail.target.id;
-            var targetElement = document.getElementById(targetId);
+            var targetElement = document.getElementById(event.detail.target.id);
 
-            if (targetElement && event.detail.xhr.status >= 200 && event.detail.xhr.status < 300) {
-                targetElement.innerText = event.detail.xhr.responseText;
-            } else if (targetElement) {
+            if (targetElement) {
                 targetElement.innerText = event.detail.xhr.responseText;
             }
         });
+
 
         document.addEventListener('DOMContentLoaded', function() {
             var uploadButton = document.getElementById('upload-button');
