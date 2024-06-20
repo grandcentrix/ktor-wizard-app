@@ -103,9 +103,6 @@ class SignupTest {
         val user = daoUsers.getItem(formParameters["username"]!!)
 
         assertNull(user!!.house)
-
-        // delete the created user
-        daoUsers.deleteItem("persontwo")
     }
 
     @Test
@@ -128,9 +125,6 @@ class SignupTest {
             expected = formParameters["houses"]!!,
             actual = user.house!!.id
         )
-
-        // delete the created user
-        daoUsers.deleteItem("persontwo")
     }
 
     @Test
