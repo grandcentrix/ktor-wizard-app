@@ -1,9 +1,8 @@
 package net.grandcentrix.backend.controllers
 
 import io.ktor.http.*
-import io.ktor.server.config.*
+import net.grandcentrix.backend.TestDatabaseSetup.startDatabase
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
-import net.grandcentrix.backend.dao.DatabaseSingleton
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.House
 import net.grandcentrix.backend.models.User
@@ -16,8 +15,10 @@ class SignupTest {
 
     @BeforeTest
     fun beforeTest() {
-      // create a population of users for test
-        val user1 = User(
+        // set a test database using a configuration file for tests
+        startDatabase()
+
+        val user = User (
             "Person",
             "One",
             "personone@email.com",
@@ -26,38 +27,7 @@ class SignupTest {
             null
         )
 
-        val user2 = User(
-            "Person",
-            "Two",
-            "persontwo@email.com",
-            "persontwo",
-            "123",
-            null
-        )
-
-        val user3 = User(
-            "Person",
-            "Three",
-            "personthree@email.com",
-            "personthree",
-            "123",
-            null
-        )
-
-        // set a test database using a configuration file for tests
-        val configTest = ApplicationConfig("./src/main/resources/test_application.conf")
-        DatabaseSingleton.init(configTest)
-        // add the small population from the app database to the test database
-        daoUsers.addItem(user1)
-        daoUsers.addItem(user2)
-        daoUsers.addItem(user3)
-    }
-
-    @AfterTest
-    fun afterTest() {
-        for (user in daoUsers.getAll()) {
-            daoUsers.deleteItem(user.username)
-        }
+        daoUsers.addItem(user)
     }
 
     @Test
@@ -65,7 +35,7 @@ class SignupTest {
         val formParameters = Parameters.build {
             append("name", "")
             append("surname", "")
-            append("email", "personfour@email.com")
+            append("email", "persontwo@email.com")
             append("username", "")
             append("password", "123")
             append("house", "")
@@ -83,8 +53,8 @@ class SignupTest {
     fun testCreateUserWitDuplicatedUsername() {
         val formParameters = Parameters.build {
             append("name", "Person")
-            append("surname", "Four")
-            append("email", "personfour@email.com")
+            append("surname", "Two")
+            append("email", "persontwo@email.com")
             append("username", "personone")
             append("password", "123")
             append("house", "")
@@ -103,9 +73,9 @@ class SignupTest {
         val duplicatedEmail = daoUsers.getAll().first().email
         val formParameters = Parameters.build {
             append("name", "Person")
-            append("surname", "Four")
-            append("email", "personone@email.com")
-            append("username", "personfour")
+            append("surname", "Two")
+            append("email", duplicatedEmail)
+            append("username", "persontwo")
             append("password", "123")
             append("house", "")
         }
@@ -122,9 +92,9 @@ class SignupTest {
     fun testCreateUserWithoutHouse() {
         val formParameters = Parameters.build {
             append("name", "Person")
-            append("surname", "Four")
-            append("email", "personfour@email.com")
-            append("username", "personfour")
+            append("surname", "Two")
+            append("email", "persontwo@email.com")
+            append("username", "persontwo")
             append("password", "123")
             append("house", "")
         }
@@ -135,16 +105,16 @@ class SignupTest {
         assertNull(user!!.house)
 
         // delete the created user
-        daoUsers.deleteItem("personfour")
+        daoUsers.deleteItem("persontwo")
     }
 
     @Test
     fun testCreateUserWithHouse() {
         val formParameters = Parameters.build {
             append("name", "Person")
-            append("surname", "Four")
-            append("email", "personfour@email.com")
-            append("username", "personfour")
+            append("surname", "Two")
+            append("email", "persontwo@email.com")
+            append("username", "persontwo")
             append("password", "123")
             append("houses", "0367baf3-1cb6-4baf-bede-48e17e1cd005")
         }
@@ -160,16 +130,16 @@ class SignupTest {
         )
 
         // delete the created user
-        daoUsers.deleteItem("personfour")
+        daoUsers.deleteItem("persontwo")
     }
 
     @Test
     fun testInvalidEmailAddress() {
         val formParameters = Parameters.build {
             append("name", "Person")
-            append("surname", "Four")
-            append("email", "personfour@email")
-            append("username", "personfour")
+            append("surname", "Two")
+            append("email", "persontwo@email")
+            append("username", "persontwo")
             append("password", "123")
             append("houses", "")
         }
@@ -186,9 +156,9 @@ class SignupTest {
     fun testInvalidUsername() {
         val formParameters = Parameters.build {
             append("name", "Person")
-            append("surname", "Four")
-            append("email", "personfour@email")
-            append("username", "!personfour!")
+            append("surname", "Two")
+            append("email", "persontwo@email")
+            append("username", "!persontwo!")
             append("password", "123")
             append("houses", "")
         }
@@ -206,8 +176,8 @@ class SignupTest {
         val formParameters = Parameters.build {
             append("name", "1234")
             append("surname", "Person")
-            append("email", "personfour@email")
-            append("username", "personfour")
+            append("email", "persontwo@email")
+            append("username", "persontwo")
             append("password", "123")
             append("houses", "")
         }
