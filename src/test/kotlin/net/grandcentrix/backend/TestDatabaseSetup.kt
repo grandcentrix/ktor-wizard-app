@@ -34,18 +34,6 @@ object TestDatabaseSetup {
             // creates the tables
             SchemaUtils.create(Users)
 
-//            // Add one user for tests
-//            Users.insert {
-//                it[id] = UUID.randomUUID().toString()
-//                it[name] = "Person"
-//                it[surname] = "One"
-//                it[email] = "personone@email.com"
-//                it[username] = "personone"
-//                it[password] = "123"
-//                it[house] = ""
-//                it[favouriteItems] = ""
-//            }
-
         }
 
         println("Database initialized successfully!")
