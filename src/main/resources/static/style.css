@@ -234,7 +234,7 @@ menu.main-menu li:target {
     letter-spacing: 0.3px;
     border-radius: 100px;
     margin-left: 10px;
-/*     padding: 0; */
+    /*     padding: 0; */
     padding: 10px 20px;
     /* background-color: transparent; */
     /* border: 1px solid #dab5bd; */
@@ -433,27 +433,37 @@ ul.content-list {
     padding: 0;
     margin: 0;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: flex-start;
     font-size: 16px;
 }
 
 .content-list li {
-    width: calc((100% / 3) - 1%);
+    width: calc((100% / 5) - 1%);
     display: flex;
     align-items: center;
     margin: 1% 0;
+    height: auto;
+    flex-direction: column;
 }
 
 .content-list li a {
     background-color: #7C404C;
     padding: 40px;
-    border-radius: 10px;
+    border-radius: 0px 0px 10px 10px;
     font-weight: bold;
-    width: 100%;
+    width: calc((100%) - 80px);
     display: flex;
     justify-content: center;
+    height: 100%;
 }
 
 .content-list li a:hover {
     background-color: #734136;
+}
+
+.content-img {
+    object-fit: cover;
+    height: 470px;
+    width: 100%;
+    object-position: top center;
 }
