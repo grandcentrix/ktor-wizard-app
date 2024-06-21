@@ -455,6 +455,8 @@ ul.content-list {
     display: flex;
     justify-content: center;
     height: 100%;
+    max-height: 130px;
+    align-items: center;
 }
 
 .content-list li a:hover {
@@ -466,4 +468,9 @@ ul.content-list {
     height: 470px;
     width: 100%;
     object-position: top center;
+}
+
+.content-img:hover {
+    filter: grayscale(1);
+    transition-duration: 0.8s;
 }
