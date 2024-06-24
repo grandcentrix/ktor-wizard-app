@@ -12,7 +12,6 @@
     <body>
     <header>
         <#if userSession == "null">
-            <p>${gravatar}</p>
             <nav class="user-menu">
                 <!-- Profile Picture Dropdown Section -->
                 <div class="dropdown" id="profile-dropdown">
@@ -25,7 +24,6 @@
                 </div>
             </nav>
         <#elseif userSession != "null" && (gravatar == "null")>
-            <p>${gravatar}</p>
             <nav class="user-menu">
                 <!-- Profile Picture Dropdown Section -->
                 <div class="dropdown" id="profile-dropdown">
@@ -38,7 +36,6 @@
                 </div>
             </nav>
         <#else>
-            <p>${gravatar}</p>
             <nav class="user-menu">
                 <!-- Profile Picture Dropdown Section -->
                 <div class="dropdown" id="profile-dropdown">

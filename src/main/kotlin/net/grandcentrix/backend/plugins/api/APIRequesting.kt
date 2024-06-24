@@ -6,6 +6,7 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
+import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import net.grandcentrix.backend.models.*
@@ -88,13 +89,12 @@ object APIRequesting {
         return spells
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     fun fetchGravatarProfile(email: String): GravatarProfile {
         val digest = MessageDigest.getInstance("SHA-256")
         val hashBytes = digest.digest(
             email.toByteArray(StandardCharsets.UTF_8)
         )
-        val emailKey: String = hashBytes.toHexString()
+        val emailKey: String = hex(hashBytes)
 
         try {
             val profile: GravatarProfile = runBlocking {
