@@ -3,10 +3,10 @@
 
 <@layout.base>
 
-    <h1>
-        <span class="material-symbols-outlined">account_box</span>
-        Welcome, ${username}!
-    </h1>
+<h1>
+    <span class="material-symbols-outlined">account_box</span>
+    Welcome, ${username}!
+</h1>
 
 
 
@@ -35,37 +35,35 @@
         </form>
     </div>
 
-        <div class="user-data">
-            <p>Profile Picture:</p>
-            <form id="upload-form" enctype="multipart/form-data">
-                <input type="file" id="picture-upload" name="profilePicture" style="display: none;">
-                <button type="button" id="upload-button">Upload Picture</button>
-            </form>
-            <button hx-delete="/user/profilepicture" hx-target="#message-container-picture">Remove Picture</button>
-            <p id="message-container-picture" style="color: #dab6bd; margin-left:15px;"></p>
-        </div>
+    <div class="user-data">
+        <p>Profile Picture:</p>
+        <form id="upload-form" enctype="multipart/form-data">
+            <input type="file" id="picture-upload" name="profilePicture" style="display: none;">
+            <button type="button" id="upload-button">Upload Picture</button>
+        </form>
+        <button hx-delete="/user/profilepicture" hx-target=".content">Remove Picture</button>
+    </div>
 
-        <div class="delete-button">
-            <form hx-delete="/user/account" hx-trigger="submit" hx-target="#delete-message-container" onsubmit="return confirm('Are you sure you want to delete your account?');">
-                <input class="button" style="margin-left: 0;" type="submit" value="Delete Account">
-            </form>
-            <p id="delete-message-container" style="color: #dab6bd; margin-left:15px;"></p>
-        </div>
+    <div class="delete-button">
+        <form hx-delete="/user/account" hx-trigger="submit" hx-target=".content" onsubmit="return confirm('Are you sure you want to delete your account?');">
+            <input class="button" style="margin-left: 0;" type="submit" value="Delete Account">
+        </form>
+    </div>
 
-        <div class="user-data" hx-get="/hogwarts-house" hx-swap="outerHTML">
-            <#if house??>
-                <div class="user-data">
-                    <img
-                            src="/static/img/${house} house symbole.png"
-                            alt="${house} Symbol"
-                            style="width: 200px; height: 200px;"
-                    />
-                    <div style="color: #dab6bd;">Hogwarts House: ${house}</div>
-                </div>
-            <#else>
-                <p>No Hogwarts house assigned.</p>
-            </#if>
-        </div>
+    <div class="user-data" hx-get="/hogwarts-house" hx-swap="outerHTML">
+        <#if house??>
+            <div class="user-data">
+                <img
+                        src="/static/img/${house} house symbole.png"
+                        alt="${house} Symbol"
+                        style="width: 200px; height: 200px;"
+                />
+                <div style="color: #dab6bd;">Hogwarts House: ${house}</div>
+            </div>
+        <#else>
+            <p>No Hogwarts house assigned.</p>
+        </#if>
+    </div>
 
     <script>
 
@@ -123,4 +121,4 @@
         });
     </script>
 
-</@layout.base>
+    </@layout.base>
