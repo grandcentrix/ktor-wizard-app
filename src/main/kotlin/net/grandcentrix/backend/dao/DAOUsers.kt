@@ -1,6 +1,5 @@
 package net.grandcentrix.backend.dao
 
-import kotlinx.coroutines.runBlocking
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.models.Users
 import org.jetbrains.exposed.sql.*
@@ -99,7 +98,7 @@ class DAOUsers : DAOFacade {
 
             Users.update({ Users.username eq username }) {
                 it[profilePictureData] = imageData
-            } > 0
+            } > 0 //needs to throw an exception instead of comparing to booleans
         }
 
 
@@ -128,6 +127,5 @@ class DAOUsers : DAOFacade {
     }
 
 
-val daoUsers = DAOUsers().apply {
+val daoUsers = DAOUsers()
 
-}

@@ -4,6 +4,7 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.sessions.*
 import io.ktor.server.response.*
+import io.ktor.util.*
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
@@ -48,7 +49,7 @@ suspend fun ApplicationCall.updateEmail(userSession: UserSession, newEmail: Stri
     }
 }
 
-@OptIn(ExperimentalStdlibApi::class)
+
 suspend fun ApplicationCall.updatePassword(userSession: UserSession, newPassword: String?) {
     if (newPassword.isNullOrBlank()) {
         throw RequestException("New password is missing or empty")
@@ -56,7 +57,7 @@ suspend fun ApplicationCall.updatePassword(userSession: UserSession, newPassword
     val username = userSession.username
     val salt = SignupInstance.generateRandomSalt()
     val hashedPassword = SignupInstance.generateHash(newPassword, salt)
-    val hexSalt = salt.toHexString()
+    val hexSalt = hex(salt)
     if (daoUsers.updatePassword(username, hexSalt + hashedPassword)) {
         response.headers.append("HX-Redirect", "/logout")
         respondText("Password updated successfully", status = HttpStatusCode.OK)
@@ -110,7 +111,6 @@ suspend fun ApplicationCall.getProfilePicture(userSession: UserSession) {
     if (profilePictureData != null) {
         respondBytes(profilePictureData, ContentType.Image.JPEG)
     } else {
-        respondBytes(ByteArray(0), ContentType.Image.JPEG)
+        respondBytes(ByteArray(0),ContentType.Image.JPEG ) //needs to be changed to text and 404
     }
 }
-
