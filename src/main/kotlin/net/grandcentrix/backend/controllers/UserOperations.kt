@@ -8,56 +8,50 @@ import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
 
-suspend fun ApplicationCall.verifyUserSession(): UserSession? {
+fun ApplicationCall.verifyUserSession(): UserSession? {
     val userSession = sessions.get<UserSession>()
     if (userSession == null) {
-        respondText("User session is missing", status = HttpStatusCode.BadRequest)
+        throw RequestException("User session is missing")
     }
     return userSession
 }
 
 suspend fun ApplicationCall.updateUsername(userSession: UserSession, newUsername: String?) {
     if (newUsername.isNullOrEmpty()) {
-        respondText("New username is missing or empty", status = HttpStatusCode.BadRequest)
-        return
+        throw RequestException("New username is missing or empty")
     }
     val username = userSession.username
     if (daoUsers.getItem(newUsername) != null) {
-        respondText("New username is already taken", status = HttpStatusCode.Conflict)
-        return
+        throw UserAlreadyExistsException("New username is already taken")
     }
     if (daoUsers.updateUsername(username, newUsername)) {
         response.headers.append("HX-Redirect", "/logout")
         respondText("Username updated successfully", status = HttpStatusCode.OK)
     } else {
-        respondText("Failed to update username", status = HttpStatusCode.InternalServerError)
+        throw RequestException("Failed to update username")
     }
 }
 
 suspend fun ApplicationCall.updateEmail(userSession: UserSession, newEmail: String?) {
     if (newEmail.isNullOrEmpty()) {
-        respondText("New email is missing or empty", status = HttpStatusCode.BadRequest)
-        return
+        throw RequestException("New email is missing or empty")
     }
     val username = userSession.username
     if (daoUsers.getByEmail(newEmail) != null) {
-        respondText("New email is already taken", status = HttpStatusCode.Conflict)
-        return
+        throw UserAlreadyExistsException("New email is already taken")
     }
     if (daoUsers.updateEmail(username, newEmail)) {
         response.headers.append("HX-Redirect", "/profile")
         respondText("Email updated successfully", status = HttpStatusCode.OK)
     } else {
-        respondText("Failed to update email", status = HttpStatusCode.InternalServerError)
+        throw RequestException("Failed to update email")
     }
 }
-
 
 @OptIn(ExperimentalStdlibApi::class)
 suspend fun ApplicationCall.updatePassword(userSession: UserSession, newPassword: String?) {
     if (newPassword.isNullOrBlank()) {
-        respondText("New password is missing or empty", status = HttpStatusCode.BadRequest)
-        return
+        throw RequestException("New password is missing or empty")
     }
     val username = userSession.username
     val salt = SignupInstance.generateRandomSalt()
@@ -67,7 +61,7 @@ suspend fun ApplicationCall.updatePassword(userSession: UserSession, newPassword
         response.headers.append("HX-Redirect", "/logout")
         respondText("Password updated successfully", status = HttpStatusCode.OK)
     } else {
-        respondText("Failed to update password", status = HttpStatusCode.InternalServerError)
+        throw RequestException("Failed to update password")
     }
 }
 
@@ -78,19 +72,18 @@ suspend fun ApplicationCall.deleteAccount(userSession: UserSession) {
         response.headers.append("HX-Redirect", "/logout")
         respondText("Account deleted successfully", status = HttpStatusCode.OK)
     } catch (e: Exception) {
-        respondText("Failed to delete account: ${e.localizedMessage}", status = HttpStatusCode.InternalServerError)
+        throw RequestException("Failed to delete account: ${e.localizedMessage}")
     }
 }
 
 suspend fun ApplicationCall.updateProfilePicture(userSession: UserSession, imageData: ByteArray?) {
     if (imageData == null) {
-        respondText("Image data is missing", status = HttpStatusCode.BadRequest)
-        return
+        throw RequestException("Image data is missing")
     }
     if (daoUsers.updateProfilePicture(userSession.username, imageData)) {
         respondText("Profile picture uploaded successfully", status = HttpStatusCode.OK)
     } else {
-        respondText("Failed to upload profile picture", status = HttpStatusCode.InternalServerError)
+        throw RequestException("Failed to upload profile picture")
     }
 }
 
@@ -99,7 +92,7 @@ suspend fun ApplicationCall.removeProfilePicture(userSession: UserSession) {
         response.headers.append("HX-Redirect", "/profile")
         respondText("Profile picture removed successfully", status = HttpStatusCode.OK)
     } else {
-        respondText("Failed to remove profile picture", status = HttpStatusCode.InternalServerError)
+        throw RequestException("Failed to remove profile picture")
     }
 }
 
@@ -108,7 +101,7 @@ suspend fun ApplicationCall.getHogwartsHouse(userSession: UserSession) {
     if (house != null) {
         respondText(house, status = HttpStatusCode.OK)
     } else {
-        respondText("House not found", status = HttpStatusCode.NotFound)
+        throw RequestException("House not found")
     }
 }
 
@@ -120,3 +113,4 @@ suspend fun ApplicationCall.getProfilePicture(userSession: UserSession) {
         respondBytes(ByteArray(0), ContentType.Image.JPEG)
     }
 }
+

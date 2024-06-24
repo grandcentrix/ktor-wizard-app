@@ -8,33 +8,31 @@
         Welcome, ${username}!
     </h1>
 
-    <section class="content" style="flex-direction: column;">
-        <div class="user-data">
-            <form hx-put="/user/username" hx-trigger="submit" hx-target="#message-container-username">
-                <label for="new-username">New Username:</label>
-                <input type="text" id="new-username" name="newUsername" required>
-                <input type="submit" value="Update Username">
-                <p id="message-container-username" style="color: #dab6bd; margin-left:15px;"></p>
-            </form>
-        </div>
 
-        <div class="user-data">
-            <form hx-put="/user/email" hx-trigger="submit" hx-target="#message-container-email">
-                <label for="new-email">New Email:</label>
-                <input type="email" id="new-email" name="newEmail" required>
-                <input type="submit" value="Update Email">
-                <p id="message-container-email" style="color: #dab6bd; margin-left:15px;"></p>
-            </form>
-        </div>
+<section class="content" style="flex-direction: column;">
+    <div class="user-data">
+        <form hx-put="/user/username" hx-trigger="submit" hx-target="this">
+            <label for="new-username">New Username:</label>
+            <input type="text" id="new-username" name="newUsername" required>
+            <input type="submit" value="Update Username">
+        </form>
+    </div>
 
-        <div class="user-data">
-            <form hx-put="/user/password" hx-trigger="submit" hx-target="#message-container-password">
-                <label for="new-password">New Password:</label>
-                <input type="password" id="new-password" name="newPassword" required>
-                <input type="submit" value="Update Password">
-                <p id="message-container-password" style="color: #dab6bd; margin-left:15px;"></p>
-            </form>
-        </div>
+    <div class="user-data">
+        <form hx-put="/user/email" hx-trigger="submit" hx-target="this">
+            <label for="new-email">New Email:</label>
+            <input type="email" id="new-email" name="newEmail" required>
+            <input type="submit" value="Update Email">
+        </form>
+    </div>
+
+    <div class="user-data">
+        <form hx-put="/user/password" hx-trigger="submit" hx-target="this">
+            <label for="new-password">New Password:</label>
+            <input type="password" id="new-password" name="newPassword" required>
+            <input type="submit" value="Update Password">
+        </form>
+    </div>
 
         <div class="user-data">
             <p>Profile Picture:</p>

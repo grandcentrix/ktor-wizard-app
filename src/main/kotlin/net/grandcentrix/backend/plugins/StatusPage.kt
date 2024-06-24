@@ -29,7 +29,13 @@ fun Application.configureStatusPage() {
                 is UnauthorizedException -> call.respondRedirect( "/login")
 
                 is UserAlreadyExistsException -> {
-                    call.respondRedirect("/signup")
+                    call.respondTemplate(
+                        "error.ftl",
+                        mapOf(
+                            "errorMessage" to cause.message,
+                            "redirectLink" to "/signup"
+                        )
+                    )
                 }
 
                 else ->
