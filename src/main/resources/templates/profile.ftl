@@ -9,9 +9,10 @@
     </h1>
 
 
+
 <section class="content" style="flex-direction: column;">
     <div class="user-data">
-        <form hx-put="/user/username" hx-trigger="submit" hx-target="this">
+        <form hx-put="/user/username" hx-trigger="submit" hx-target=".content">
             <label for="new-username">New Username:</label>
             <input type="text" id="new-username" name="newUsername" required>
             <input type="submit" value="Update Username">
@@ -19,7 +20,7 @@
     </div>
 
     <div class="user-data">
-        <form hx-put="/user/email" hx-trigger="submit" hx-target="this">
+        <form hx-put="/user/email" hx-trigger="submit" hx-target=".content">
             <label for="new-email">New Email:</label>
             <input type="email" id="new-email" name="newEmail" required>
             <input type="submit" value="Update Email">
@@ -27,7 +28,7 @@
     </div>
 
     <div class="user-data">
-        <form hx-put="/user/password" hx-trigger="submit" hx-target="this">
+        <form hx-put="/user/password" hx-trigger="submit" hx-target=".content">
             <label for="new-password">New Password:</label>
             <input type="password" id="new-password" name="newPassword" required>
             <input type="submit" value="Update Password">
@@ -67,13 +68,7 @@
         </div>
 
     <script>
-        document.addEventListener('htmx:afterOnLoad', function(event) {
-            var targetElement = document.getElementById(event.detail.target.id);
 
-            if (targetElement) {
-                targetElement.innerText = event.detail.xhr.responseText;
-            }
-        });
 
 
         document.addEventListener('DOMContentLoaded', function() {
