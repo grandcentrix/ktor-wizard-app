@@ -1,5 +1,5 @@
 <#assign userSession = "null">
-<#global avatar = "null">
+<#global gravatar = "null">
 
 <#macro base>
     <!DOCTYPE html>
@@ -12,7 +12,7 @@
     <body>
     <header>
         <#if userSession == "null">
-            <p>${avatar}</p>
+            <p>${gravatar}</p>
             <nav class="user-menu">
                 <!-- Profile Picture Dropdown Section -->
                 <div class="dropdown" id="profile-dropdown">
@@ -24,8 +24,8 @@
                     <!-- End of Profile Picture Dropdown Section -->
                 </div>
             </nav>
-        <#elseif userSession != "null" && (avatar == "null")>
-            <p>${avatar}</p>
+        <#elseif userSession != "null" && (gravatar == "null")>
+            <p>${gravatar}</p>
             <nav class="user-menu">
                 <!-- Profile Picture Dropdown Section -->
                 <div class="dropdown" id="profile-dropdown">
@@ -38,10 +38,11 @@
                 </div>
             </nav>
         <#else>
+            <p>${gravatar}</p>
             <nav class="user-menu">
                 <!-- Profile Picture Dropdown Section -->
                 <div class="dropdown" id="profile-dropdown">
-                    <img class="profile-picture" id="profile-pic" src="${avatar}" alt="Profile Picture">
+                    <img class="profile-picture" id="profile-pic" src="${gravatar}" alt="Profile Picture">
                     <div class="dropdown-content">
                         <a href="/profile#favourites">Favourites</a>
                         <a href="/logout">Logout</a>

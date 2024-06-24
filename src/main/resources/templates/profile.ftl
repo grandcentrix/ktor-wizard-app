@@ -1,6 +1,6 @@
 <#import "_layout.ftl" as layout />
 <#assign userSession = userSession in layout>
-<#assign avatar = avatar>
+<#assign gravatar = avatar in layout>
 
 <@layout.base> <!-- Calling the "base" macro defined in the imported "_layout.ftl" template -->
 

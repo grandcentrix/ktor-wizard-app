@@ -3,6 +3,7 @@ package net.grandcentrix.backend.controllers
 import io.ktor.server.auth.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.dao.daoUsers
+import net.grandcentrix.backend.models.GravatarProfile
 
 
 class Login {
@@ -30,6 +31,13 @@ class Login {
 
         val inputHash = SignupInstance.generateHash(password, salt)
         return inputHash.contentEquals(storedPasswordHash)
+    }
+
+    fun verifyGravatarProfile(gravatar: GravatarProfile?): GravatarProfile? {
+        if (!gravatar?.error.isNullOrEmpty()) {
+            return null
+        }
+        return gravatar
     }
 
 }

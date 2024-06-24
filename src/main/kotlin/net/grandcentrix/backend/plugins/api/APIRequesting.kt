@@ -3,13 +3,10 @@ package net.grandcentrix.backend.plugins.api
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import net.grandcentrix.backend.models.*
 import net.grandcentrix.backend.plugins.GravatarProfileError
@@ -110,12 +107,4 @@ object APIRequesting {
             throw GravatarProfileError("Gravatar API failed")
         }
     }
-}
-
-@Serializable
-data class Error(val code: Int, val message: String)
-class CustomResponseException(response: HttpResponse, cachedResponseText: String) :
-    ResponseException(response, cachedResponseText) {
-    override val message: String = "Custom server error: ${response.call.request.url}. " +
-            "Status: ${response.status}. Text: \"$cachedResponseText\""
 }

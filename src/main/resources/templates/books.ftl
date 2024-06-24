@@ -1,6 +1,6 @@
 <#import "_layout.ftl" as layout />
 <#assign userSession = userSession in layout>
-<#assign avatar = layout.avatar>
+<#assign gravatar = avatar in layout>
 
 <@layout.base>
     <h1>

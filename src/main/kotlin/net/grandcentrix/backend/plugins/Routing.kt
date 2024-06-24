@@ -8,6 +8,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
+import net.grandcentrix.backend.controllers.Login.Companion.LoginInstance
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.dao.daoUsers
@@ -55,8 +56,11 @@ fun Application.configureRouting() {
                     val username = call.principal<UserIdPrincipal>()?.name.toString()
                     call.sessions.set(UserSession(username))
                     userSession = call.sessions.get<UserSession>()
+
                     val userEmail = daoUsers.getItem(username)?.email
-                    gravatarProfile = fetchGravatarProfile(userEmail!!)
+                    val gravatar = fetchGravatarProfile(userEmail!!)
+                    gravatarProfile = LoginInstance.verifyGravatarProfile(gravatar)
+
                     call.respondRedirect("/")
                 }
             }
@@ -71,7 +75,7 @@ fun Application.configureRouting() {
                             "username" to username,
                             "uploadButton" to true,
                             "userSession" to userSession.toString(),
-                            "avatar" to gravatarProfile?.avatarUrl
+                            "avatar" to gravatarProfile?.avatarUrl.toString()
                         )
                     ))
                 }
@@ -109,7 +113,7 @@ fun Application.configureRouting() {
                     mapOf(
                         "books" to BooksRepositoryInstance.getAll(),
                         "userSession" to userSession.toString(),
-                        "avatar" to gravatarProfile?.avatarUrl
+                        "avatar" to gravatarProfile?.avatarUrl.toString()
                     )
                 )
             }
