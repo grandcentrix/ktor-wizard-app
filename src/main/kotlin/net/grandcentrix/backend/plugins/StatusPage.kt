@@ -7,6 +7,7 @@ import io.ktor.server.http.content.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import net.grandcentrix.backend.repository.HousesRepository
 
 fun Application.configureStatusPage() {
     routing {
@@ -38,6 +39,17 @@ fun Application.configureStatusPage() {
                     )
                 }
 
+                is SignupInvalidInput -> {
+                    call.respondTemplate(
+                        "signup.ftl",
+                        mapOf(
+                            "userSession" to "null",
+                            "houses" to HousesRepository.HousesRepositoryInstance.getAll().map { it.name },
+                            "message" to cause.message
+                        )
+                    )
+                }
+
                 else ->
                     call.respondTemplate(
                         "error.ftl",
@@ -64,3 +76,4 @@ open class StatusException(override val message: String?): Exception()
 class RequestException(override val message: String?): StatusException(message)
 class UserAlreadyExistsException(override val message: String?): StatusException(message)
 class UnauthorizedException(override val message: String?): StatusException(message)
+class SignupInvalidInput(override val message: String?): StatusException(message)

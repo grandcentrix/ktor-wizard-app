@@ -1,6 +1,5 @@
 package net.grandcentrix.backend.plugins
 
-import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -13,8 +12,6 @@ import io.ktor.server.sessions.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.dao.daoUsers
-import net.grandcentrix.backend.models.Users
-import net.grandcentrix.backend.models.Users.password
 import net.grandcentrix.backend.models.Users.username
 import net.grandcentrix.backend.repository.BooksRepository.Companion.BooksRepositoryInstance
 import net.grandcentrix.backend.repository.CharactersRepository.Companion.CharactersRepositoryInstance
@@ -86,7 +83,8 @@ fun Application.configureRouting() {
                         "signup.ftl",
                         mapOf(
                             "userSession" to "null",
-                            "houses" to HousesRepositoryInstance.getAll().map { it.name }
+                            "houses" to HousesRepositoryInstance.getAll().map { it.name },
+                            "message" to ""
                         )
                     ))
                 }

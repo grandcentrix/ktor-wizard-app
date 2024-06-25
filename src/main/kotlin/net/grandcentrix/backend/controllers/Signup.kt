@@ -5,10 +5,11 @@ import io.ktor.util.*
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.plugins.RequestException
+import net.grandcentrix.backend.plugins.SignupInvalidInput
 import net.grandcentrix.backend.plugins.UserAlreadyExistsException
-import java.util.regex.Pattern;
 import java.security.SecureRandom
 import java.security.spec.KeySpec
+import java.util.regex.Pattern
 import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
@@ -83,16 +84,40 @@ class Signup {
     ) {
         // regex - set of strings that matches the pattern
         val emailPattern = Pattern.compile("^(.+)@(\\S+)$")
-        val usernamePattern = Pattern.compile("^(?!.*\\.\\.)(?!.*\\.\$)[^\\W][\\w.]{0,29}\$")
-        val namesPattern = Pattern.compile("^[a-zA-Z]+(?:\\s+[a-zA-Z]+)*\$")
 
-        if (!emailPattern.matcher(email).matches()) {
-            throw RequestException("Invalid value for e-mail!")
-        } else if (!usernamePattern.matcher(username).matches()) {
-            throw RequestException("Invalid value for username!")
-        } else if (!namesPattern.matcher(name).matches() || !namesPattern.matcher(surname).matches()) {
-            throw RequestException("Invalid value for name!")
+        name.toCharArray().map { character ->
+            if (!character.isLetter() && !character.isWhitespace()) {
+                throw SignupInvalidInput("Name and surname must contain only letters.")
+            }
         }
+
+        surname.toCharArray().map { character ->
+            if (!character.isLetter() && !character.isWhitespace()) {
+                throw SignupInvalidInput("Name and surname must contain only letters.")
+            }
+        }
+
+        username.toCharArray().map { character ->
+            if (!character.isLetterOrDigit() &&
+                (character.toString() != "." || character.toString() != "_")) {
+                    throw SignupInvalidInput(
+                        "Username can only contain alphanumeric, underscore and point characters."
+                    )
+            }
+        }
+
+        if (
+            username.endsWith(".") ||
+            username.startsWith(".") ||
+            username.startsWith("_") ||
+            username.length > 25
+            ) {
+            throw SignupInvalidInput("Username can't start with non-alphanumeric characters or be more than 25 characters.")
+        }
+        else if (!emailPattern.matcher(email).matches()) {
+            throw SignupInvalidInput("This e-mail is not a valid value for e-mail!")
+        }
+
     }
 
     private fun verifyDuplicates(email: String, username: String) {
