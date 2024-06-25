@@ -24,7 +24,6 @@ fun Application.configureStatusPage() {
                             "redirectLink" to call.request.local.uri
                         )
                     )
-
                 }
 
                 is UnauthorizedException -> call.respondRedirect("/login")
@@ -33,15 +32,8 @@ fun Application.configureStatusPage() {
                     call.respondRedirect("/signup")
                 }
 
-                is GravatarProfileError -> {
-                    call.respondRedirect("/")
-//                    call.respondTemplate(
-//                        "error.ftl",
-//                        mapOf(
-//                            "errorMessage" to cause.message,
-//                            "redirectLink" to call.request.local.uri
-//                        )
-//                    )
+                is GravatarProfileException -> {
+                    call.request.local.uri
                 }
 
                 else ->
@@ -80,4 +72,7 @@ open class StatusException(override val message: String?): Exception()
 class RequestException(override val message: String?): StatusException(message)
 class UserAlreadyExistsException(override val message: String?): StatusException(message)
 class UnauthorizedException(override val message: String?): StatusException(message)
-class GravatarProfileError(override val message: String?): StatusException(message)
+class GravatarProfileException(
+    override val message: String?,
+    override val cause: Throwable? = null
+): StatusException(message)

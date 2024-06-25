@@ -10,10 +10,9 @@ import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import net.grandcentrix.backend.models.*
-import net.grandcentrix.backend.plugins.GravatarProfileError
+import net.grandcentrix.backend.plugins.GravatarProfileException
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
-
 
 object APIRequesting {
 
@@ -104,7 +103,7 @@ object APIRequesting {
             }
             return profile
         } catch (cause: Throwable) {
-            throw GravatarProfileError("Gravatar API failed")
+            throw GravatarProfileException("Gravatar API failed", cause)
         }
     }
 }
