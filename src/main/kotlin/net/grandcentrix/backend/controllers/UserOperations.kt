@@ -25,11 +25,12 @@ suspend fun ApplicationCall.updateUsername(userSession: UserSession, newUsername
     if (daoUsers.getItem(newUsername) != null) {
         throw UserAlreadyExistsException("New username is already taken")
     }
-    if (daoUsers.updateUsername(username, newUsername)) {
+    try {
+        daoUsers.updateUsername(username, newUsername)
         response.headers.append("HX-Redirect", "/logout")
         respondText("Username updated successfully", status = HttpStatusCode.OK)
-    } else {
-        throw RequestException("Failed to update username")
+    } catch (e: Exception) {
+        throw RequestException("Failed to update username: ${e.localizedMessage}")
     }
 }
 
@@ -41,14 +42,14 @@ suspend fun ApplicationCall.updateEmail(userSession: UserSession, newEmail: Stri
     if (daoUsers.getByEmail(newEmail) != null) {
         throw UserAlreadyExistsException("New email is already taken")
     }
-    if (daoUsers.updateEmail(username, newEmail)) {
+    try {
+        daoUsers.updateEmail(username, newEmail)
         response.headers.append("HX-Redirect", "/profile")
         respondText("Email updated successfully", status = HttpStatusCode.OK)
-    } else {
-        throw RequestException("Failed to update email")
+    } catch (e: Exception) {
+        throw RequestException("Failed to update email: ${e.localizedMessage}")
     }
 }
-
 
 suspend fun ApplicationCall.updatePassword(userSession: UserSession, newPassword: String?) {
     if (newPassword.isNullOrBlank()) {
@@ -58,11 +59,12 @@ suspend fun ApplicationCall.updatePassword(userSession: UserSession, newPassword
     val salt = SignupInstance.generateRandomSalt()
     val hashedPassword = SignupInstance.generateHash(newPassword, salt)
     val hexSalt = hex(salt)
-    if (daoUsers.updatePassword(username, hexSalt + hashedPassword)) {
+    try {
+        daoUsers.updatePassword(username, hexSalt + hashedPassword)
         response.headers.append("HX-Redirect", "/logout")
         respondText("Password updated successfully", status = HttpStatusCode.OK)
-    } else {
-        throw RequestException("Failed to update password")
+    } catch (e: Exception) {
+        throw RequestException("Failed to update password: ${e.localizedMessage}")
     }
 }
 
@@ -81,19 +83,21 @@ suspend fun ApplicationCall.updateProfilePicture(userSession: UserSession, image
     if (imageData == null) {
         throw RequestException("Image data is missing")
     }
-    if (daoUsers.updateProfilePicture(userSession.username, imageData)) {
+    try {
+        daoUsers.updateProfilePicture(userSession.username, imageData)
         respondText("Profile picture uploaded successfully", status = HttpStatusCode.OK)
-    } else {
-        throw RequestException("Failed to upload profile picture")
+    } catch (e: Exception) {
+        throw RequestException("Failed to upload profile picture: ${e.localizedMessage}")
     }
 }
 
 suspend fun ApplicationCall.removeProfilePicture(userSession: UserSession) {
-    if (daoUsers.removeProfilePicture(userSession.username)) {
+    try {
+        daoUsers.removeProfilePicture(userSession.username)
         response.headers.append("HX-Redirect", "/profile")
         respondText("Profile picture removed successfully", status = HttpStatusCode.OK)
-    } else {
-        throw RequestException("Failed to remove profile picture")
+    } catch (e: Exception) {
+        throw RequestException("Failed to remove profile picture: ${e.localizedMessage}")
     }
 }
 
@@ -108,9 +112,10 @@ suspend fun ApplicationCall.getHogwartsHouse(userSession: UserSession) {
 
 suspend fun ApplicationCall.getProfilePicture(userSession: UserSession) {
     val profilePictureData = daoUsers.getProfilePictureData(userSession.username)
-    if (profilePictureData != null) {
+    if (profilePictureData?.isNotEmpty()!!) {
         respondBytes(profilePictureData, ContentType.Image.JPEG)
     } else {
-        respondBytes(ByteArray(0),ContentType.Image.JPEG ) //needs to be changed to text and 404
+        respond(HttpStatusCode.NotFound, "Profile picture not found")
     }
 }
+
