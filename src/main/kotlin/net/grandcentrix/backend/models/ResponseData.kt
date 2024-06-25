@@ -3,12 +3,12 @@ package net.grandcentrix.backend.models
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ResponseData (
-    val data: List<DataItem>
+data class ResponseData<T> (
+    val data: List<DataItem<T>>
 )
 
 @Serializable
-data class DataItem (
+data class DataItem<T> (
     val id: String,
-    val attributes: MutableMap<String,String>
+    val attributes: T
 )
