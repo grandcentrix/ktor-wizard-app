@@ -8,6 +8,10 @@ import io.ktor.util.*
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
+import java.lang.IllegalArgumentException
+
+
+class DatabaseException(message: String) : Exception(message)
 
 fun ApplicationCall.verifyUserSession(): UserSession? {
     val userSession = sessions.get<UserSession>()
@@ -25,11 +29,16 @@ suspend fun ApplicationCall.updateUsername(userSession: UserSession, newUsername
     if (daoUsers.getItem(newUsername) != null) {
         throw UserAlreadyExistsException("New username is already taken")
     }
-    if (daoUsers.updateUsername(username, newUsername)) {
+    try {
+        daoUsers.updateUsername(username, newUsername)
         response.headers.append("HX-Redirect", "/logout")
         respondText("Username updated successfully", status = HttpStatusCode.OK)
-    } else {
-        throw RequestException("Failed to update username")
+    } catch (e: IllegalArgumentException) {
+        throw RequestException("Invalid argument: ${e.localizedMessage}")
+    } catch (e: DatabaseException) {
+        throw RequestException("Database error: ${e.localizedMessage}")
+    } catch (e: Exception) {
+        throw RequestException("Failed to update username: ${e.localizedMessage}")
     }
 }
 
@@ -41,14 +50,18 @@ suspend fun ApplicationCall.updateEmail(userSession: UserSession, newEmail: Stri
     if (daoUsers.getByEmail(newEmail) != null) {
         throw UserAlreadyExistsException("New email is already taken")
     }
-    if (daoUsers.updateEmail(username, newEmail)) {
+    try {
+        daoUsers.updateEmail(username, newEmail)
         response.headers.append("HX-Redirect", "/profile")
         respondText("Email updated successfully", status = HttpStatusCode.OK)
-    } else {
-        throw RequestException("Failed to update email")
+    } catch (e: IllegalArgumentException) {
+        throw RequestException("Invalid argument: ${e.localizedMessage}")
+    } catch (e: DAOException) {
+        throw DAOException("Database error: ${e.localizedMessage}")
+    } catch (e: Exception) {
+        throw RequestException("Failed to update email: ${e.localizedMessage}")
     }
 }
-
 
 suspend fun ApplicationCall.updatePassword(userSession: UserSession, newPassword: String?) {
     if (newPassword.isNullOrBlank()) {
@@ -58,11 +71,16 @@ suspend fun ApplicationCall.updatePassword(userSession: UserSession, newPassword
     val salt = SignupInstance.generateRandomSalt()
     val hashedPassword = SignupInstance.generateHash(newPassword, salt)
     val hexSalt = hex(salt)
-    if (daoUsers.updatePassword(username, hexSalt + hashedPassword)) {
+    try {
+        daoUsers.updatePassword(username, hexSalt + hashedPassword)
         response.headers.append("HX-Redirect", "/logout")
         respondText("Password updated successfully", status = HttpStatusCode.OK)
-    } else {
-        throw RequestException("Failed to update password")
+    } catch (e: IllegalArgumentException) {
+        throw RequestException("Invalid argument: ${e.localizedMessage}")
+    } catch (e: DAOException) {
+    throw DAOException("Database error: ${e.localizedMessage}")
+    } catch (e: Exception) {
+        throw RequestException("Failed to update password: ${e.localizedMessage}")
     }
 }
 
@@ -72,6 +90,10 @@ suspend fun ApplicationCall.deleteAccount(userSession: UserSession) {
         sessions.clear<UserSession>()
         response.headers.append("HX-Redirect", "/logout")
         respondText("Account deleted successfully", status = HttpStatusCode.OK)
+    } catch (e: IllegalArgumentException) {
+        throw RequestException("Invalid argument: ${e.localizedMessage}")
+    } catch (e: DAOException) {
+        throw DAOException("Database error: ${e.localizedMessage}")
     } catch (e: Exception) {
         throw RequestException("Failed to delete account: ${e.localizedMessage}")
     }
@@ -81,36 +103,58 @@ suspend fun ApplicationCall.updateProfilePicture(userSession: UserSession, image
     if (imageData == null) {
         throw RequestException("Image data is missing")
     }
-    if (daoUsers.updateProfilePicture(userSession.username, imageData)) {
+    try {
+        daoUsers.updateProfilePicture(userSession.username, imageData)
         respondText("Profile picture uploaded successfully", status = HttpStatusCode.OK)
-    } else {
-        throw RequestException("Failed to upload profile picture")
+    } catch (e: IllegalArgumentException) {
+        throw RequestException("Invalid argument: ${e.localizedMessage}")
+    } catch (e: DAOException) {
+        throw DAOException("Database error: ${e.localizedMessage}")
+    } catch (e: Exception) {
+        throw RequestException("Failed to upload profile picture: ${e.localizedMessage}")
     }
 }
 
 suspend fun ApplicationCall.removeProfilePicture(userSession: UserSession) {
-    if (daoUsers.removeProfilePicture(userSession.username)) {
+    try {
+        daoUsers.removeProfilePicture(userSession.username)
         response.headers.append("HX-Redirect", "/profile")
         respondText("Profile picture removed successfully", status = HttpStatusCode.OK)
-    } else {
-        throw RequestException("Failed to remove profile picture")
+    } catch (e: IllegalArgumentException) {
+        throw RequestException("Invalid argument: ${e.localizedMessage}")
+    } catch (e: DAOException) {
+        throw DAOException("Database error: ${e.localizedMessage}")
+    } catch (e: Exception) {
+        throw RequestException("Failed to remove profile picture: ${e.localizedMessage}")
     }
 }
 
 suspend fun ApplicationCall.getHogwartsHouse(userSession: UserSession) {
-    val house = daoUsers.getHouse(userSession.username)
-    if (house != null) {
-        respondText(house, status = HttpStatusCode.OK)
-    } else {
-        throw RequestException("House not found")
+    try {
+        val house = daoUsers.getHouse(userSession.username)
+        if (house != null) {
+            respondText(house, status = HttpStatusCode.OK)
+        } else {
+            throw RequestException("House not found")
+        }
+    } catch (e: DAOException) {
+        throw DAOException("Database error: ${e.localizedMessage}")
+    } catch (e: Exception) {
+        throw RequestException("Failed to retrieve house: ${e.localizedMessage}")
     }
 }
 
 suspend fun ApplicationCall.getProfilePicture(userSession: UserSession) {
-    val profilePictureData = daoUsers.getProfilePictureData(userSession.username)
-    if (profilePictureData != null) {
-        respondBytes(profilePictureData, ContentType.Image.JPEG)
-    } else {
-        respondBytes(ByteArray(0),ContentType.Image.JPEG ) //needs to be changed to text and 404
+    try {
+        val profilePictureData = daoUsers.getProfilePictureData(userSession.username)
+        if (profilePictureData?.isNotEmpty() == true) {
+            respondBytes(profilePictureData, ContentType.Image.JPEG)
+        } else {
+            respond(HttpStatusCode.NotFound, "Profile picture not found")
+        }
+    } catch (e: DAOException) {
+        throw DAOException("Database error: ${e.localizedMessage}")
+    } catch (e: Exception) {
+        throw RequestException("Failed to retrieve profile picture: ${e.localizedMessage}")
     }
 }

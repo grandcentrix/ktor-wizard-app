@@ -2,9 +2,12 @@ package net.grandcentrix.backend.dao
 
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.models.Users
+import net.grandcentrix.backend.plugins.DAOException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
+
+
 
 class DAOUsers : DAOFacade {
 
@@ -36,7 +39,9 @@ class DAOUsers : DAOFacade {
             users[favouriteItems] = user.favouriteItems.joinToString(",")
             users[profilePictureData] = user.profilePictureData
         }
-        insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToUser)
+        if (insertStatement.resultedValues?.singleOrNull() == null) {
+            throw DAOException("Failed to add user with username: ${user.username}")
+        }
     }
 
     override fun getItem(username: String): User? = transaction {
@@ -69,63 +74,91 @@ class DAOUsers : DAOFacade {
         }
     }
 
-
     override fun deleteItem(username: String): Unit = transaction {
-        Users.deleteWhere { Users.username eq username } > 0
+        val deleteCount = Users.deleteWhere { Users.username eq username }
+        if (deleteCount == 0) {
+            throw DAOException("Failed to delete user with username: $username")
+        }
     }
 
     override fun updateItem(user: User) {
-        Users.update({ Users.username eq user.username }) { users ->
-            users[name] = user.name
-            users[surname] = user.surname
-            users[email] = user.email
-            users[password] = user.password
-            users[house] = user.house.toString()
-            users[favouriteItems] = user.favouriteItems.joinToString(",")
-            users[profilePictureData] = user.profilePictureData
-        } > 0
+        transaction {
+            val updateCount = Users.update({ Users.username eq user.username }) { users ->
+                users[name] = user.name
+                users[surname] = user.surname
+                users[email] = user.email
+                users[password] = user.password
+                users[house] = user.house.toString()
+                users[favouriteItems] = user.favouriteItems.joinToString(",")
+                users[profilePictureData] = user.profilePictureData
+            }
+            if (updateCount == 0) {
+                throw DAOException("Failed to update user with username: ${user.username}")
+            }
+        }
     }
 
-    fun updateUsername(currentUsername: String, newUsername: String): Boolean = transaction {
-
-            Users.update({ Users.username eq currentUsername }) {
+    fun updateUsername(currentUsername: String, newUsername: String) {
+        transaction {
+            val updateCount = Users.update({ Users.username eq currentUsername }) {
                 it[username] = newUsername
-            } > 0
+            }
+            if (updateCount == 0) {
+                throw DAOException("Failed to update username from $currentUsername to $newUsername")
+            } else if (updateCount > 1) {
+                throw DAOException("Updated more than one username unexpectedly")
+            }
         }
+    }
 
 
-    fun updateProfilePicture(username: String, imageData: ByteArray):  Boolean = transaction {
 
-            Users.update({ Users.username eq username }) {
+    fun updateProfilePicture(username: String, imageData: ByteArray) {
+        transaction {
+            val updateCount = Users.update({ Users.username eq username }) {
                 it[profilePictureData] = imageData
-            } > 0 //needs to throw an exception instead of comparing to booleans
+            }
+            if (updateCount == 0) {
+                throw DAOException("Failed to update profile picture for user with username: $username")
+            }
         }
-
-
-    fun removeProfilePicture(username: String): Boolean = transaction {
-        Users.update({ Users.username eq username }) {
-            it[profilePictureData] = null
-        }
-
-        // Check if profilePictureData is null after the update
-        Users.select { Users.username eq username }
-            .singleOrNull()?.get(Users.profilePictureData) == null
     }
 
-    fun updatePassword(username: String, newPassword: String): Boolean = transaction {
-        Users.update({ Users.username eq username }) {
-            it[password] = newPassword
-        } > 0
-    }
-
-
-    fun updateEmail(username: String, newEmail: String):  Boolean = transaction {
+    fun removeProfilePicture(username: String) {
+        transaction {
             Users.update({ Users.username eq username }) {
-                it[email] = newEmail
-            } > 0
+                it[profilePictureData] = null
+            }
+
+            // Check if profilePictureData is null after the update
+            if (Users.select { Users.username eq username }
+                    .singleOrNull()?.get(Users.profilePictureData) != null) {
+                throw DAOException("Failed to remove profile picture for user with username: $username")
+            }
         }
     }
 
+    fun updatePassword(username: String, newPassword: String) {
+        transaction {
+            val updateCount = Users.update({ Users.username eq username }) {
+                it[password] = newPassword
+            }
+            if (updateCount == 0) {
+                throw DAOException("Failed to update password for user with username: $username")
+            }
+        }
+    }
+
+    fun updateEmail(username: String, newEmail: String) {
+        transaction {
+            val updateCount = Users.update({ Users.username eq username }) {
+                it[email] = newEmail
+            }
+            if (updateCount == 0) {
+                throw DAOException("Failed to update email for user with username: $username")
+            }
+        }
+    }
+}
 
 val daoUsers = DAOUsers()
-

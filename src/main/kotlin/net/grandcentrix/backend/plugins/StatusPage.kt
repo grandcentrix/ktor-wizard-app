@@ -29,6 +29,16 @@ fun Application.configureStatusPage() {
 
                 is UnauthorizedException -> call.respondRedirect( "/login")
 
+                is DAOException -> {
+                    call.respondTemplate(
+                        "error.ftl",
+                        mapOf(
+                            "errorMessage" to cause.message,
+                            "redirectLink" to call.request.local.uri
+                        )
+                    )
+                }
+
                 is UserAlreadyExistsException -> {
                     call.respondTemplate(
                         "error.ftl",
@@ -72,8 +82,11 @@ fun Application.configureStatusPage() {
     }
 }
 
+
 open class StatusException(override val message: String?): Exception()
+
+class DAOException(override val message: String?): StatusException(message)
 class RequestException(override val message: String?): StatusException(message)
 class UserAlreadyExistsException(override val message: String?): StatusException(message)
-class UnauthorizedException(override val message: String?): StatusException(message)
 class SignupInvalidInput(override val message: String?): StatusException(message)
+class UnauthorizedException(override val message: String?): StatusException(message)
