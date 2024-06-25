@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Character(
-    val id: String = String(), //FIXME
+    var id: String? = null,
     val name: String,
     @SerialName("alias_names")
     val aliasNames: List<String>,

@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Book(
-    val id: String, //FIXME
+    var id: String? = null,
     val author: String,
     @SerialName("cover")
     val coverUrl: String?,
