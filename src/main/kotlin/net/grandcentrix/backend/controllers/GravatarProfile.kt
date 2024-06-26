@@ -7,20 +7,12 @@ import net.grandcentrix.backend.plugins.api.APIRequesting.fetchGravatarProfile
 
 class GravatarProfile {
 
-    fun getGravatarProfile(userSession: UserSession?): GravatarProfile? {
-        if (userSession == null) {
-            return null
-        }
-
+    fun getGravatarProfile(userSession: UserSession): GravatarProfile {
         val username = userSession.username
         val userEmail = daoUsers.getItem(username)?.email
             ?: throw GravatarProfileException("User not found for gravatar")
 
         val gravatar = fetchGravatarProfile(userEmail)
-
-        if (gravatar.error.isNotEmpty()) {
-            return null
-        }
 
         return gravatar
     }

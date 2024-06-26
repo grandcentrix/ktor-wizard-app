@@ -7,6 +7,8 @@ import io.ktor.server.http.content.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.sessions.*
+import net.grandcentrix.backend.controllers.UserSession
 
 fun Application.configureStatusPage() {
     routing {
@@ -17,11 +19,13 @@ fun Application.configureStatusPage() {
         exception<StatusException> { call, cause ->
             when (cause) {
                 is RequestException -> {
+                    val userSession: UserSession? = call.sessions.get<UserSession>()
                     call.respondTemplate(
                         "error.ftl",
                         mapOf(
                             "errorMessage" to cause.message,
-                            "redirectLink" to call.request.local.uri
+                            "redirectLink" to call.request.local.uri,
+                            "session" to userSession.toString()
                         )
                     )
                 }
@@ -29,21 +33,25 @@ fun Application.configureStatusPage() {
                 is UnauthorizedException -> call.respondRedirect( "/login")
 
                 is DAOException -> {
+                    val userSession: UserSession? = call.sessions.get<UserSession>()
                     call.respondTemplate(
                         "error.ftl",
                         mapOf(
                             "errorMessage" to cause.message,
-                            "redirectLink" to call.request.local.uri
+                            "redirectLink" to call.request.local.uri,
+                            "session" to userSession.toString()
                         )
                     )
                 }
 
                 is UserAlreadyExistsException -> {
+                    val userSession: UserSession? = call.sessions.get<UserSession>()
                     call.respondTemplate(
                         "error.ftl",
                         mapOf(
                             "errorMessage" to cause.message,
-                            "redirectLink" to "/signup"
+                            "redirectLink" to "/signup",
+                            "session" to userSession.toString()
                         )
                     )
                 }
@@ -52,33 +60,40 @@ fun Application.configureStatusPage() {
                     call.request.local.uri
                 }
 
-                else ->
+                else -> {
+                    val userSession: UserSession? = call.sessions.get<UserSession>()
                     call.respondTemplate(
                         "error.ftl",
                         mapOf(
                             "errorMessage" to cause.message,
-                            "redirectLink" to call.request.local.uri
+                            "redirectLink" to call.request.local.uri,
+                            "session" to userSession.toString()
                         )
                     )
+                }
             }
         }
 
         status(HttpStatusCode.NotFound) { call, _ ->
+            val userSession: UserSession? = call.sessions.get<UserSession>()
             call.respondTemplate(
                 "error.ftl",
                 mapOf(
                     "errorMessage" to "Oops! It wasn't possible to find the page, or it doesn't exist.",
-                    "redirectLink" to "/"
+                    "redirectLink" to "/",
+                    "session" to userSession.toString()
                 )
             )
         }
 
         status(HttpStatusCode.InternalServerError) { call, _ ->
+            val userSession: UserSession? = call.sessions.get<UserSession>()
             call.respondTemplate(
                 "error.ftl",
                 mapOf(
                     "errorMessage" to "Status 500 - Internal Server Error",
-                    "redirectLink" to "/"
+                    "redirectLink" to "/",
+                    "session" to userSession.toString()
                 ))
         }
     }

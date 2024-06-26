@@ -1,5 +1,4 @@
 <#global userSession = "null">
-<#global gravatar = "null">
 
 <#macro base>
     <!DOCTYPE html>
@@ -17,65 +16,37 @@
     </head>
     <body>
     <header>
-        <#if userSession == "null">
-            <nav class="user-menu">
-                <!-- Profile Picture Dropdown Section -->
-                <div class="dropdown" id="profile-dropdown">
-                    <img class="profile-picture" id="profile-pic" src="/static/img/no_profile_picture.png" alt="Profile Picture">
-                    <div class="dropdown-content">
-                        <a href="/signup">Signup</a>
-                        <a href="/login">Login</a>
-                    </div>
-                    <!-- End of Profile Picture Dropdown Section -->
-                </div>
-            </nav>
-        <#elseif userSession != "null" && (gravatar == "null")>
             <nav class="user-menu">
                 <!-- Profile Picture Dropdown Section -->
                 <div class="dropdown tooltip" id="profile-dropdown">
-                    <img class="profile-picture" id="profile-pic" src="/static/img/no_profile_picture.png" alt="Profile Picture">
-                    <div class="tooltip">
-                        <div class="tooltiptext">
-                            <#if username??>
-                                <p>Username: ${username}
-                                    <#if house??>
-                                        <img src="/static/img/${house} house symbole.png" alt="House Symbol" style="width: 20px; height: 20px; vertical-align: middle;">
-                                    </#if>
-                                </p>
-                            </#if>
+                    <a href="#">
+                        <img class="profile-picture" id="profile-pic" src="${"/profile-picture"}" alt="Profile Picture">
+                    </a>
+                    <#if userSession == "null">
+                        <div class="dropdown-content">
+                            <a href="/signup">Signup</a>
+                            <a href="/login">Login</a>
                         </div>
-                    </div>
-                    <div class="dropdown-content">
-                        <a href="/profile#favourites">Favourites</a>
-                        <a href="/logout">Logout</a>
-                    </div>
-                    <!-- End of Profile Picture Dropdown Section -->
+                        <!-- End of Profile Picture Dropdown Section -->
+                    <#elseif userSession != "null">
+                        <div class="tooltip">
+                            <div class="tooltiptext">
+                                <#if username??>
+                                    <p>Username: ${username}
+                                        <#if house??>
+                                            <img src="/static/img/${house}_symbol.png" alt="${house} Symbol" style="width: 20px; height: 20px; vertical-align: middle;">
+                                        </#if>
+                                    </p>
+                                </#if>
+                            </div>
+                        </div>
+                        <div class="dropdown-content">
+                            <a href="/profile#favourites">Favourites</a>
+                            <a href="/logout">Logout</a>
+                        </div>
+                    </#if>
                 </div>
             </nav>
-        <#else>
-            <nav class="user-menu">
-                <!-- Profile Picture Dropdown Section -->
-                <div class="dropdow tooltip" id="profile-dropdown">
-                    <img class="profile-picture" id="profile-pic" src="${gravatar}" alt="Profile Picture">
-                    <div class="tooltip">
-                        <div class="tooltiptext">
-                            <#if username??>
-                                <p>Username: ${username}
-                                    <#if house??>
-                                        <img src="/static/img/${house} house symbole.png" alt="House Symbol" style="width: 20px; height: 20px; vertical-align: middle;">
-                                    </#if>
-                                </p>
-                            </#if>
-                        </div>
-                    </div>
-                    <div class="dropdown-content">
-                        <a href="/profile#favourites">Favourites</a>
-                        <a href="/logout">Logout</a>
-                    </div>
-                    <!-- End of Profile Picture Dropdown Section -->
-                </div>
-            </nav>
-        </#if>
 
         <h1 class="logo">
             <a href="/">Wizard</a>

@@ -1,5 +1,5 @@
 <#import "_layout.ftl" as layout />
-
+<#assign userSession = session in layout>
 
 <@layout.base>
     <h2>${errorMessage}</h2>
