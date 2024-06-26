@@ -35,7 +35,7 @@ fun Application.configureRouting() {
                         mapOf(
                             "session" to userSession.toString(),
                             "username" to username,
-                            "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                            "house" to userSession?.let { daoUsers.getHouse(it.username) }
                         )
                     )
                 )
@@ -72,7 +72,7 @@ fun Application.configureRouting() {
                                 "username" to username,
                                 "uploadButton" to true,
                                 "session" to userSession.toString(),
-                                "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                                "house" to userSession?.let { daoUsers.getHouse(it.username) }
                             )
                         )
                     )
@@ -89,7 +89,7 @@ fun Application.configureRouting() {
                             "signup.ftl",
                             mapOf(
                                 "session" to "null",
-                                "houses" to HousesRepositoryInstance.getAll().map { it.name },
+                                "houses" to HousesRepositoryInstance.getAll().map { it.name }
                             )
                         )
                     )
@@ -116,7 +116,7 @@ fun Application.configureRouting() {
                         "books" to BooksRepositoryInstance.getAll(),
                         "session" to userSession.toString(),
                         "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                        "house" to userSession?.let { daoUsers.getHouse(it.username) }
                     )
                 )
             }
@@ -130,7 +130,7 @@ fun Application.configureRouting() {
                         "houses" to HousesRepositoryInstance.getAll(),
                         "session" to userSession.toString(),
                         "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                        "house" to userSession?.let { daoUsers.getHouse(it.username) }
                     )
                 )
             }
@@ -144,7 +144,7 @@ fun Application.configureRouting() {
                         "characters" to CharactersRepositoryInstance.getAll(),
                         "session" to userSession.toString(),
                         "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                        "house" to userSession?.let { daoUsers.getHouse(it.username) }
                     )
                 )
             }
@@ -159,7 +159,7 @@ fun Application.configureRouting() {
                         "movies" to MoviesRepositoryInstance.getAll(),
                         "session" to userSession.toString(),
                         "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                        "house" to userSession?.let { daoUsers.getHouse(it.username) }
                     )
                 )
             }
@@ -174,7 +174,7 @@ fun Application.configureRouting() {
                         "potions" to PotionsRepositoryInstance.getAll(),
                         "session" to userSession.toString(),
                         "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                        "house" to userSession?.let { daoUsers.getHouse(it.username) }
                     )
                 )
             }
@@ -189,7 +189,7 @@ fun Application.configureRouting() {
                         "spells" to SpellsRepositoryInstance.getAll(),
                         "session" to userSession.toString(),
                         "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                        "house" to userSession?.let { daoUsers.getHouse(it.username) }
                     )
                 )
             }
