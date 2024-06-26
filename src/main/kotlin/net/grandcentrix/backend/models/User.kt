@@ -12,7 +12,6 @@ data class User(
     val email: String,
     val username: String,
     val password: String,
-    @Contextual
     val house: House? = null,
     val favouriteItems: MutableList<String> = mutableListOf(),
     val id: String = UUID.randomUUID().toString()

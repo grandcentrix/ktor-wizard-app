@@ -9,27 +9,8 @@ class HousesRepository: RepositoryFacade<House,House?> {
         val HousesRepositoryInstance: HousesRepository = HousesRepository()
     }
 
-//    private var houses = listOf<House>()
-
-//    private fun getFile() = File("houses.json")
-
-
     override fun getAll(): List<House> = fetchHouses()
 
     override fun getItem(id: String): House? = getAll().find { it.id == id }
-
-//    override fun deleteItem(name: String){
-//        TODO("Not yet implemented")
-//    }
-
-//    override fun addItem(item: House) {
-//        houses = getAll() + item
-//        val file = Json.encodeToJsonElement(houses).toString()
-//        getFile().writeText(file)
-//    }
-//
-//    override fun updateItem(item: House) {
-//        TODO("Not yet implemented")
-//    }
 
 }

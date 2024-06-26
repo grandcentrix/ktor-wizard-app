@@ -1,4 +1,4 @@
-package net.grandcentrix.backend.repository
+package net.grandcentrix.backend.dao
 
 import io.mockk.every
 import io.mockk.spyk
@@ -14,13 +14,13 @@ import kotlin.test.AfterTest
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-class UserRepositoryTest {
+class DAOUsersTest {
 
     companion object {
         private const val FILE_NAME = "src/main/resources/testFile.json"
     }
 
-    private val userManager = spyk(UserManagerInstance, recordPrivateCalls = true)
+    private val userManager = spyk(daoUsers, recordPrivateCalls = true)
 
     @Before
     fun beforeTests() {
@@ -30,11 +30,11 @@ class UserRepositoryTest {
             "One",
             "personone@email.com",
             "personone",
-            "pass",
+            123,
             House(
-                1,
+                1.toString(),
                 "Gryffindor",
-                colors = listOf(),
+                "",
                 "",
                 "",
                 "",
@@ -60,7 +60,7 @@ class UserRepositoryTest {
 
     @Test
     fun testGetUsers() {
-        val users = UserManagerInstance.getAll()
+        val users = daoUsers.getAll()
 
         assertNotNull(users)
         assertTrue { users.isNotEmpty() }
@@ -81,7 +81,7 @@ class UserRepositoryTest {
             "Two",
             "persontwo@email.com",
             "persontwo",
-            "pass",
+            123,
             null,
             favouriteItems = mutableListOf()
         )
@@ -100,7 +100,7 @@ class UserRepositoryTest {
             "Three",
             "personthree@email.com",
             "personthree",
-            "pass",
+            123,
             null
         )
 
