@@ -9,7 +9,10 @@
     <section class="content">
         <ul class="content-list">
             <#list books as book>
-                <li><a href="/books/${book.slug}">${book.title}</a></li>
+                <li>
+                    <img alt="" class="content-img" src="${book.coverUrl}" />
+                    <a href="/books/${book.slug}">${book.title}</a>
+                </li>
             </#list>
         </ul>
     </section>
