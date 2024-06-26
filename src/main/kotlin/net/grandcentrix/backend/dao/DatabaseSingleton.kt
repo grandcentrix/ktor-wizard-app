@@ -24,9 +24,10 @@ object DatabaseSingleton {
 
 
         transaction(database) {
-            // creates the tables
-            SchemaUtils.create(Users)
+            // Create or update the Users table schema
+            SchemaUtils.createMissingTablesAndColumns(Users)
         }
+
 
         println("Database initialized successfully!")
 

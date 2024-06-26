@@ -311,6 +311,7 @@ menu.main-menu li:target {
     width: 50px;
     height: 50px;
     cursor: pointer;
+    float: right;
 }
 
 #upload-button {
@@ -365,9 +366,11 @@ nav.user-menu {
 
 .dropdown {
     display: inline-block;
+    position: relative; /* Position relative to its parent */
     z-index: 10;
 }
 
+/* Dropdown content */
 .dropdown-content {
     display: none;
     position: absolute;
@@ -376,8 +379,12 @@ nav.user-menu {
     border-radius: 10px;
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
     z-index: 1;
+    right: -10px;;
+    top: 100%;
+
 }
 
+/* Dropdown links */
 .dropdown-content a {
     color: #ffcec3;
     padding: 12px 16px;
@@ -386,44 +393,37 @@ nav.user-menu {
     border-bottom: 1px solid #915b4f;
 }
 
+/* Hover effect */
 .dropdown-content a:hover {
-    background-color: rgb(136 78 65);
+    background-color: rgb(136, 78, 65);
     border-radius: 10px 10px 0 0;
 }
 
-/* Ensure the dropdown remains open when hovering over it */
-.dropdown:hover .dropdown-content {
+/* Show dropdown content on hover or focus */
+.dropdown:hover .dropdown-content,
+.dropdown:focus-within .dropdown-content {
     display: block;
 }
 
-/* Hide the dropdown content when the mouse leaves the dropdown area */
-.dropdown-content {
-    z-index: 1;
-    right: 0;
-}
-
-.dropdown:hover .dropdown-content {
-    display: block;
-}
-
-/* Shows the dropdown content in a block format */
-.dropdown-content:hover {
-    display: block;
-}
-
-/* Hide dropdown content when mouse leaves the dropdown area */
-.dropdown:hover .dropdown-content:not(:hover) {
-    display: none;
-}
-
+/* Last child styling */
 .dropdown-content a:last-child {
     border-radius: 0 0 10px 10px;
     border-bottom: none;
 }
 
+.tooltiptext {
+    background-color: rgba(115, 65, 54, 0); /* Adjust alpha for desired transparency */
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+}
+
 .user-data {
-    width:100%;
-    margin-bottom: 30PX;
+    width: 100%;
+    margin-bottom: 30px;
 }
 
 ul.content-list {
@@ -456,4 +456,12 @@ ul.content-list {
 
 .content-list li a:hover {
     background-color: #734136;
+}
+
+.tooltiptext {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
 }

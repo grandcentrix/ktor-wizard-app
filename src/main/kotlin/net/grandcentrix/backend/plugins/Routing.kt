@@ -1,5 +1,7 @@
 package net.grandcentrix.backend.plugins
 
+import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.freemarker.*
@@ -12,6 +14,9 @@ import net.grandcentrix.backend.controllers.GravatarProfile
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.dao.daoUsers
+import net.grandcentrix.backend.models.Users
+import net.grandcentrix.backend.models.Users.password
+import net.grandcentrix.backend.models.Users.username
 import net.grandcentrix.backend.repository.BooksRepository.Companion.BooksRepositoryInstance
 import net.grandcentrix.backend.repository.CharactersRepository.Companion.CharactersRepositoryInstance
 import net.grandcentrix.backend.repository.HousesRepository.Companion.HousesRepositoryInstance
@@ -28,24 +33,32 @@ fun Application.configureRouting() {
 
             get {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
+                val username = call.sessions.get<UserSession>()?.username
                 val gravatarProfile = GravatarProfile().getGravatarProfile(userSession)
-                call.respond(FreeMarkerContent(
-                    "index.ftl",
-                    mapOf(
-                        "session" to userSession.toString(),
-                        "avatar" to gravatarProfile?.avatarUrl.toString()
+
+                call.respond(
+                    FreeMarkerContent(
+                        "index.ftl",
+                        mapOf(
+                            "session" to userSession.toString(),
+                            "username" to username,
+                            "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                            "avatar" to gravatarProfile?.avatarUrl.toString()
+                        )
                     )
-                ))
+                )
             }
 
             get("/login") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                call.respond(FreeMarkerContent(
-                    "login.ftl",
-                    mapOf(
-                        "userSession" to userSession.toString()
+                call.respond(
+                    FreeMarkerContent(
+                        "login.ftl",
+                        mapOf(
+                            "userSession" to userSession.toString()
+                        )
                     )
-                ))
+                )
             }
 
             authenticate("auth-form") {
@@ -59,16 +72,21 @@ fun Application.configureRouting() {
             authenticate("auth-session") {
                 get("/profile") {
                     val userSession: UserSession? = call.sessions.get<UserSession>()
+                    val username = call.sessions.get<UserSession>()?.username
                     val gravatarProfile = GravatarProfile().getGravatarProfile(userSession)
-                    call.respond(FreeMarkerContent(
-                        "profile.ftl",
-                        mapOf(
-                            "username" to userSession?.username.toString(),
-                            "uploadButton" to true,
-                            "userSession" to userSession.toString(),
-                            "avatar" to gravatarProfile?.avatarUrl.toString()
+
+                    call.respond(
+                        FreeMarkerContent(
+                            "profile.ftl",
+                            mapOf(
+                                "username" to username,
+                                "uploadButton" to true,
+                                "userSession" to userSession.toString(),
+                                "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                                "avatar" to gravatarProfile?.avatarUrl.toString()
+                            )
                         )
-                    ))
+                    )
                 }
             }
 
@@ -77,13 +95,15 @@ fun Application.configureRouting() {
                 if (userSession != null) {
                     call.respondRedirect("/")
                 } else {
-                    call.respond(FreeMarkerContent(
-                        "signup.ftl",
-                        mapOf(
-                            "userSession" to "null",
-                            "houses" to HousesRepositoryInstance.getAll().map { it.name },
+                    call.respond(
+                        FreeMarkerContent(
+                            "signup.ftl",
+                            mapOf(
+                                "userSession" to "null",
+                                "houses" to HousesRepositoryInstance.getAll().map { it.name },
+                            )
                         )
-                    ))
+                    )
                 }
             }
 
@@ -101,11 +121,15 @@ fun Application.configureRouting() {
             get("/books") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
                 val gravatarProfile = GravatarProfile().getGravatarProfile(userSession)
+                val username = call.sessions.get<UserSession>()?.username
+
                 call.respondTemplate(
                     "books.ftl",
                     mapOf(
                         "books" to BooksRepositoryInstance.getAll(),
                         "userSession" to userSession.toString(),
+                        "username" to username,
+                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
                         "avatar" to gravatarProfile?.avatarUrl.toString()
                     )
                 )
@@ -114,11 +138,15 @@ fun Application.configureRouting() {
             get("/houses") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
                 val gravatarProfile = GravatarProfile().getGravatarProfile(userSession)
+                val username = call.sessions.get<UserSession>()?.username
+
                 call.respondTemplate(
                     "houses.ftl",
                     mapOf(
                         "houses" to HousesRepositoryInstance.getAll(),
                         "userSession" to userSession.toString(),
+                        "username" to username,
+                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
                         "avatar" to gravatarProfile?.avatarUrl.toString()
                     )
                 )
@@ -127,11 +155,15 @@ fun Application.configureRouting() {
             get("/characters") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
                 val gravatarProfile = GravatarProfile().getGravatarProfile(userSession)
+                val username = call.sessions.get<UserSession>()?.username
+
                 call.respondTemplate(
                     "characters.ftl",
                     mapOf(
                         "characters" to CharactersRepositoryInstance.getAll(),
                         "userSession" to userSession.toString(),
+                        "username" to username,
+                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
                         "avatar" to gravatarProfile?.avatarUrl.toString()
                     )
                 )
@@ -140,11 +172,15 @@ fun Application.configureRouting() {
             get("/movies") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
                 val gravatarProfile = GravatarProfile().getGravatarProfile(userSession)
+                val username = call.sessions.get<UserSession>()?.username
+
                 call.respondTemplate(
                     "movies.ftl",
                     mapOf(
                         "movies" to MoviesRepositoryInstance.getAll(),
                         "userSession" to userSession.toString(),
+                        "username" to username,
+                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
                         "avatar" to gravatarProfile?.avatarUrl.toString()
                     )
                 )
@@ -153,11 +189,15 @@ fun Application.configureRouting() {
             get("/potions") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
                 val gravatarProfile = GravatarProfile().getGravatarProfile(userSession)
+                val username = call.sessions.get<UserSession>()?.username
+
                 call.respondTemplate(
                     "potions.ftl",
                     mapOf(
                         "potions" to PotionsRepositoryInstance.getAll(),
                         "userSession" to userSession.toString(),
+                        "username" to username,
+                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
                         "avatar" to gravatarProfile?.avatarUrl.toString()
                     )
                 )
@@ -166,11 +206,15 @@ fun Application.configureRouting() {
             get("/spells") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
                 val gravatarProfile = GravatarProfile().getGravatarProfile(userSession)
+                val username = call.sessions.get<UserSession>()?.username
+
                 call.respondTemplate(
                     "spells.ftl",
                     mapOf(
                         "spells" to SpellsRepositoryInstance.getAll(),
                         "userSession" to userSession.toString(),
+                        "username" to username,
+                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
                         "avatar" to gravatarProfile?.avatarUrl.toString()
                     )
                 )
@@ -181,20 +225,81 @@ fun Application.configureRouting() {
                 call.respondRedirect("/")
             }
 
-            // TODO("try a way to use delete verb instead of post")
-            post("/delete-account") {
-                // Retrieve the user session
-                val userSession: UserSession? = call.sessions.get<UserSession>()
-
-                // Check if the user session is not null
+            delete("/user/account") {
+                val userSession = call.verifyUserSession()
                 if (userSession != null) {
-                    // Delete user from repository
-                    daoUsers.deleteItem(userSession!!.username)
+                    call.deleteAccount(userSession)
                 }
-                call.respondRedirect("/logout")
+            }
+
+            authenticate("auth-session") {
+                put("/user/username") {
+                    val userSession = call.verifyUserSession()
+                    val parameters = call.receiveParameters()
+                    val newUsername = parameters["newUsername"]
+                    if (userSession != null) {
+                        call.updateUsername(userSession, newUsername)
+                    }
+                }
+            }
+
+            put("/user/email") {
+                val userSession = call.verifyUserSession()
+                val parameters = call.receiveParameters()
+                val newEmail = parameters["newEmail"]
+                if (userSession != null) {
+                    call.updateEmail(userSession, newEmail)
+                }
+            }
+
+            put("/user/password") {
+                val userSession = call.verifyUserSession()
+                val parameters = call.receiveParameters()
+                val newPassword = parameters["newPassword"]
+                if (userSession != null) {
+                    call.updatePassword(userSession, newPassword)
+                }
+            }
+
+            put("/user/profilepicture") {
+                val userSession = call.verifyUserSession()
+                val multipartData = call.receiveMultipart()
+                val imageDataPart = multipartData.readPart() as? PartData.FileItem
+                val imageData = imageDataPart?.streamProvider?.invoke()?.readBytes()
+                if (userSession != null) {
+                    call.updateProfilePicture(userSession, imageData)
+                }
+            }
+
+            delete("/user/profilepicture") {
+                val userSession = call.verifyUserSession()
+                if (userSession != null) {
+                    call.removeProfilePicture(userSession)
+                }
+            }
+
+            get("/hogwards-house") {
+                val userSession = call.verifyUserSession()
+                if (userSession != null) {
+                    call.getHogwartsHouse(userSession)
+                }
+            }
+
+            get("/profile-picture") {
+                val userSession = call.verifyUserSession()
+                if (userSession != null) {
+                    call.getProfilePicture(userSession)
+                    call.respond(FreeMarkerContent(
+                        "_layout.ftl",
+                        mapOf(
+                            "userSession" to userSession,
+                            "username" to username,
+                            "house" to userSession.let { daoUsers.getHouse(it.username) }
+                        )
+                    ))
+                }
             }
         }
     }
 }
-
 

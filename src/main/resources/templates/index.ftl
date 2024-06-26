@@ -5,7 +5,6 @@
 <@layout.base>
 
     <section class="content">
-
             <article style="background-image: url('/static/img/book.png')" class="home-items">
                 <h2><a href="/books" >Books</a></h2>
             </article>
@@ -25,7 +24,6 @@
             <article style="background-image: url('/static/img/house.png')" class="home-items">
                 <h2><a href="/houses" >Houses</a></h2>
             </article>
+    </section>
 
 </@layout.base>
-
-

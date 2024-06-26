@@ -6,14 +6,14 @@ import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.plugins.RequestException
 import net.grandcentrix.backend.plugins.UserAlreadyExistsException
-import net.grandcentrix.backend.repository.HousesRepository.Companion.HousesRepositoryInstance
+import java.util.regex.Pattern;
 import java.security.SecureRandom
 import java.security.spec.KeySpec
-import java.util.regex.Pattern
 import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 import kotlin.text.toCharArray
+
 
 class Signup {
 
@@ -33,15 +33,16 @@ class Signup {
         val password = formParameters["password"]
         val house = formParameters["houses"]
 
-         if (
-             name.isNullOrBlank() ||
-             surname.isNullOrBlank() ||
-             username.isNullOrBlank() ||
-             password.isNullOrBlank() ||
-             email.isNullOrBlank()
-         ) {
-             throw RequestException("Missing required fields!")
-         }
+        if (
+            name.isNullOrBlank() ||
+            surname.isNullOrBlank() ||
+            username.isNullOrBlank() ||
+            password.isNullOrBlank() ||
+            house.isNullOrBlank() ||
+            email.isNullOrBlank()
+        ) {
+            throw RequestException("Missing required fields!")
+        }
 
         verifyFields(name, surname, username, email)
 
@@ -57,8 +58,8 @@ class Signup {
                 surname,
                 email,
                 username,
+                null,
                 hexSalt+hashedPassword,
-                null
             )
             daoUsers.addItem(user)
         } else {
@@ -67,8 +68,8 @@ class Signup {
                 surname,
                 email,
                 username,
+                house,
                 hexSalt+hashedPassword,
-                HousesRepositoryInstance.getItem(house)
             )
             daoUsers.addItem(user)
         }
@@ -82,7 +83,7 @@ class Signup {
     ) {
         // regex - set of strings that matches the pattern
         val emailPattern = Pattern.compile("^(.+)@(\\S+)$")
-        val usernamePattern = Pattern.compile("^(^[^-._,\\s])(\\S+)(\\w\$)\$")
+        val usernamePattern = Pattern.compile("^(?!.*\\.\\.)(?!.*\\.\$)[^\\W][\\w.]{0,29}\$")
         val namesPattern = Pattern.compile("^[a-zA-Z]+(?:\\s+[a-zA-Z]+)*\$")
 
         if (!emailPattern.matcher(email).matches()) {
@@ -103,16 +104,16 @@ class Signup {
         }
     }
 
-    private fun generateRandomSalt(): ByteArray {
+     fun generateRandomSalt(): ByteArray {
         val random = SecureRandom()
         val salt = ByteArray(16) // creates a 16-byte salt
         random.nextBytes(salt)
         return salt
     }
 
-     fun ByteArray.toHexString(): String = hex(this) // convert byte array to a hex string
+    fun ByteArray.toHexString(): String = hex(this) // convert byte array to a hex string
 
-     fun generateHash(password: String, salt: ByteArray): String {
+    fun generateHash(password: String, salt: ByteArray): String {
         // Returns a SecretKeyFactory object that converts secret keys of the specified algorithm
         val factory: SecretKeyFactory = SecretKeyFactory.getInstance(ALGORITHM)
         val spec: KeySpec = PBEKeySpec(password.toCharArray(), salt, ITERATIONS, KEY_LENGTH_BYTES) // derived key specifications

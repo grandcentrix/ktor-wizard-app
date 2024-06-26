@@ -7,7 +7,13 @@
     <head>
         <title>Wizard</title>
         <link href="/static/style.css" rel="stylesheet" />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+        <link rel="stylesheet"
+              href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+        />
+        <script src="https://unpkg.com/htmx.org@2.0.0"
+                integrity="sha384-wS5l5IKJBvK6sPTKa2WZ1js3d947pvWXbPJ1OmWfEuxLgeHcEbjUUA5i9V5ZkpCw"
+                crossorigin="anonymous">
+        </script>
     </head>
     <body>
     <header>
@@ -26,8 +32,19 @@
         <#elseif userSession != "null" && (gravatar == "null")>
             <nav class="user-menu">
                 <!-- Profile Picture Dropdown Section -->
-                <div class="dropdown" id="profile-dropdown">
+                <div class="dropdown tooltip" id="profile-dropdown">
                     <img class="profile-picture" id="profile-pic" src="/static/img/no_profile_picture.png" alt="Profile Picture">
+                    <div class="tooltip">
+                        <div class="tooltiptext">
+                            <#if username??>
+                                <p>Username: ${username}
+                                    <#if house??>
+                                        <img src="/static/img/${house} house symbole.png" alt="House Symbol" style="width: 20px; height: 20px; vertical-align: middle;">
+                                    </#if>
+                                </p>
+                            </#if>
+                        </div>
+                    </div>
                     <div class="dropdown-content">
                         <a href="/profile#favourites">Favourites</a>
                         <a href="/logout">Logout</a>
@@ -38,8 +55,19 @@
         <#else>
             <nav class="user-menu">
                 <!-- Profile Picture Dropdown Section -->
-                <div class="dropdown" id="profile-dropdown">
+                <div class="dropdow tooltip" id="profile-dropdown">
                     <img class="profile-picture" id="profile-pic" src="${gravatar}" alt="Profile Picture">
+                    <div class="tooltip">
+                        <div class="tooltiptext">
+                            <#if username??>
+                                <p>Username: ${username}
+                                    <#if house??>
+                                        <img src="/static/img/${house} house symbole.png" alt="House Symbol" style="width: 20px; height: 20px; vertical-align: middle;">
+                                    </#if>
+                                </p>
+                            </#if>
+                        </div>
+                    </div>
                     <div class="dropdown-content">
                         <a href="/profile#favourites">Favourites</a>
                         <a href="/logout">Logout</a>
@@ -59,7 +87,7 @@
         </menu>
         <label class="search-bar">
             <span class="material-symbols-outlined">search</span>
-            <input src="" name="search" placeholder="Search something..." type="text">
+            <input name="search" placeholder="Search something..." type="text">
         </label>
         <div class="bg-effect"></div>
     </header>
@@ -67,41 +95,4 @@
     <section class="container">
         <#nested>
     </section>
-
-    <!-- JavaScript for Dropdown Functionality -->
-    <script>
-        // This event listener waits for the DOMContentLoaded event, which starts when the initial HTML document has been completely loaded and parsed.
-        document.addEventListener('DOMContentLoaded', function() {
-            // This line selects the dropdown content element using its class name.
-            var dropdownContent = document.querySelector('.dropdown-content');
-
-            // This line adds a click event listener to the profile picture element.
-            document.getElementById('profile-pic').addEventListener('click', function(event) {
-                // This line prevents the click event from propagating to the document, which avoids closing the dropdown when clicking inside it.
-                event.stopPropagation();
-                // This line toggles the display style of the dropdown content between 'block' and 'none' when the profile picture is clicked.
-                dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
-            });
-
-            // This line adds a click event listener to the profile dropdown element.
-            document.getElementById('profile-dropdown').addEventListener('click', function(event) {
-                // This line prevents the click event from propagating to the document, which avoids closing the dropdown when clicking inside it.
-                event.stopPropagation();
-            });
-
-            // This comment indicates the purpose of the following code block.
-            // Close dropdown when clicking outside
-            // This line adds a click event listener to the entire document.
-            document.addEventListener('click', function(event) {
-                // This line checks if the clicked element is not within the profile picture element.
-                if (!document.getElementById('profile-pic').contains(event.target)) {
-                    // This line hides the dropdown content if the clicked element is not within the profile picture element.
-                    dropdownContent.style.display = 'none';
-                }
-            });
-        });
-
-    </script>
-    </body>
-    </html>
 </#macro>
