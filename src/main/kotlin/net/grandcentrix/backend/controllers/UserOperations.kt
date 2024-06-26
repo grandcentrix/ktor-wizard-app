@@ -9,9 +9,10 @@ import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
 import java.lang.IllegalArgumentException
+import java.net.URL
 
 
-class DatabaseException(message: String) : Exception(message)
+
 
 fun ApplicationCall.verifyUserSession(): UserSession? {
     val userSession = sessions.get<UserSession>()
@@ -35,7 +36,7 @@ suspend fun ApplicationCall.updateUsername(userSession: UserSession, newUsername
         respondText("Username updated successfully", status = HttpStatusCode.OK)
     } catch (e: IllegalArgumentException) {
         throw RequestException("Invalid argument: ${e.localizedMessage}")
-    } catch (e: DatabaseException) {
+    } catch (e: DAOException) {
         throw RequestException("Database error: ${e.localizedMessage}")
     } catch (e: Exception) {
         throw RequestException("Failed to update username: ${e.localizedMessage}")
@@ -150,11 +151,13 @@ suspend fun ApplicationCall.getProfilePicture(userSession: UserSession) {
         if (profilePictureData?.isNotEmpty() == true) {
             respondBytes(profilePictureData, ContentType.Image.JPEG)
         } else {
-            respond(HttpStatusCode.NotFound, "Profile picture not found")
+            val inputStream = URL("https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg").openStream()
+            val defaultProfilePicture = inputStream.readBytes()
+            respondBytes(defaultProfilePicture, ContentType.Image.JPEG)
         }
     } catch (e: DAOException) {
         throw DAOException("Database error: ${e.localizedMessage}")
     } catch (e: Exception) {
-        throw RequestException("Failed to retrieve profile picture: ${e.localizedMessage}")
+        respond(HttpStatusCode.NotFound, "Failed to retrieve profile picture: ${e.localizedMessage}")
     }
 }
