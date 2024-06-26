@@ -457,3 +457,11 @@ ul.content-list {
 .content-list li a:hover {
     background-color: #734136;
 }
+
+.tooltiptext {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
