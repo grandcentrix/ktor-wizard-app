@@ -10,6 +10,11 @@
         <ul class="content-list">
             <#list books as book>
                 <li>
+                    <form method="POST" action="/favourite/book/${book.id}" class="favourite-items-form">
+                        <button class="favourite-button" type="submit">
+                            <span class="material-symbols-outlined" style="font-size: 30px">favorite</span>
+                        </button>
+                    </form>
                     <img alt="" class="content-img" src="${book.coverUrl}" />
                     <a href="/books/${book.slug}">${book.title}</a>
                 </li>

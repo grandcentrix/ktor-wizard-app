@@ -8,6 +8,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
+import io.ktor.server.util.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.dao.daoUsers
@@ -168,6 +169,13 @@ fun Application.configureRouting() {
                     daoUsers.deleteItem(userSession!!.username)
                 }
                 call.respondRedirect("/logout")
+            }
+
+            post("/favourite/{item}/{itemId}") {
+                val item = call.parameters.getOrFail<String>("item")
+                val itemId = call.parameters.getOrFail<String>("itemId")
+                val formParameters = call.receiveParameters()
+
             }
         }
     }
