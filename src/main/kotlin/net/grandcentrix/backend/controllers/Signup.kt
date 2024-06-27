@@ -6,9 +6,9 @@ import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.plugins.RequestException
 import net.grandcentrix.backend.plugins.UserAlreadyExistsException
-import java.util.regex.Pattern;
 import java.security.SecureRandom
 import java.security.spec.KeySpec
+import java.util.regex.Pattern
 import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
@@ -59,7 +59,7 @@ class Signup {
                 email,
                 username,
                 null,
-                hexSalt+hashedPassword,
+                hexSalt+hashedPassword
             )
             daoUsers.addItem(user)
         } else {
@@ -69,7 +69,7 @@ class Signup {
                 email,
                 username,
                 house,
-                hexSalt+hashedPassword,
+                hexSalt+hashedPassword
             )
             daoUsers.addItem(user)
         }

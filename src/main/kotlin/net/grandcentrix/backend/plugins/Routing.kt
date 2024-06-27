@@ -10,9 +10,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.util.*
-import net.grandcentrix.backend.controllers.FavouriteItems
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
+import net.grandcentrix.backend.controllers.addFavouriteItem
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.Users.username
 import net.grandcentrix.backend.repository.BooksRepository.Companion.BooksRepositoryInstance
@@ -85,7 +85,7 @@ fun Application.configureRouting() {
                         "signup.ftl",
                         mapOf(
                             "userSession" to "null",
-                            "houses" to HousesRepositoryInstance.getAll().map { it.name }
+                            "houses" to HousesRepositoryInstance.getAll()
                         )
                     ))
                 }
@@ -263,9 +263,10 @@ fun Application.configureRouting() {
                 val itemId = call.parameters.getOrFail<String>("itemId")
                 val username = call.sessions.get<UserSession>()?.username
                 if (username != null) {
-                    FavouriteItems().addItem(item, itemId, username)
+                    call.addFavouriteItem(item, itemId, username)
+                } else {
+                    call.respondRedirect("/login")
                 }
-                call.respondRedirect("/login")
             }
         }
     }

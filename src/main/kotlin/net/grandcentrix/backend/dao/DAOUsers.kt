@@ -1,5 +1,8 @@
 package net.grandcentrix.backend.dao
 
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
+import net.grandcentrix.backend.models.FavouriteItems
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.models.Users
 import net.grandcentrix.backend.plugins.DAOException
@@ -8,8 +11,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 
-
-class DAOUsers : DAOFacade {
+class DAOUsers {
 
     private fun resultRowToUser(row: ResultRow) = User(
         id = row[Users.id],
@@ -19,15 +21,15 @@ class DAOUsers : DAOFacade {
         username = row[Users.username],
         password = row[Users.password],
         house = row[Users.house],
-        favouriteItems = row[Users.favouriteItems].split(",").toMutableList(),
+        favouriteItems = Json.decodeFromString<FavouriteItems>(row[Users.favouriteItems]),
         profilePictureData = row[Users.profilePictureData]
     )
 
-    override fun getAll(): List<User> = transaction {
+    fun getAll(): List<User> = transaction {
         Users.selectAll().map(::resultRowToUser)
     }
 
-    override fun addItem(user: User): Unit = transaction {
+    fun addItem(user: User): Unit = transaction {
         val insertStatement = Users.insertIgnore { users ->
             users[id] = user.id
             users[name] = user.name
@@ -36,15 +38,15 @@ class DAOUsers : DAOFacade {
             users[username] = user.username
             users[password] = user.password
             users[house] = user.house.toString()
-            users[favouriteItems] = user.favouriteItems.joinToString(",")
+            users[favouriteItems] = Json.encodeToJsonElement<FavouriteItems>(user.favouriteItems).toString()
             users[profilePictureData] = user.profilePictureData
         }
         if (insertStatement.resultedValues?.singleOrNull() == null) {
             throw DAOException("Failed to add user with username: ${user.username}")
         }
-    }
+     }
 
-    override fun getItem(username: String): User? = transaction {
+    fun getItem(username: String): User? = transaction {
         Users
             .select { Users.username eq username }
             .map(::resultRowToUser)
@@ -74,26 +76,20 @@ class DAOUsers : DAOFacade {
         }
     }
 
-    override fun deleteItem(username: String): Unit = transaction {
+    fun deleteItem(username: String): Unit = transaction {
         val deleteCount = Users.deleteWhere { Users.username eq username }
         if (deleteCount == 0) {
             throw DAOException("Failed to delete user with username: $username")
         }
     }
 
-    override fun updateItem(user: User) {
+    fun updateFavouriteItems(username: String, newItems: FavouriteItems) {
         transaction {
-            val updateCount = Users.update({ Users.username eq user.username }) { users ->
-                users[name] = user.name
-                users[surname] = user.surname
-                users[email] = user.email
-                users[password] = user.password
-                users[house] = user.house.toString()
-                users[favouriteItems] = user.favouriteItems.joinToString(",")
-                users[profilePictureData] = user.profilePictureData
+            val updateCount = Users.update({ Users.username eq username }) {
+                it[favouriteItems] = Json.encodeToJsonElement<FavouriteItems>(newItems).toString()
             }
             if (updateCount == 0) {
-                throw DAOException("Failed to update user with username: ${user.username}")
+                throw DAOException("Database error: Failed to update favourite items list!")
             }
         }
     }
@@ -110,8 +106,6 @@ class DAOUsers : DAOFacade {
             }
         }
     }
-
-
 
     fun updateProfilePicture(username: String, imageData: ByteArray) {
         transaction {

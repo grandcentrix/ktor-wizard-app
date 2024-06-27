@@ -35,7 +35,7 @@
                 <label class="select-label" for="houses">Choose your Hogwarts' House:</label>
                 <select class="round-arrow" name="houses" id="houses">
                     <#list houses as house>
-                        <option name="house" value="${house.id}">${house}</option>
+                        <option name="house" value="${house.id}">${house.name}</option>
                     </#list>
                 </select>
             </div>

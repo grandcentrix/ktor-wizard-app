@@ -1,5 +1,6 @@
 package net.grandcentrix.backend.models
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Table
 import java.util.*
@@ -12,7 +13,8 @@ data class User(
     val username: String,
     val house: String?,
     val password: String,
-    val favouriteItems: MutableList<String> = mutableListOf(),
+    @Contextual
+    val favouriteItems: FavouriteItems = FavouriteItems(),
     val id: String = UUID.randomUUID().toString(),
     val profilePictureData: ByteArray? = null //to store profile picture data as a ByteArray. This allows storing the image data directly in the database.
 ) {
