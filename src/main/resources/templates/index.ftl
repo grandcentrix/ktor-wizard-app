@@ -24,8 +24,8 @@
             <article style="background-image: url('/static/img/house.png')" class="home-items">
                 <h2><a href="/houses" >Houses</a></h2>
             </article>
+        </section>
 
-
-</@layout.base>
+        </@layout.base>
 
 
