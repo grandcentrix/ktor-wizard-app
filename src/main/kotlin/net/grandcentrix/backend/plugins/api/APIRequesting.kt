@@ -23,94 +23,43 @@ object APIRequesting {
         }
     }
 
-     fun fetchBooks(): List<Book> {
-
-        // Make a GET request to the external API
-         val resJson: ResponseData<Book> = runBlocking {
+     fun fetchBooks(): List<Book> = runBlocking<ResponseData<Book>> {
               client.get("$API_URL/books").body()
+         }.data.map {
+             it.attributes.id = it.id
+             it.attributes
          }
 
-         val booksIDs = resJson.data.map { it.id }
-         val books = resJson.data.map { it.attributes }
-
-         for (i in booksIDs.indices) {
-            books[i].id = booksIDs[i]
-         }
-
-         return books
-     }
-
-    fun fetchHouses(): List<House> {
-        // Make a GET request to the external API
-        val resJson: List<House> = runBlocking {
+    fun fetchHouses(): List<House> = runBlocking {
             client.get("https://wizard-world-api.herokuapp.com/Houses").body()
-        }
-
-        return resJson
     }
 
-    fun fetchCharacters(): List<Character> {
-        // Make a GET request to the external API
-        val resJson: ResponseData<Character> = runBlocking {
+    fun fetchCharacters(): List<Character> = runBlocking<ResponseData<Character>> {
             client.get("$API_URL/characters").body()
+        }.data.map {
+            it.attributes.id = it.id
+            it.attributes
         }
 
-        val charactersIDs = resJson.data.map { it.id }
-        val characters = resJson.data.map { it.attributes }
-
-        for (i in charactersIDs.indices) {
-            characters[i].id = charactersIDs[i]
-        }
-
-        return characters
-    }
-
-    fun fetchMovies(): List<Movie> {
-        // Make a GET request to the external API
-        val resJson: ResponseData<Movie> = runBlocking {
+    fun fetchMovies(): List<Movie> = runBlocking<ResponseData<Movie>> {
             client.get("$API_URL/movies").body()
+        }.data.map {
+            it.attributes.id = it.id
+            it.attributes
         }
 
-        val moviesIDs = resJson.data.map { it.id }
-        val movies = resJson.data.map { it.attributes }
-
-        for (i in moviesIDs.indices) {
-            movies[i].id = moviesIDs[i]
-        }
-
-        return movies
-    }
-
-    fun fetchPotions(): List<Potion> {
-        // Make a GET request to the external API
-        val resJson: ResponseData<Potion> = runBlocking {
+    fun fetchPotions(): List<Potion> = runBlocking<ResponseData<Potion>> {
             client.get("$API_URL/potions").body()
+        }.data.map {
+            it.attributes.id = it.id
+            it.attributes
         }
 
-        val potionsIDs = resJson.data.map { it.id }
-        val potions = resJson.data.map { it.attributes }
 
-        for (i in potionsIDs.indices) {
-            potions[i].id = potionsIDs[i]
-        }
-
-        return potions
-    }
-
-    fun fetchSpells(): List<Spell> {
-        // Make a GET request to the external API
-        val resJson: ResponseData<Spell> = runBlocking {
+    fun fetchSpells(): List<Spell> = runBlocking<ResponseData<Spell>> {
             client.get("$API_URL/spells").body()
+        }.data.map {
+            it.attributes.id = it.id
+            it.attributes
         }
-
-        val spellsIDs = resJson.data.map { it.id }
-        val spells = resJson.data.map { it.attributes }
-
-        for (i in spellsIDs.indices) {
-            spells[i].id = spellsIDs[i]
-        }
-
-        return spells
-    }
-
 }
