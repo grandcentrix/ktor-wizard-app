@@ -8,7 +8,10 @@ import io.ktor.util.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.GravatarProfile
-import net.grandcentrix.backend.plugins.*
+import net.grandcentrix.backend.plugins.DAOException
+import net.grandcentrix.backend.plugins.GravatarProfileException
+import net.grandcentrix.backend.plugins.RequestException
+import net.grandcentrix.backend.plugins.UserAlreadyExistsException
 import net.grandcentrix.backend.plugins.api.APIRequesting
 import java.io.File
 import java.nio.file.NoSuchFileException
@@ -166,23 +169,17 @@ fun getDefaultProfilePicture(): String {
 fun getProfilePicture(userSession: UserSession?): String {
     return if (userSession == null) {
         getDefaultProfilePicture()
-    }
-    else {
-        try {
-            val profilePictureData = daoUsers.getProfilePictureData(userSession.username)
-            return if (profilePictureData?.isNotEmpty() == true) {
-                "data:image/png;base64," + Base64.getEncoder().encodeToString(profilePictureData)
+    } else {
+        val profilePictureData = daoUsers.getProfilePictureData(userSession.username)
+        return if (profilePictureData?.isNotEmpty() == true) {
+            "data:image/png;base64," + Base64.getEncoder().encodeToString(profilePictureData)
+        } else {
+            val gravatarProfile = getGravatarProfile(userSession)
+            return if (gravatarProfile.error.isEmpty()) {
+                gravatarProfile.avatarUrl
+            } else {
+                return getDefaultProfilePicture()
             }
-            else {
-                val gravatarProfile = getGravatarProfile(userSession)
-                return if (gravatarProfile.error.isEmpty()) {
-                    gravatarProfile.avatarUrl
-                } else {
-                    return getDefaultProfilePicture()
-                }
-            }
-        } catch (e: StatusException) {
-            throw DAOException("Database error: Not possible to get profile picture.")
         }
     }
 }
