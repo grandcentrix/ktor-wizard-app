@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Potion(
-    val id: String = String(), //FIXME
+    var id: String? = null,
     val name: String,
     val characteristics: List<String>,
     val difficulty: String,

@@ -8,6 +8,7 @@ data class ResponseData<T> (
 )
 
 @Serializable
-data class DataItem<T>(
+data class DataItem<T> (
+    val id: String,
     val attributes: T
 )
