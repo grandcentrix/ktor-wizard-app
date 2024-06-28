@@ -8,7 +8,6 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
-import net.grandcentrix.backend.controllers.DefaultProfilePicture.getDefaultProfilePicture
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.controllers.getProfilePicture
 
@@ -43,14 +42,23 @@ fun Application.configureStatusPage() {
                             "errorMessage" to cause.message,
                             "redirectLink" to call.request.local.uri,
                             "session" to userSession.toString(),
-                            "profilePictureData" to getProfilePicture(userSession)
+                            "profilePicture" to getProfilePicture(userSession)
                         )
                     )
                 }
 
-                is DAOProfilePictureException -> {
-                    call.respondBytes(getDefaultProfilePicture(), ContentType.Image.JPEG)
-                }
+//                is DAOProfilePictureException -> {
+//                    val userSession = call.sessions.get<UserSession>()
+//                    call.respondTemplate(
+//                        "error.ftl",
+//                        mapOf(
+//                            "errorMessage" to cause.message,
+//                            "redirectLink" to call.request.local.uri,
+//                            "session" to userSession.toString(),
+//                            "profilePicture" to getProfilePicture(userSession)
+//                        )
+//                    )
+//                }
 
                 is UserAlreadyExistsException -> {
                     val userSession: UserSession? = call.sessions.get<UserSession>()

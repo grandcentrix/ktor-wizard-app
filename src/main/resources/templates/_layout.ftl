@@ -1,5 +1,5 @@
 <#global userSession = "null">
-<#global profilePicture = "">
+<#global profilePicture = "/static/img/no_profile_picture.png">
 
 <#macro base>
     <!DOCTYPE html>

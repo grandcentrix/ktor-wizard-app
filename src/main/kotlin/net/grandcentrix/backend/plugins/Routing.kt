@@ -268,11 +268,6 @@ fun Application.configureRouting() {
                     call.getHogwartsHouse(userSession)
                 }
             }
-
-//            get("/profile-picture") {
-//                val userSession: UserSession? = call.sessions.get<UserSession>()
-////                call.getProfilePicture(userSession)
-//            }
         }
     }
 }
