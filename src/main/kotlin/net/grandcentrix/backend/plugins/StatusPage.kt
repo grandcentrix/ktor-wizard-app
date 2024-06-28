@@ -122,7 +122,6 @@ fun Application.configureStatusPage() {
 
 open class StatusException(override val message: String?): Exception()
 class DAOException(override val message: String?): StatusException(message)
-class DAOProfilePictureException(override val message: String?): StatusException(message)
 class RequestException(override val message: String?): StatusException(message)
 class UserAlreadyExistsException(override val message: String?): StatusException(message)
 class UnauthorizedException(override val message: String?): StatusException(message)
