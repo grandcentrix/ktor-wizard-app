@@ -7,12 +7,12 @@ import io.ktor.server.sessions.*
 import io.ktor.util.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.dao.daoUsers
-import net.grandcentrix.backend.plugins.DAOException
-import net.grandcentrix.backend.plugins.RequestException
-import net.grandcentrix.backend.plugins.UserAlreadyExistsException
+import net.grandcentrix.backend.models.GravatarProfile
+import net.grandcentrix.backend.plugins.*
+import net.grandcentrix.backend.plugins.api.APIRequesting
 import java.io.InputStream
-import java.net.URL
 import java.nio.file.NoSuchFileException
+import java.util.*
 
 
 fun ApplicationCall.verifyUserSession(): UserSession? {
@@ -80,7 +80,7 @@ suspend fun ApplicationCall.updatePassword(userSession: UserSession, newPassword
     } catch (e: IllegalArgumentException) {
         throw RequestException("Invalid argument: ${e.localizedMessage}")
     } catch (e: DAOException) {
-    throw DAOException("Database error: ${e.localizedMessage}")
+        throw DAOException("Database error: ${e.localizedMessage}")
     } catch (e: Exception) {
         throw RequestException("Failed to update password: ${e.localizedMessage}")
     }
@@ -146,39 +146,56 @@ suspend fun ApplicationCall.getHogwartsHouse(userSession: UserSession) {
     }
 }
 
-suspend fun ApplicationCall.getProfilePicture(userSession: UserSession?) {
-    try {
-        if (userSession == null) {
-            val inputStream: InputStream = this::class.java.getResourceAsStream("/static/img/no_profile_picture.png")
-                ?: throw NoSuchFileException("Not found the image file for default profile picture.")
+fun getGravatarProfile(userSession: UserSession): GravatarProfile {
+    val username = userSession.username
+    val userEmail = daoUsers.getItem(username)?.email
+        ?: throw GravatarProfileException("User not found for gravatar")
 
-            val defaultProfilePicture = inputStream.readBytes()
-            respondBytes(defaultProfilePicture, ContentType.Image.JPEG)
-        } else {
+    val gravatar = APIRequesting.fetchGravatarProfile(userEmail)
+
+    return gravatar
+}
+
+object DefaultProfilePicture {
+    fun getDefaultProfilePicture(): ByteArray {
+        val inputStream: InputStream = this::class.java.getResourceAsStream("/static/img/no_profile_picture.png")
+            ?: throw NoSuchFileException("Not found the image file for default profile picture.")
+
+        val defaultProfilePicture = inputStream.readBytes()
+        return defaultProfilePicture
+    }
+}
+
+fun getProfilePicture(userSession: UserSession?): String {
+    if (userSession == null) {
+        return "/static/img/no_profile_picture.png"
+//            val inputStream: InputStream = this::class.java.getResourceAsStream("/static/img/no_profile_picture.png")
+//                ?: throw NoSuchFileException("Not found the image file for default profile picture.")
+//
+//            val defaultProfilePicture = inputStream.readBytes()
+//            respondBytes(defaultProfilePicture, ContentType.Image.JPEG)
+    } else {
+//        try {
             val profilePictureData = daoUsers.getProfilePictureData(userSession.username)
-            val gravatarProfile = GravatarProfile().getGravatarProfile(userSession)
 
             if (profilePictureData?.isNotEmpty() == true) {
-                respondBytes(profilePictureData, ContentType.Image.JPEG)
-            }
+                return "data:image/png;base64,"+Base64.getEncoder().encodeToString(profilePictureData)
 
-            else if (gravatarProfile.error.isEmpty()) {
-                val inputStream = URL(gravatarProfile.avatarUrl).openStream()
-                val defaultProfilePicture = inputStream.readBytes()
-                respondBytes(defaultProfilePicture, ContentType.Image.JPEG)
+//                    respondBytes(profilePictureData, ContentType.Image.JPEG)
+            } else {
+                val gravatarProfile = getGravatarProfile(userSession)
+                if (gravatarProfile.error.isEmpty()) {
+                    return gravatarProfile.avatarUrl
+//                        val inputStream = URL(gravatarProfile.avatarUrl).openStream()
+//                        val gravatarAvatar = inputStream.readBytes()
+//                        respondBytes(gravatarAvatar, ContentType.Image.JPEG)
+                }
             }
-
-            else {
-                val inputStream: InputStream = this::class.java.getResourceAsStream("/static/img/no_profile_picture.png")
-                    ?: throw NoSuchFileException("Not found the image file for default profile picture.")
-
-                val defaultProfilePicture = inputStream.readBytes()
-                respondBytes(defaultProfilePicture, ContentType.Image.JPEG)
-            }
-        }
-    } catch (e: DAOException) {
-        throw DAOException("Database error: ${e.localizedMessage}")
-    } catch (e: Exception) {
-        respond(HttpStatusCode.NotFound, "Failed to retrieve profile picture: ${e.localizedMessage}")
+//        } catch (e: Exception) {
+            throw DAOProfilePictureException("Not possible to get profile picture")
+//                else {
+//                    respondBytes(getDefaultProfilePicture(), ContentType.Image.JPEG)
+//                }
+//        }
     }
 }

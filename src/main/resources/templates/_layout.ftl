@@ -1,4 +1,5 @@
 <#global userSession = "null">
+<#global profilePicture = "">
 
 <#macro base>
     <!DOCTYPE html>
@@ -20,7 +21,7 @@
                 <!-- Profile Picture Dropdown Section -->
                 <div class="dropdown tooltip" id="profile-dropdown">
                     <a href="#">
-                        <img class="profile-picture" id="profile-pic" src="${"/profile-picture"}" alt="Profile Picture">
+                        <img class="profile-picture" id="profile-pic" src="${profilePicture}" alt="Profile Picture">
                     </a>
                     <#if userSession == "null">
                         <div class="dropdown-content">
