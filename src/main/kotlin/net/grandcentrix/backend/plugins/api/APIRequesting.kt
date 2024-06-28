@@ -16,7 +16,7 @@ import java.security.MessageDigest
 
 object APIRequesting {
 
-    private const val apiUrl = "https://api.potterdb.com/v1"
+    private const val API_URL = "https://api.potterdb.com/v1"
 
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
@@ -27,66 +27,45 @@ object APIRequesting {
         }
     }
 
-     fun fetchBooks(): List<Book>  {
-
-        // Make a GET request to the external API
-         val resJson: ResponseData<Book> = runBlocking {
-              client.get("$apiUrl/books").body()
+     fun fetchBooks(): List<Book> = runBlocking<ResponseData<Book>> {
+              client.get("$API_URL/books").body()
+         }.data.map {
+             it.attributes.id = it.id
+             it.attributes
          }
 
-         val books = resJson.data.map { it.attributes }
-
-         return books
-    }
-
-    fun fetchHouses(): List<House> {
-        // Make a GET request to the external API
-        val resJson: List<House> = runBlocking {
+    fun fetchHouses(): List<House> = runBlocking {
             client.get("https://wizard-world-api.herokuapp.com/Houses").body()
-        }
-
-        return resJson
     }
 
-    fun fetchCharacters(): List<Character> {
-        // Make a GET request to the external API
-        val resJson: ResponseData<Character> = runBlocking {
-            client.get("$apiUrl/characters").body()
+    fun fetchCharacters(): List<Character> = runBlocking<ResponseData<Character>> {
+            client.get("$API_URL/characters").body()
+        }.data.map {
+            it.attributes.id = it.id
+            it.attributes
         }
 
-        val characters = resJson.data.map { it.attributes }
-        return characters
-    }
-
-    fun fetchMovies(): List<Movie> {
-        // Make a GET request to the external API
-        val resJson: ResponseData<Movie> = runBlocking {
-            client.get("$apiUrl/movies").body()
+    fun fetchMovies(): List<Movie> = runBlocking<ResponseData<Movie>> {
+            client.get("$API_URL/movies").body()
+        }.data.map {
+            it.attributes.id = it.id
+            it.attributes
         }
 
-        val movies = resJson.data.map { it.attributes }
-        return movies
-    }
-
-    fun fetchPotions(): List<Potion> {
-        // Make a GET request to the external API
-        val resJson: ResponseData<Potion> = runBlocking {
-            client.get("$apiUrl/potions").body()
+    fun fetchPotions(): List<Potion> = runBlocking<ResponseData<Potion>> {
+            client.get("$API_URL/potions").body()
+        }.data.map {
+            it.attributes.id = it.id
+            it.attributes
         }
 
-        val potions = resJson.data.map { it.attributes }
-        return potions
-    }
 
-    fun fetchSpells(): List<Spell> {
-        // Make a GET request to the external API
-        val resJson: ResponseData<Spell> = runBlocking {
-            client.get("$apiUrl/spells").body()
+    fun fetchSpells(): List<Spell> = runBlocking<ResponseData<Spell>> {
+            client.get("$API_URL/spells").body()
+        }.data.map {
+            it.attributes.id = it.id
+            it.attributes
         }
-
-        val spells = resJson.data.map { it.attributes }
-        return spells
-    }
 
     fun fetchGravatarProfile(email: String): GravatarProfile {
         val digest = MessageDigest.getInstance("SHA-256")
