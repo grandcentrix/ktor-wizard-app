@@ -26,11 +26,21 @@ fun Application.configureStatusPage() {
                     )
                 }
 
+                is RequestUserDataException -> {
+                    call.respondTemplate(
+                        "error-Userdata.ftl",
+                        mapOf(
+                            "errorMessage" to cause.message,
+                            "redirectLink" to call.request.local.uri
+                        )
+                    )
+                }
+
                 is UnauthorizedException -> call.respondRedirect( "/login")
 
                 is DAOException -> {
                     call.respondTemplate(
-                        "error.ftl",
+                        "error-Userdata.ftl",
                         mapOf(
                             "errorMessage" to cause.message,
                             "redirectLink" to call.request.local.uri
@@ -41,6 +51,16 @@ fun Application.configureStatusPage() {
                 is UserAlreadyExistsException -> {
                     call.respondTemplate(
                         "error.ftl",
+                        mapOf(
+                            "errorMessage" to cause.message,
+                            "redirectLink" to "/signup"
+                        )
+                    )
+                }
+
+                is UserDataAlreadyExistsException -> {
+                    call.respondTemplate(
+                        "error-Userdata.ftl",
                         mapOf(
                             "errorMessage" to cause.message,
                             "redirectLink" to "/signup"
@@ -75,5 +95,8 @@ open class StatusException(override val message: String?): Exception()
 
 class DAOException(override val message: String?): StatusException(message)
 class RequestException(override val message: String?): StatusException(message)
+
+class RequestUserDataException(override val message: String?): StatusException(message)
 class UserAlreadyExistsException(override val message: String?): StatusException(message)
+class UserDataAlreadyExistsException(override val message: String?): StatusException(message)
 class UnauthorizedException(override val message: String?): StatusException(message)
