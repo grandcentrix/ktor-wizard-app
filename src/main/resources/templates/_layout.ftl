@@ -64,11 +64,13 @@
         </menu>
         <label class="search-bar">
             <span class="material-symbols-outlined">search</span>
-            <input name="search" placeholder="Search something..." type="text" id="search-input">
+            <input name="search" placeholder="Search something..." type="text" id="search-input" list="search-options">
+            <datalist id="search-options"></datalist>
         </label>
 
         <script>
             const searchInput = document.getElementById('search-input');
+            const searchOptions = document.getElementById('search-options');
             const routes = {
                 "books": "/books",
                 "houses": "/houses",
@@ -77,6 +79,18 @@
                 "potions": "/potions",
                 "spells": "/spells"
             };
+
+            searchInput.addEventListener('input', (e) => {
+                const inputValue = searchInput.value.toLowerCase();
+                const options = Object.keys(routes).filter((key) => key.startsWith(inputValue));
+                searchOptions.innerHTML = '';
+                options.forEach((option) => {
+                    const opt = document.createElement('option');
+                    opt.value = option;
+                    opt.text = option.charAt(0).toUpperCase() + option.slice(1);
+                    searchOptions.appendChild(opt);
+                });
+            });
 
             searchInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
