@@ -11,9 +11,8 @@
     </head>
     <body>
     <header>
-        <#if userSession == "null">
-            <nav class="user-menu">
-                <!-- Profile Picture Dropdown Section -->
+        <nav class="user-menu">
+            <#if userSession == "null">
                 <div class="dropdown" id="profile-dropdown">
                     <a href="#">
                         <img class="profile-picture" id="profile-pic" src="https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg" alt="Profile Picture">
@@ -21,14 +20,9 @@
                     <div class="dropdown-content">
                         <a href="/signup">Signup</a>
                         <a href="/login">Login</a>
-                        <!-- Add more options here -->
                     </div>
-                    <!-- End of Profile Picture Dropdown Section -->
                 </div>
-            </nav>
-        <#else>
-            <nav class="user-menu">
-                <!-- Profile Picture Dropdown Section -->
+            <#else>
                 <div class="dropdown tooltip" id="profile-dropdown">
                     <a href="#">
                         <img class="profile-picture" id="profile-pic" src="${"/profile-picture"}" alt="Profile Picture">
@@ -47,12 +41,10 @@
                     <div class="dropdown-content">
                         <a href="/profile#favourites">Favourites</a>
                         <a href="/logout">Logout</a>
-                        <!-- Add more options here -->
                     </div>
-                    <!-- End of Profile Picture Dropdown Section -->
                 </div>
-            </nav>
-        </#if>
+            </#if>
+        </nav>
 
         <h1 class="logo">
             <a href="/">Wizard</a>
@@ -62,51 +54,23 @@
             <li style="padding: 0 10px;">//</li>
             <li><a href="/profile">My account</a></li>
         </menu>
+
         <label class="search-bar">
             <span class="material-symbols-outlined">search</span>
-            <input name="search" placeholder="Search something..." type="text" id="search-input" list="search-options">
-            <datalist id="search-options"></datalist>
+            <form id="search-form" hx-post="/search-redirect" hx-target="#search-results">
+                <input name="search" placeholder="Search something..." type="text" id="search-input" list="search-options"
+                       hx-get="/search-suggestions" hx-trigger="input[from:1s delay:300ms]" hx-target="#search-options"
+                       hx-boost="true">
+                <datalist id="search-options"></datalist>
+            </form>
         </label>
-
-        <script>
-            const searchInput = document.getElementById('search-input');
-            const searchOptions = document.getElementById('search-options');
-            const routes = {
-                "books": "/books",
-                "houses": "/houses",
-                "characters": "/characters",
-                "movies": "/movies",
-                "potions": "/potions",
-                "spells": "/spells"
-            };
-
-            searchInput.addEventListener('input', (e) => {
-                const inputValue = searchInput.value.toLowerCase();
-                const options = Object.keys(routes).filter((key) => key.startsWith(inputValue));
-                searchOptions.innerHTML = '';
-                options.forEach((option) => {
-                    const opt = document.createElement('option');
-                    opt.value = option;
-                    opt.text = option.charAt(0).toUpperCase() + option.slice(1);
-                    searchOptions.appendChild(opt);
-                });
-            });
-
-            searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    const inputValue = searchInput.value.toLowerCase();
-                    if (routes.hasOwnProperty(inputValue)) {
-                        window.location.href = routes[inputValue];
-                    }
-                }
-            });
-        </script>
         <div class="bg-effect"></div>
     </header>
 
-    <section class="container">
+    <section class="container" id="search-results">
         <#nested>
     </section>
+
     </body>
     </html>
 </#macro>

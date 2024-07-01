@@ -246,6 +246,41 @@ fun Application.configureRouting() {
                     }
                 }
 
+                get("/search-suggestions") {
+                    val query = call.request.queryParameters["search"].orEmpty().lowercase()
+                    val routes = mapOf(
+                        "books" to "/books",
+                        "houses" to "/houses",
+                        "characters" to "/characters",
+                        "movies" to "/movies",
+                        "potions" to "/potions",
+                        "spells" to "/spells"
+                    )
+
+                    // Filter options for the datalist suggestions
+                    val options = routes.keys.filter { it.startsWith(query) }
+                    val response = options.joinToString(separator = "") { "<option value=\"$it\">${it.capitalize()}</option>" }
+                    call.respondText(response, ContentType.Text.Html)
+                }
+
+                post("/search-redirect") {
+                    val query = call.receiveParameters()["search"]?.lowercase()
+                    val routes = mapOf(
+                        "books" to "/books",
+                        "houses" to "/houses",
+                        "characters" to "/characters",
+                        "movies" to "/movies",
+                        "potions" to "/potions",
+                        "spells" to "/spells"
+                    )
+
+                    if (query != null && routes.containsKey(query)) {
+                        call.respondRedirect(routes[query]!!)
+                    } else {
+                        call.respond(HttpStatusCode.NotFound, "Route not found for '$query'")
+                    }
+                }
+
                 get("/profile-picture") {
                     val userSession = call.verifyUserSession()
                     if (userSession!= null) {
