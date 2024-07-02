@@ -9,7 +9,6 @@ import net.grandcentrix.backend.plugins.UserAlreadyExistsException
 import java.util.regex.Pattern;
 import java.security.SecureRandom
 import java.security.spec.KeySpec
-import java.util.regex.Pattern
 import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
