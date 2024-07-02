@@ -5,6 +5,7 @@ import io.mockk.spyk
 import io.mockk.unmockkAll
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
+import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.House
 import net.grandcentrix.backend.models.User
 import org.junit.Before
@@ -20,7 +21,7 @@ class UserRepositoryTest {
         private const val FILE_NAME = "src/main/resources/testFile.json"
     }
 
-    private val userManager = spyk(UserManagerInstance, recordPrivateCalls = true)
+    private val userManager = spyk(daoUsers, recordPrivateCalls = true)
 
     @Before
     fun beforeTests() {
@@ -30,11 +31,11 @@ class UserRepositoryTest {
             "One",
             "personone@email.com",
             "personone",
-            "pass",
+            "123",
             House(
-                1,
+                1.toString(),
                 "Gryffindor",
-                colors = listOf(),
+                "",
                 "",
                 "",
                 "",
@@ -60,7 +61,7 @@ class UserRepositoryTest {
 
     @Test
     fun testGetUsers() {
-        val users = UserManagerInstance.getAll()
+        val users = daoUsers.getAll()
 
         assertNotNull(users)
         assertTrue { users.isNotEmpty() }
@@ -81,7 +82,7 @@ class UserRepositoryTest {
             "Two",
             "persontwo@email.com",
             "persontwo",
-            "pass",
+            "123",
             null,
             favouriteItems = mutableListOf()
         )
@@ -100,7 +101,7 @@ class UserRepositoryTest {
             "Three",
             "personthree@email.com",
             "personthree",
-            "pass",
+            "123",
             null
         )
 

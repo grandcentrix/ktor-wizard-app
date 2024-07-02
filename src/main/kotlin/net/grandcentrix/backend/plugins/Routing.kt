@@ -86,7 +86,9 @@ fun Application.configureRouting() {
                         "signup.ftl",
                         mapOf(
                             "userSession" to "null",
-                            "houses" to HousesRepositoryInstance.getAll().map { it.name }
+                            "houses" to HousesRepositoryInstance.getAll().map {
+                                mapOf("id" to it.id, "name" to it.name)
+                            }
                         )
                     ))
                 }
