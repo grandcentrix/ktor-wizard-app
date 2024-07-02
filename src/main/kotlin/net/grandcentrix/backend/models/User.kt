@@ -10,9 +10,8 @@ data class User(
     val surname: String,
     val email: String,
     val username: String,
-//    val house: String?,
     val password: String,
-    val house: House? = null,
+    val house: String,
     val favouriteItems: MutableList<String> = mutableListOf(),
     val id: String = UUID.randomUUID().toString(),
     val profilePictureData: ByteArray? = null //to store profile picture data as a ByteArray. This allows storing the image data directly in the database.

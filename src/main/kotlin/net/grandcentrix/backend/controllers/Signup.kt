@@ -6,9 +6,9 @@ import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.plugins.RequestException
 import net.grandcentrix.backend.plugins.UserAlreadyExistsException
-import java.util.regex.Pattern;
 import java.security.SecureRandom
 import java.security.spec.KeySpec
+import java.util.regex.Pattern
 import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
@@ -51,27 +51,15 @@ class Signup {
 
         verifyDuplicates(email, username)
 
-        if (house.isNullOrBlank()) {
-            val user = User(
+        val user = User(
                 name,
                 surname,
                 email,
                 username,
-                null,
                 hexSalt+hashedPassword,
+                house
             )
             daoUsers.addItem(user)
-        } else {
-            val user = User(
-                name,
-                surname,
-                email,
-                username,
-                house,
-                hexSalt+hashedPassword,
-            )
-            daoUsers.addItem(user)
-        }
     }
 
     private fun verifyFields(
