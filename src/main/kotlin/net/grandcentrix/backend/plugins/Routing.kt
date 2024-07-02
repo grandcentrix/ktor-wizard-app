@@ -58,6 +58,63 @@ fun Application.configureRouting() {
                 ))
             }
 
+            get("/search-suggestions") {
+                val query = call.request.queryParameters["search"].orEmpty().lowercase()
+                val books = fetchBooks().associateBy { it.title.lowercase() }
+                val houses = APIRequesting.fetchHouses().associateBy { it.name.lowercase() }
+                val routes = mapOf(
+                    "books" to "/books",
+                    "houses" to "/houses",
+                    "characters" to "/characters",
+                    "movies" to "/movies",
+                    "potions" to "/potions",
+                    "spells" to "/spells"
+                )
+
+                // Filter options for the datalist suggestions
+                val options = routes.keys.filter { it.startsWith(query) } + books.keys.filter { it.startsWith(query) } + houses.keys.filter { it.startsWith(query) }
+                val response = options.joinToString(separator = "") {
+                    if (books.containsKey(it)) {
+                        "<option value=\"${it}\">${it.capitalize()} (Book)</option>"
+                    } else if (houses.containsKey(it)) {
+                        "<option value=\"${it}\">${it.capitalize()} (House)</option>"
+                    } else {
+                        "<option value=\"${it}\">${it.capitalize()}</option>"
+                    }
+                }
+                call.respondText(response, ContentType.Text.Html)
+            }
+
+            post("/search-redirect") {
+                val query = call.receiveParameters()["search"]?.lowercase()
+                val books = fetchBooks().associateBy { it.title.lowercase() }
+                val houses = APIRequesting.fetchHouses().associateBy { it.name.lowercase() }
+
+                if (query != null) {
+                    if (books.containsKey(query)) {
+                        call.respondRedirect("/books/${books[query]!!.slug}")
+                    } else if (houses.containsKey(query)) {
+                        call.respondRedirect("/houses/${houses[query]!!.name}")
+                    } else {
+                        val routes = mapOf(
+                            "books" to "/books",
+                            "houses" to "/houses",
+                            "characters" to "/characters",
+                            "movies" to "/movies",
+                            "potions" to "/potions",
+                            "spells" to "/spells"
+                        )
+
+                        if (routes.containsKey(query)) {
+                            call.respondRedirect(routes[query]!!)
+                        } else {
+                            call.respond(HttpStatusCode.NotFound, "Route not found for '$query'")
+                        }
+                    }
+                }
+            }
+
+
             authenticate("auth-form") {
                 post("/login") {
                     val username = call.principal<UserIdPrincipal>()?.name.toString()
@@ -245,61 +302,6 @@ fun Application.configureRouting() {
                     val userSession = call.verifyUserSession()
                     if (userSession != null) {
                         call.getHogwartsHouse(userSession)
-                    }
-                }
-
-                get("/search-suggestions") {
-                    val query = call.request.queryParameters["search"].orEmpty().lowercase()
-                    val books = fetchBooks().associateBy { it.title.lowercase() }
-                    val houses = APIRequesting.fetchHouses().associateBy { it.name.lowercase() }
-                    val routes = mapOf(
-                        "books" to "/books",
-                        "houses" to "/houses",
-                        "characters" to "/characters",
-                        "movies" to "/movies",
-                        "potions" to "/potions",
-                        "spells" to "/spells"
-                    )
-
-                    // Filter options for the datalist suggestions
-                    val options = routes.keys.filter { it.startsWith(query) } + books.keys.filter { it.startsWith(query)
-                    }+ houses.keys.filter { it.startsWith(query) }
-                    val response = options.joinToString(separator = "") {
-                        if (books.containsKey(it)) {
-                            "<option value=\"${it}\">${it.capitalize()}</option>"
-                        } else {
-                            "<option value=\"${it}\">${it.capitalize()}</option>"
-                        }
-                    }
-                    call.respondText(response, ContentType.Text.Html)
-                }
-
-                post("/search-redirect") {
-                    val query = call.receiveParameters()["search"]?.lowercase()
-                    val books = fetchBooks().associateBy { it.title.lowercase() }
-                    val houses = APIRequesting.fetchHouses().associateBy { it.name.lowercase() }
-
-                    if (query != null) {
-                        if (books.containsKey(query)) {
-                            call.respondRedirect("/books/${books[query]!!.slug}")
-                        } else if (houses.containsKey(query)) {
-                            call.respondRedirect("/houses/${houses[query]!!.name}")
-                        } else {
-                            val routes = mapOf(
-                                "books" to "/books",
-                                "houses" to "/houses",
-                                "characters" to "/characters",
-                                "movies" to "/movies",
-                                "potions" to "/potions",
-                                "spells" to "/spells"
-                            )
-
-                            if (routes.containsKey(query)) {
-                                call.respondRedirect(routes[query]!!)
-                            } else {
-                                call.respond(HttpStatusCode.NotFound, "Route not found for '$query'")
-                            }
-                        }
                     }
                 }
 
