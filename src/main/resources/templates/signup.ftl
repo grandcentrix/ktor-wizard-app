@@ -1,5 +1,6 @@
 <#import "_layout.ftl" as layout />
 <#assign statusMessage = message>
+<#assign profilePicture = profilePictureData in layout>
 
 <@layout.base>
 
@@ -40,13 +41,14 @@
                 <label class="select-label" for="houses">Choose your Hogwarts' House:</label>
                 <select class="round-arrow" name="houses" id="houses">
                     <#list houses as house>
-                        <option name="house" value="${house}">${house}</option>
+                        <option name="house" value="${house["id"]}">${house["name"]}</option>
                     </#list>
                 </select>
             </div>
         </div>
 
         <input class="register-button button" type="submit" value="Register">
+
     </form>
 
 </@layout.base>

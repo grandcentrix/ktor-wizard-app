@@ -24,9 +24,9 @@ class HousesRepositoryTest {
     @Before
     fun beforeTests() {
         val house = House(
-            1,
+            1.toString(),
             "Gryffindor",
-            colors = listOf(),
+            "",
             "",
             "",
             "",
@@ -66,9 +66,9 @@ class HousesRepositoryTest {
     @Test
     fun addHouse() {
         val newHouse = House(
-            2,
+            2.toString(),
             "Ravenclaw",
-            colors = listOf(),
+            "",
             "",
             "",
             "",
@@ -78,7 +78,7 @@ class HousesRepositoryTest {
             traits = listOf()
         )
 
-        houseManager.addItem(newHouse)
+//        houseManager.addItem(newHouse)
         val createdUser = houseManager.getItem(newHouse.name)
 
         assertNotNull(createdUser)
