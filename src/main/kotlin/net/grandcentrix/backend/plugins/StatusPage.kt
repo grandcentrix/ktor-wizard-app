@@ -7,10 +7,10 @@ import io.ktor.server.http.content.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import net.grandcentrix.backend.repository.HousesRepository
 import io.ktor.server.sessions.*
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.controllers.getProfilePicture
+import net.grandcentrix.backend.repository.HousesRepository
 
 fun Application.configureStatusPage() {
     routing {
@@ -61,12 +61,13 @@ fun Application.configureStatusPage() {
                     )
                 }
 
-                is SignupInvalidInput -> {
+                is SignupException -> {
                     call.respondTemplate(
                         "signup.ftl",
                         mapOf(
                             "userSession" to "null",
-                            "houses" to HousesRepository.HousesRepositoryInstance.getAll().map { it.name },
+                            "houses" to HousesRepository.HousesRepositoryInstance.getAll(),
+                            "profilePictureData" to getProfilePicture(userSession=null),
                             "message" to cause.message
                         )
                     )
@@ -123,7 +124,7 @@ open class StatusException(override val message: String?): Exception()
 class DAOException(override val message: String?): StatusException(message)
 class RequestException(override val message: String?): StatusException(message)
 class UserAlreadyExistsException(override val message: String?): StatusException(message)
-class SignupInvalidInput(override val message: String?): StatusException(message)
+class SignupException(override val message: String?): StatusException(message)
 class UnauthorizedException(override val message: String?): StatusException(message)
 class GravatarProfileException(
     override val message: String?,

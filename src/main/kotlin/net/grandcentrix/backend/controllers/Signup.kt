@@ -5,11 +5,9 @@ import io.ktor.util.*
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.plugins.RequestException
-import net.grandcentrix.backend.plugins.SignupInvalidInput
-import net.grandcentrix.backend.plugins.UserAlreadyExistsException
+import net.grandcentrix.backend.plugins.SignupException
 import java.security.SecureRandom
 import java.security.spec.KeySpec
-import java.util.regex.Pattern
 import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
@@ -44,13 +42,14 @@ class Signup {
             throw RequestException("Missing required fields!")
         }
 
-        verifyFields(name, surname, username, email)
+        verifyName(name)
+        verifySurname(surname)
+        verifyUsername(username)
+        verifyEmail(email)
 
         val salt = generateRandomSalt()
         val hashedPassword = generateHash(password, salt)
         val hexSalt = salt.toHexString()
-
-        verifyDuplicates(email, username)
 
         if (house.isNullOrBlank()) {
             val user = User(
@@ -75,33 +74,52 @@ class Signup {
         }
     }
 
-    private fun verifyFields(
-        name: String,
-        surname: String,
-        username: String,
-        email: String
-    ) {
-        // regex - set of strings that matches the pattern
-        val emailPattern = Pattern.compile("^(.+)@(\\S+)$")
+    private fun verifyEmail(email: String) {
+        email.toCharArray().map { character ->
+            if (!character.isLetterOrDigit() &&
+                (character.toString() != "@" && character.toString() != ".")) {
+                throw SignupException(
+                    "Invalid e-mail."
+                )
+            }
+        }
 
+        if (
+            email.startsWith("@") ||
+            email.startsWith(".") ||
+            email.endsWith("@") ||
+            email.endsWith(".") ||
+            (!email.contains("@") && !email.contains(".")) ||
+            email.contains("@.")
+        ) {
+            throw SignupException("Must be a valid format for e-mail address.")
+        }
+
+    }
+
+    private fun verifyName(name: String) {
         name.toCharArray().map { character ->
             if (!character.isLetter() && !character.isWhitespace()) {
-                throw SignupInvalidInput("Name and surname must contain only letters.")
+                throw SignupException("Name and surname must contain only letters.")
             }
         }
+    }
 
+    private fun verifySurname(surname: String) {
         surname.toCharArray().map { character ->
             if (!character.isLetter() && !character.isWhitespace()) {
-                throw SignupInvalidInput("Name and surname must contain only letters.")
+                throw SignupException("Name and surname must contain only letters.")
             }
         }
+    }
 
+    private fun verifyUsername(username: String) {
         username.toCharArray().map { character ->
             if (!character.isLetterOrDigit() &&
-                (character.toString() != "." || character.toString() != "_")) {
-                    throw SignupInvalidInput(
-                        "Username can only contain alphanumeric, underscore and point characters."
-                    )
+                (character.toString() != "." && character.toString() != "_")) {
+                throw SignupException(
+                    "Username can only contain alphanumeric, underscore and point characters."
+                )
             }
         }
 
@@ -110,26 +128,15 @@ class Signup {
             username.startsWith(".") ||
             username.startsWith("_") ||
             username.length > 25
-            ) {
-            throw SignupInvalidInput("Username can't start with non-alphanumeric characters or be more than 25 characters.")
-        }
-        else if (!emailPattern.matcher(email).matches()) {
-            throw SignupInvalidInput("This e-mail is not a valid value for e-mail!")
-        }
-
-    }
-
-    private fun verifyDuplicates(email: String, username: String) {
-        if (daoUsers.getByEmail(email) != null) {
-            throw UserAlreadyExistsException("Email is already in use!")
-        }
-        if (daoUsers.getItem(username) != null) {
-            throw UserAlreadyExistsException("Username is already in use!")
+        ) {
+            throw SignupException(
+                "Username can't start with non-alphanumeric characters or be more than 25 characters."
+            )
         }
     }
 
 
-     fun generateRandomSalt(): ByteArray {
+    fun generateRandomSalt(): ByteArray {
         val random = SecureRandom()
         val salt = ByteArray(16) // creates a 16-byte salt
         random.nextBytes(salt)
