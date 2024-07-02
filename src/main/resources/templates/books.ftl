@@ -10,9 +10,23 @@
         <ul class="content-list">
             <#list books as book>
                 <li>
-                    <form method="POST" action="/favourite/book/${book.id}" class="favourite-items-form">
+                    <form method="POST" action="/books/${book.id}/favourite" class="favourite-items-form" target="invisible">
                         <button class="favourite-button" type="submit">
-                            <span class="material-symbols-outlined" style="font-size: 30px">favorite</span>
+                            <#assign isFavourite = "false">
+
+                            <#list userFavourites>
+                                <#items as favouriteItem>
+                                    <#if favouriteItem == book["id"]>
+                                        <#assign isFavourite = "true">
+                                    </#if>
+                                </#items>
+                            </#list>
+
+                            <#if isFavourite == "true">
+                                <span class="material-symbols-outlined favourite-button-icon-red" style="font-size: 30px;">favorite</span>
+                            <#else>
+                                <span class="material-symbols-outlined favourite-button-icon-white" style="font-size: 30px;">favorite</span>
+                            </#if>
                         </button>
                     </form>
                     <img alt="" class="content-img" src="${book.coverUrl}" />
@@ -21,5 +35,8 @@
             </#list>
         </ul>
     </section>
+
+    <!-- Invisible iframe to handle form submissions without page reload -->
+    <iframe id="invisible" name="invisible" style="display: none;"></iframe>
 
 </@layout.base>

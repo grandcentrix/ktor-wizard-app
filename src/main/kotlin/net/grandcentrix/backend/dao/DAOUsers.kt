@@ -1,11 +1,8 @@
 package net.grandcentrix.backend.dao
 
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.encodeToJsonElement
-import net.grandcentrix.backend.models.FavouriteItems
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.models.Users
-import net.grandcentrix.backend.plugins.DAOException
+import net.grandcentrix.backend.plugins.DAOUsersException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -21,7 +18,6 @@ class DAOUsers {
         username = row[Users.username],
         password = row[Users.password],
         house = row[Users.house],
-        favouriteItems = Json.decodeFromString<FavouriteItems>(row[Users.favouriteItems]),
         profilePictureData = row[Users.profilePictureData]
     )
 
@@ -38,11 +34,10 @@ class DAOUsers {
             users[username] = user.username
             users[password] = user.password
             users[house] = user.house.toString()
-            users[favouriteItems] = Json.encodeToJsonElement<FavouriteItems>(user.favouriteItems).toString()
             users[profilePictureData] = user.profilePictureData
         }
         if (insertStatement.resultedValues?.singleOrNull() == null) {
-            throw DAOException("Failed to add user with username: ${user.username}")
+            throw DAOUsersException("Failed to add user with username: ${user.username}")
         }
      }
 
@@ -79,18 +74,7 @@ class DAOUsers {
     fun deleteItem(username: String): Unit = transaction {
         val deleteCount = Users.deleteWhere { Users.username eq username }
         if (deleteCount == 0) {
-            throw DAOException("Failed to delete user with username: $username")
-        }
-    }
-
-    fun updateFavouriteItems(username: String, newItems: FavouriteItems) {
-        transaction {
-            val updateCount = Users.update({ Users.username eq username }) {
-                it[favouriteItems] = Json.encodeToJsonElement<FavouriteItems>(newItems).toString()
-            }
-            if (updateCount == 0) {
-                throw DAOException("Database error: Failed to update favourite items list!")
-            }
+            throw DAOUsersException("Failed to delete user with username: $username")
         }
     }
 
@@ -100,9 +84,9 @@ class DAOUsers {
                 it[username] = newUsername
             }
             if (updateCount == 0) {
-                throw DAOException("Failed to update username from $currentUsername to $newUsername")
+                throw DAOUsersException("Failed to update username from $currentUsername to $newUsername")
             } else if (updateCount > 1) {
-                throw DAOException("Updated more than one username unexpectedly")
+                throw DAOUsersException("Updated more than one username unexpectedly")
             }
         }
     }
@@ -113,7 +97,7 @@ class DAOUsers {
                 it[profilePictureData] = imageData
             }
             if (updateCount == 0) {
-                throw DAOException("Failed to update profile picture for user with username: $username")
+                throw DAOUsersException("Failed to update profile picture for user with username: $username")
             }
         }
     }
@@ -127,7 +111,7 @@ class DAOUsers {
             // Check if profilePictureData is null after the update
             if (Users.select { Users.username eq username }
                     .singleOrNull()?.get(Users.profilePictureData) != null) {
-                throw DAOException("Failed to remove profile picture for user with username: $username")
+                throw DAOUsersException("Failed to remove profile picture for user with username: $username")
             }
         }
     }
@@ -138,7 +122,7 @@ class DAOUsers {
                 it[password] = newPassword
             }
             if (updateCount == 0) {
-                throw DAOException("Failed to update password for user with username: $username")
+                throw DAOUsersException("Failed to update password for user with username: $username")
             }
         }
     }
@@ -149,7 +133,7 @@ class DAOUsers {
                 it[email] = newEmail
             }
             if (updateCount == 0) {
-                throw DAOException("Failed to update email for user with username: $username")
+                throw DAOUsersException("Failed to update email for user with username: $username")
             }
         }
     }

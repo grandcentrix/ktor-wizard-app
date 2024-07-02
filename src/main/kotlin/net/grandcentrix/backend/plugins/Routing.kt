@@ -1,5 +1,6 @@
 package net.grandcentrix.backend.plugins
 
+import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -13,6 +14,7 @@ import io.ktor.server.util.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.controllers.addFavouriteItem
+import net.grandcentrix.backend.controllers.userFavouriteItems
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.Users.username
 import net.grandcentrix.backend.repository.BooksRepository.Companion.BooksRepositoryInstance
@@ -105,13 +107,15 @@ fun Application.configureRouting() {
 
             get("/books") {
                 val username = call.sessions.get<UserSession>()?.username
+                val item = call.request.local.uri.removePrefix("/")
                 call.respondTemplate(
                     "books.ftl",
                     mapOf(
                         "books" to BooksRepositoryInstance.getAll(),
                         "userSession" to userSession.toString(),
                         "username" to username,
-                        "house" to userSession?.let { it1 -> daoUsers.getHouse(it1.username) }
+                        "house" to userSession?.let { it1 -> daoUsers.getHouse(it1.username) },
+                        "userFavourites" to userFavouriteItems(username, item)
                     )
                 )
             }
@@ -258,14 +262,14 @@ fun Application.configureRouting() {
                 }
             }
 
-            post("/favourite/{item}/{itemId}") {
-                val item = call.parameters.getOrFail<String>("item")
-                val itemId = call.parameters.getOrFail<String>("itemId")
-                val username = call.sessions.get<UserSession>()?.username
-                if (username != null) {
-                    call.addFavouriteItem(item, itemId, username)
-                } else {
-                    call.respondRedirect("/login")
+            authenticate("auth-session") {
+                post("/{item}/{itemId}/favourite") {
+                    val item = call.parameters.getOrFail<String>("item")
+                    val itemId = call.parameters.getOrFail<String>("itemId")
+                    val username = call.sessions.get<UserSession>()?.username
+                        ?: throw UnauthorizedException("Username for session not found.")
+                    addFavouriteItem(item, itemId, username)
+                    call.respond(HttpStatusCode.OK)
                 }
             }
         }
