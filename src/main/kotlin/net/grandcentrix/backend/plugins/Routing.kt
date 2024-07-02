@@ -59,9 +59,16 @@ fun Application.configureRouting() {
             }
 
             get("/search-suggestions") {
+                // Get the search query from the request query parameters
                 val query = call.request.queryParameters["search"].orEmpty().lowercase()
+
+                // Fetch a list of books and create a map with title as key (in lowercase)
                 val books = fetchBooks().associateBy { it.title.lowercase() }
+
+                // Fetch a list of houses and create a map with name as key (in lowercase)
                 val houses = APIRequesting.fetchHouses().associateBy { it.name.lowercase() }
+
+                // Define a map of routes with their corresponding URLs
                 val routes = mapOf(
                     "books" to "/books",
                     "houses" to "/houses",
@@ -72,30 +79,50 @@ fun Application.configureRouting() {
                 )
 
                 // Filter options for the datalist suggestions
-                val options = routes.keys.filter { it.startsWith(query) } + books.keys.filter { it.startsWith(query) } + houses.keys.filter { it.startsWith(query) }
+                // Get all keys from routes, books, and houses that start with the search query
+                val options = routes.keys.filter { it.startsWith(query) } +
+                        books.keys.filter { it.startsWith(query) } +
+                        houses.keys.filter { it.startsWith(query) }
+
+                // Create an HTML response with options for the datalist
                 val response = options.joinToString(separator = "") {
                     if (books.containsKey(it)) {
+                        // If the option is a book, add "(Book)" to the label
                         "<option value=\"${it}\">${it.capitalize()} (Book)</option>"
                     } else if (houses.containsKey(it)) {
+                        // If the option is a house, add "(House)" to the label
                         "<option value=\"${it}\">${it.capitalize()} (House)</option>"
                     } else {
+                        // For other options, just capitalize the label
                         "<option value=\"${it}\">${it.capitalize()}</option>"
                     }
                 }
+
+                // Respond with the HTML response
                 call.respondText(response, ContentType.Text.Html)
             }
 
             post("/search-redirect") {
+                // Get the search query from the request body
                 val query = call.receiveParameters()["search"]?.lowercase()
+
+                // Fetch a list of books and create a map with title as key (in lowercase)
                 val books = fetchBooks().associateBy { it.title.lowercase() }
+
+                // Fetch a list of houses and create a map with name as key (in lowercase)
                 val houses = APIRequesting.fetchHouses().associateBy { it.name.lowercase() }
 
-                if (query != null) {
+                if (query!= null) {
+                    // If the query matches a book, redirect to the book page
                     if (books.containsKey(query)) {
                         call.respondRedirect("/books/${books[query]!!.slug}")
-                    } else if (houses.containsKey(query)) {
+                    }
+                    // If the query matches a house, redirect to the house page
+                    else if (houses.containsKey(query)) {
                         call.respondRedirect("/houses/${houses[query]!!.name}")
-                    } else {
+                    }
+                    else {
+                        // Define a map of routes with their corresponding URLs
                         val routes = mapOf(
                             "books" to "/books",
                             "houses" to "/houses",
@@ -105,9 +132,12 @@ fun Application.configureRouting() {
                             "spells" to "/spells"
                         )
 
+                        // If the query matches a route, redirect to that route
                         if (routes.containsKey(query)) {
                             call.respondRedirect(routes[query]!!)
-                        } else {
+                        }
+                        else {
+                            // If no match is found, return a 404 error
                             call.respond(HttpStatusCode.NotFound, "Route not found for '$query'")
                         }
                     }

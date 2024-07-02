@@ -59,8 +59,7 @@
             <span class="material-symbols-outlined">search</span>
             <form id="search-form" hx-post="/search-redirect" hx-target="#search-results">
                 <input name="search" placeholder="Search something..." type="text" id="search-input" list="search-options"
-                       hx-get="/search-suggestions" hx-trigger="input[from:1s delay:300ms]" hx-target="#search-options"
-                       hx-boost="true">
+                       hx-get="/search-suggestions" hx-trigger="input" hx-target="#search-options">
                 <datalist id="search-options"></datalist>
             </form>
         </label>
