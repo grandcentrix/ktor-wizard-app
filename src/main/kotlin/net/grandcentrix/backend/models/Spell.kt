@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Spell(
-    val id: String = String(), //FIXME
+    var id: String? = null,
     val name: String,
     val category: String,
     val creator: String,
