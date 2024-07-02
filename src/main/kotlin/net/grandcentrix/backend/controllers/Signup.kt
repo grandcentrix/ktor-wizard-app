@@ -9,11 +9,11 @@ import net.grandcentrix.backend.plugins.UserAlreadyExistsException
 import java.util.regex.Pattern;
 import java.security.SecureRandom
 import java.security.spec.KeySpec
+import java.util.regex.Pattern
 import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 import kotlin.text.toCharArray
-
 
 class Signup {
 
@@ -103,6 +103,7 @@ class Signup {
             throw UserAlreadyExistsException("Username is already in use!")
         }
     }
+
 
      fun generateRandomSalt(): ByteArray {
         val random = SecureRandom()
