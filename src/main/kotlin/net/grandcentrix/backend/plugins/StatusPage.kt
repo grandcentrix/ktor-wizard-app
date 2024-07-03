@@ -54,7 +54,7 @@ fun Application.configureStatusPage() {
                         "errorWithoutLayout.ftl",
                         mapOf(
                             "errorMessage" to cause.message,
-                            "redirectLink" to "/signup"
+                            "redirectLink" to "/"
                         )
                     )
                 }
@@ -65,7 +65,7 @@ fun Application.configureStatusPage() {
                         "errorWithoutLayout.ftl",
                         mapOf(
                             "errorMessage" to cause.message,
-                            "redirectLink" to "/signup"
+                            "redirectLink" to "/profile"
                         )
                     )
                 }
