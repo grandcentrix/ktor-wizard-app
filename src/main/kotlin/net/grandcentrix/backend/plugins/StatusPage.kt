@@ -10,6 +10,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.controllers.getProfilePicture
+import respondTemplates
 
 fun Application.configureStatusPage() {
     routing {
@@ -21,7 +22,7 @@ fun Application.configureStatusPage() {
             when (cause) {
                 is RequestException -> {
                     val userSession: UserSession? = call.sessions.get<UserSession>()
-                    call.respondTemplate(
+                    call.respondTemplates(
                         "error.ftl",
                         mapOf(
                             "errorMessage" to cause.message,
@@ -36,7 +37,7 @@ fun Application.configureStatusPage() {
 
                 is DAOException -> {
                     val userSession = call.sessions.get<UserSession>()
-                    call.respondTemplate(
+                    call.respondTemplates(
                         "error.ftl",
                         mapOf(
                             "errorMessage" to cause.message,
@@ -62,7 +63,7 @@ fun Application.configureStatusPage() {
 
                 is UserAlreadyExistsException -> {
                     val userSession: UserSession? = call.sessions.get<UserSession>()
-                    call.respondTemplate(
+                    call.respondTemplates(
                         "error.ftl",
                         mapOf(
                             "errorMessage" to cause.message,
@@ -79,7 +80,7 @@ fun Application.configureStatusPage() {
 
                 else -> {
                     val userSession = call.sessions.get<UserSession>()
-                    call.respondTemplate(
+                    call.respondTemplates(
                         "error.ftl",
                         mapOf(
                             "errorMessage" to cause.message,
@@ -94,7 +95,7 @@ fun Application.configureStatusPage() {
 
         status(HttpStatusCode.NotFound) { call, _ ->
             val userSession: UserSession? = call.sessions.get<UserSession>()
-            call.respondTemplate(
+            call.respondTemplates(
                 "error.ftl",
                 mapOf(
                     "errorMessage" to "Oops! It wasn't possible to find the page, or it doesn't exist.",
@@ -107,7 +108,7 @@ fun Application.configureStatusPage() {
 
         status(HttpStatusCode.InternalServerError) { call, _ ->
             val userSession: UserSession? = call.sessions.get<UserSession>()
-            call.respondTemplate(
+            call.respondTemplates(
                 "error.ftl",
                 mapOf(
                     "errorMessage" to "Status 500 - Internal Server Error",
