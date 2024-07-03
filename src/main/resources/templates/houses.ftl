@@ -11,7 +11,7 @@
     <section class="content">
         <ul class="content-list">
             <#list houses as house>
-                <li><a href="/houses/${house.name}">${house.name}</a></li>
+                <li><a class="list-item" href="/houses/${house.name}">${house.name}</a></li>
             </#list>
         </ul>
     </section>

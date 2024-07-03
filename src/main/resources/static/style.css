@@ -426,10 +426,10 @@ nav.user-menu {
     margin-bottom: 30px;
 }
 
-ul.content-list {
+.content-list {
     width: 100%;
     display: flex;
-    gap: 1%;
+    gap: 2% 1%;
     padding: 0;
     margin: 0;
     flex-wrap: wrap;
@@ -440,27 +440,30 @@ ul.content-list {
 .content-list li {
     width: calc((100% / 5) - 1%);
     display: flex;
-    align-items: center;
-    margin: 1% 0;
-    height: auto;
-    flex-direction: column;
+    flex-wrap: wrap;
+    background: #7C404C;
+    border-radius: 10px;
 }
 
-.content-list li a {
-    background-color: #7C404C;
-    padding: 40px;
-    border-radius: 0px 0px 10px 10px;
+.list-item {
+    position: relative;
+    width: 100%;
+    padding: 30px;
+}
+
+.list-item-name {
     font-weight: bold;
-    width: calc((100%) - 80px);
     display: flex;
     justify-content: center;
     height: 100%;
     max-height: 130px;
     align-items: center;
+    width: 100%;
 }
 
-.content-list li a:hover {
+.content-list .list-item:hover {
     background-color: #734136;
+    border-radius: 10px;
 }
 
 .content-img {
@@ -468,7 +471,7 @@ ul.content-list {
     height: 470px;
     width: 100%;
     object-position: top center;
-    border-radius: 10px;
+    border-radius: 10px 10px 0 0;
 }
 
 li:hover .content-img {
@@ -482,12 +485,10 @@ li:hover .content-img {
     border: none;
     color: #ffffff;
     padding: 0;
-    position: absolute;
-    margin: 15px 15px 0 0;
-    height: 470px;
-    display: flex;
-    align-items: flex-end;
     cursor: pointer;
+    height: auto;
+    display: flex;
+    align-items: flex-start;
 }
 
 .favourite-button .material-symbols-outlined {
@@ -498,18 +499,19 @@ li:hover .content-img {
             'opsz' 24
 }
 
-.favourite-items-form {
-    display: flex;
-    width: 100%;
-    justify-content: flex-end;
+.favourite-items {
     z-index: 100;
+    position: absolute;
+    margin: -15px 15px 0 0;
+    top: 0;
+    right: 0;
 }
 
 .favourite-button span:hover {
     color: #d71b1b;
 }
 
-.favourite-button span:focus {
+.favourite-button-icon-white:focus {
     color: #d71b1b;
 }
 
@@ -520,6 +522,11 @@ li:hover .content-img {
 .favourite-button-icon-red {
     color: #d71b1b;
 }
+
+.favourite-button-icon-red:focus {
+    color: #ffffff;
+}
+
 
 .tooltiptext {
     position: absolute;

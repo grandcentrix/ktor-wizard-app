@@ -11,27 +11,45 @@
         <ul class="content-list">
             <#list books as book>
                 <li>
-                    <form method="POST" action="/books/${book.id}/favourite" class="favourite-items-form" target="invisible">
-                        <button class="favourite-button" type="submit">
-                            <#assign isFavourite = "false">
-
-                            <#list userFavourites>
-                                <#items as favouriteItem>
-                                    <#if favouriteItem == book["id"]>
-                                        <#assign isFavourite = "true">
-                                    </#if>
-                                </#items>
-                            </#list>
-
-                            <#if isFavourite == "true">
-                                <span class="material-symbols-outlined favourite-button-icon-red" style="font-size: 30px;">favorite</span>
-                            <#else>
-                                <span class="material-symbols-outlined favourite-button-icon-white" style="font-size: 30px;">favorite</span>
-                            </#if>
-                        </button>
-                    </form>
                     <img alt="" class="content-img" src="${book.coverUrl}" />
-                    <a href="/books/${book.slug}">${book.title}</a>
+                    <div class="list-item">
+
+                        <div class="list-item-name">
+                            <a href="/books/${book.slug}">
+                                ${book.title}
+                            </a>
+                        </div>
+
+
+                        <div class="favourite-items">
+                            <#if session == "null">
+                                <a href="/login" class="favourite-button">
+                                    <span class="material-symbols-outlined favourite-button-icon-white" style="font-size: 30px;">favorite</span>
+                                </a>
+
+                            <#else>
+                                <form method="POST" action="/books/${book.id}/favourite" target="invisible">
+                                    <button class="favourite-button" type="submit">
+                                        <#assign isFavourite = "false">
+
+                                        <#list userFavourites>
+                                            <#items as favouriteItem>
+                                                <#if favouriteItem == book["id"]>
+                                                    <#assign isFavourite = "true">
+                                                </#if>
+                                            </#items>
+                                        </#list>
+
+                                        <#if isFavourite == "true">
+                                            <span class="material-symbols-outlined favourite-button-icon-red" style="font-size: 30px;">favorite</span>
+                                        <#else>
+                                            <span tabindex="0" class="material-symbols-outlined favourite-button-icon-white"  style="font-size: 30px;">favorite</span>
+                                        </#if>
+                                    </button>
+                                </form>
+                            </#if>
+                        </div>
+                    </div>
                 </li>
             </#list>
         </ul>
