@@ -1,9 +1,6 @@
 <#import "_layout.ftl" as layout />
-<#assign userSession = session in layout>
-<#assign profilePicture = profilePictureData in layout>
 
-
-<@layout.base>
+<@layout.base hxRequest=hxRequest>
     <h2>${errorMessage}</h2>
 
     <section class="content">

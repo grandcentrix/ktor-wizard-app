@@ -20,10 +20,13 @@ suspend fun ApplicationCall.respondTemplates(
     contentType: ContentType = ContentType.Text.Html.withCharset(Charsets.UTF_8)
 ): Unit {
     val hxRequest = request.header("HX-Request")?.toBoolean() ?: false
-    if (hxRequest) {
-        // HX-Request is true, respond accordingly
-        respond(FreeMarkerContent("errorttt.ftl", model, etag, contentType))
+    val modelWithHxRequest = if (model is Map<*, *>) {
+        model + ("hxRequest" to hxRequest)
     } else {
-        respond(FreeMarkerContent(template, model, etag, contentType))
+        mapOf("hxRequest" to hxRequest, "model" to model)
     }
+
+    respond(FreeMarkerContent(template, modelWithHxRequest, etag, contentType))
 }
+
+
