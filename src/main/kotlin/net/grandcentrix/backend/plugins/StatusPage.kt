@@ -48,21 +48,10 @@ fun Application.configureStatusPage() {
                     )
                 }
 
-                is NoSearchbarPageFoundException -> {
-                    call.respond(HttpStatusCode.NotFound)
-                    call.respondTemplate(
-                        "errorWithoutLayout.ftl",
-                        mapOf(
-                            "errorMessage" to cause.message,
-                            "redirectLink" to "/"
-                        )
-                    )
-                }
-
 
                 is UserDataAlreadyExistsException -> {
                     call.respondTemplate(
-                        "errorWithoutLayout.ftl",
+                        "error.ftl",
                         mapOf(
                             "errorMessage" to cause.message,
                             "redirectLink" to "/profile"
