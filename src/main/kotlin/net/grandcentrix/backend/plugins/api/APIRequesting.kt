@@ -6,9 +6,13 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
+import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import net.grandcentrix.backend.models.*
+import net.grandcentrix.backend.plugins.GravatarProfileException
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
 
 object APIRequesting {
 
@@ -62,4 +66,23 @@ object APIRequesting {
             it.attributes.id = it.id
             it.attributes
         }
+
+    fun fetchGravatarProfile(email: String): GravatarProfile {
+        val digest = MessageDigest.getInstance("SHA-256")
+        val hashBytes = digest.digest(
+            email.toByteArray(StandardCharsets.UTF_8)
+        )
+        val emailKey: String = hex(hashBytes)
+
+        try {
+            val profile: GravatarProfile = runBlocking {
+                client.get("https://api.gravatar.com/v3/profiles/${emailKey}") {
+                    bearerAuth("129:gk-N0JYWAg0JaYac_Bdl3ha8nadRp1rLIasSakKhP9VZMWoQzii2yBZM2VEZrsYP")
+                }.body()
+            }
+            return profile
+        } catch (cause: Throwable) {
+            throw GravatarProfileException("Gravatar API failed", cause)
+        }
+    }
 }

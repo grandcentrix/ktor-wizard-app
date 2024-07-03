@@ -1,5 +1,6 @@
 <#import "_layout.ftl" as layout />
-<#assign userSession = userSession in layout>
+<#assign userSession = session in layout>
+<#assign profilePicture = profilePictureData in layout>
 
 <@layout.base>
 
@@ -7,8 +8,6 @@
     <span class="material-symbols-outlined">account_box</span>
     Welcome, ${username}!
 </h1>
-
-
 
 <section class="content" style="flex-direction: column;">
     <div class="user-data">
@@ -54,7 +53,7 @@
         <#if house??>
             <div class="user-data">
                 <img
-                        src="/static/img/${house} house symbole.png"
+                        src="/static/img/${house}_symbol.png"
                         alt="${house} Symbol"
                         style="width: 200px; height: 200px;"
                 />

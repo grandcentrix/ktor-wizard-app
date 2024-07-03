@@ -1,4 +1,6 @@
 <#import "_layout.ftl" as layout />
+<#assign profilePicture = profilePictureData in layout>
+
 <@layout.base>
 
 <h1>
@@ -17,6 +19,7 @@
         </label>
 
         <input class="button" type="submit">
+
     </form>
 
     <a class="links" href="/signup">

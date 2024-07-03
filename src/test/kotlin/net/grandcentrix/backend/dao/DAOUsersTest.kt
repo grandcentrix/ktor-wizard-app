@@ -30,7 +30,7 @@ class DAOUsersTest {
             "One",
             "personone@email.com",
             "personone",
-            123,
+            "123",
             House(
                 1.toString(),
                 "Gryffindor",
@@ -81,7 +81,7 @@ class DAOUsersTest {
             "Two",
             "persontwo@email.com",
             "persontwo",
-            123,
+            "123",
             null,
             favouriteItems = mutableListOf()
         )
@@ -100,7 +100,7 @@ class DAOUsersTest {
             "Three",
             "personthree@email.com",
             "personthree",
-            123,
+            "123",
             null
         )
 
