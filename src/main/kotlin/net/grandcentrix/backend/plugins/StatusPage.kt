@@ -28,7 +28,7 @@ fun Application.configureStatusPage() {
 
                 is RequestUserDataException -> {
                     call.respondTemplate(
-                        "error-Userdata.ftl",
+                        "errorWithoutLayout.ftl",
                         mapOf(
                             "errorMessage" to cause.message,
                             "redirectLink" to call.request.local.uri
@@ -40,7 +40,7 @@ fun Application.configureStatusPage() {
 
                 is DAOException -> {
                     call.respondTemplate(
-                        "error-Userdata.ftl",
+                        "errorWithoutLayout.ftl",
                         mapOf(
                             "errorMessage" to cause.message,
                             "redirectLink" to call.request.local.uri
@@ -48,9 +48,10 @@ fun Application.configureStatusPage() {
                     )
                 }
 
-                is UserAlreadyExistsException -> {
+                is NoSearchbarPageFoundException -> {
+                    call.respond(HttpStatusCode.NotFound)
                     call.respondTemplate(
-                        "error.ftl",
+                        "errorWithoutLayout.ftl",
                         mapOf(
                             "errorMessage" to cause.message,
                             "redirectLink" to "/signup"
@@ -58,9 +59,10 @@ fun Application.configureStatusPage() {
                     )
                 }
 
+
                 is UserDataAlreadyExistsException -> {
                     call.respondTemplate(
-                        "error-Userdata.ftl",
+                        "errorWithoutLayout.ftl",
                         mapOf(
                             "errorMessage" to cause.message,
                             "redirectLink" to "/signup"
@@ -95,6 +97,7 @@ open class StatusException(override val message: String?): Exception()
 
 class DAOException(override val message: String?): StatusException(message)
 class RequestException(override val message: String?): StatusException(message)
+class NoSearchbarPageFoundException(override val message: String?): StatusException(message)
 
 class RequestUserDataException(override val message: String?): StatusException(message)
 class UserAlreadyExistsException(override val message: String?): StatusException(message)

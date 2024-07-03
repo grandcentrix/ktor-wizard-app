@@ -1,7 +1,4 @@
 
-
-
-
     <h2>${errorMessage}</h2>
 
     <section class="content">
