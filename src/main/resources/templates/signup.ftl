@@ -1,4 +1,5 @@
 <#import "_layout.ftl" as layout />
+<#assign statusMessage = message>
 <#assign profilePicture = profilePictureData in layout>
 
 <@layout.base>
@@ -9,6 +10,9 @@
     </h1>
 
     <form class="form form-signup" action="/signup" method="POST">
+
+        <span>${statusMessage}<br/></span>
+
         <div class="register-fields">
             <label>
                 <input placeholder="Name" required type="text" name="name">
