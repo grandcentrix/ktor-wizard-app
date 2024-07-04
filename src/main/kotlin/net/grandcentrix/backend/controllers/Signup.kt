@@ -75,11 +75,12 @@ class Signup {
     }
 
     private fun verifyEmail(email: String) {
+
         email.toCharArray().map { character ->
-            if (!character.isLetterOrDigit() &&
+            if (!isAlphanumeric(character) &&
                 (character.toString() != "@" && character.toString() != ".")) {
                 throw SignupException(
-                    "Invalid e-mail."
+                    "E-mail contain invalid characters."
                 )
             }
         }
@@ -114,8 +115,9 @@ class Signup {
     }
 
     private fun verifyUsername(username: String) {
+
         username.toCharArray().map { character ->
-            if (!character.isLetterOrDigit() &&
+            if (!isAlphanumeric(character) &&
                 (character.toString() != "." && character.toString() != "_")) {
                 throw SignupException(
                     "Username can only contain alphanumeric, underscore and point characters."
@@ -134,6 +136,11 @@ class Signup {
             )
         }
     }
+
+    private fun isAlphanumeric(character: Char) =
+        character in '0'..'9' ||
+        character in 'A'..'Z' ||
+        character in 'a'..'z'
 
 
     fun generateRandomSalt(): ByteArray {
