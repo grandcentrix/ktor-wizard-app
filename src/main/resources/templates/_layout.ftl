@@ -16,7 +16,7 @@
         </script>
     </head>
     <body>
-    <header>
+        <header>
             <nav class="user-menu">
                 <!-- Profile Picture Dropdown Section -->
                 <div class="dropdown tooltip" id="profile-dropdown">
@@ -61,7 +61,7 @@
             <span class="material-symbols-outlined">search</span>
             <input name="search" placeholder="Search something..." type="text">
         </label>
-        <div class="bg-effect"></div>
+    <div class="bg-effect"></div>
     </header>
 
     <section class="container">

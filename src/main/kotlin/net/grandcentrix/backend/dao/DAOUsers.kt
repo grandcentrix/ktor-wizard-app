@@ -3,6 +3,7 @@ package net.grandcentrix.backend.dao
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.models.Users
 import net.grandcentrix.backend.plugins.DAOUsersException
+import net.grandcentrix.backend.plugins.SignupException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -36,8 +37,8 @@ class DAOUsers {
             users[house] = user.house.toString()
             users[profilePictureData] = user.profilePictureData
         }
-        if (insertStatement.resultedValues?.singleOrNull() == null) {
-            throw DAOUsersException("Failed to add user with username: ${user.username}")
+        if (insertStatement.insertedCount == 0) {
+            throw SignupException("Failed to create account. E-mail and/or username must be taken.")
         }
      }
 

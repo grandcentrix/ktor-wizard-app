@@ -10,6 +10,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.controllers.getProfilePicture
+import net.grandcentrix.backend.repository.HousesRepository
 
 fun Application.configureStatusPage() {
     routing {
@@ -47,19 +48,6 @@ fun Application.configureStatusPage() {
                     )
                 }
 
-//                is DAOProfilePictureException -> {
-//                    val userSession = call.sessions.get<UserSession>()
-//                    call.respondTemplate(
-//                        "error.ftl",
-//                        mapOf(
-//                            "errorMessage" to cause.message,
-//                            "redirectLink" to call.request.local.uri,
-//                            "session" to userSession.toString(),
-//                            "profilePicture" to getProfilePicture(userSession)
-//                        )
-//                    )
-//                }
-
                 is UserAlreadyExistsException -> {
                     val userSession: UserSession? = call.sessions.get<UserSession>()
                     call.respondTemplate(
@@ -69,6 +57,18 @@ fun Application.configureStatusPage() {
                             "redirectLink" to "/signup",
                             "session" to userSession.toString(),
                             "profilePictureData" to getProfilePicture(userSession)
+                        )
+                    )
+                }
+
+                is SignupException -> {
+                    call.respondTemplate(
+                        "signup.ftl",
+                        mapOf(
+                            "userSession" to "null",
+                            "houses" to HousesRepository.HousesRepositoryInstance.getAll(),
+                            "profilePictureData" to getProfilePicture(userSession=null),
+                            "message" to cause.message
                         )
                     )
                 }
@@ -131,6 +131,7 @@ class DAOUsersException(override val message: String?): StatusException(message)
 class DAOFavouriteItemsException(override val message: String?): StatusException(message)
 class RequestException(override val message: String?): StatusException(message)
 class UserAlreadyExistsException(override val message: String?): StatusException(message)
+class SignupException(override val message: String?): StatusException(message)
 class UnauthorizedException(override val message: String?): StatusException(message)
 class GravatarProfileException(
     override val message: String?,
