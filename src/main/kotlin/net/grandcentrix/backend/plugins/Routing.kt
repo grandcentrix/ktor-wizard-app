@@ -275,11 +275,17 @@ fun Application.configureRouting() {
 
             authenticate("auth-session") {
                 post("/{item}/{itemId}/favourite") {
+                    call.addFavouriteItem()
+                }
+            }
+
+            authenticate("auth-session") {
+                delete("/{item}/{itemId}/favourite") {
                     val item = call.parameters.getOrFail<String>("item")
                     val itemId = call.parameters.getOrFail<String>("itemId")
                     val username = call.sessions.get<UserSession>()?.username
                         ?: throw UnauthorizedException("Username for session not found.")
-                    addFavouriteItem(item, itemId, username)
+//                    removeItem(item, itemId, username)
                     call.respond(HttpStatusCode.OK)
                 }
             }

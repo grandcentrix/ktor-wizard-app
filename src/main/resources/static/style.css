@@ -511,10 +511,6 @@ li:hover .content-img {
     color: #d71b1b;
 }
 
-.favourite-button-icon-white:focus {
-    color: #d71b1b;
-}
-
 .favourite-button-icon-white {
     color: #ffffff;
 }
@@ -522,11 +518,6 @@ li:hover .content-img {
 .favourite-button-icon-red {
     color: #d71b1b;
 }
-
-.favourite-button-icon-red:focus {
-    color: #ffffff;
-}
-
 
 .tooltiptext {
     position: absolute;

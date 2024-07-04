@@ -1,62 +1,70 @@
 package net.grandcentrix.backend.dao
 
 import net.grandcentrix.backend.models.*
-import net.grandcentrix.backend.plugins.DAOUsersException
+import net.grandcentrix.backend.plugins.DAOFavouriteItemsException
 import org.jetbrains.exposed.sql.insertIgnore
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class DAOFavouriteItems {
 
-    fun addFavouriteItem(item: FavouriteItem) = transaction {
-        if (item.bookId != null) {
-            val insertStatement = FavouriteBooks.insertIgnore { books ->
-                books[userId] = item.userId
-                books[bookId] = item.bookId
-            }
-            if (insertStatement.resultedValues?.singleOrNull() == null) {
-                throw DAOUsersException("Failed to add favourite item book with ID: ${item.bookId}")
-            }
-        } else if (item.characterId != null) {
-            val insertStatement = FavouriteCharacters.insertIgnore { characters ->
-                characters[userId] = item.userId
-                characters[characterId] = item.characterId
-            }
-            if (insertStatement.resultedValues?.singleOrNull() == null) {
-                throw DAOUsersException("Failed to add favourite item character with ID: ${item.characterId}")
-            }
-        } else if (item.houseId != null) {
-            val insertStatement = FavouriteHouses.insertIgnore { houses ->
-                houses[userId] = item.userId
-                houses[houseId] = item.houseId
-            }
-            if (insertStatement.resultedValues?.singleOrNull() == null) {
-                throw DAOUsersException("Failed to add favourite item house with ID: ${item.houseId}")
-            }
-        } else if (item.movieId != null) {
-            val insertStatement = FavouriteMovies.insertIgnore { movies ->
-                movies[userId] = item.userId
-                movies[movieId] = item.movieId
-            }
-            if (insertStatement.resultedValues?.singleOrNull() == null) {
-                throw DAOUsersException("Failed to add favourite item movie with ID: ${item.movieId}")
-            }
-        } else if (item.potionId != null) {
-            val insertStatement = FavouritePotions.insertIgnore { potions ->
-                potions[userId] = item.userId
-                potions[potionId] = item.potionId
-            }
-            if (insertStatement.resultedValues?.singleOrNull() == null) {
-                throw DAOUsersException("Failed to add favourite item potion with ID: ${item.potionId}")
-            }
-        } else if (item.spellId != null) {
-            val insertStatement = FavouriteSpells.insertIgnore { spells ->
-                spells[userId] = item.userId
-                spells[spellId] = item.spellId
-            }
-            if (insertStatement.resultedValues?.singleOrNull() == null) {
-                throw DAOUsersException("Failed to add favourite item spell with ID: ${item.spellId}")
-            }
+    fun addFavouriteBook(item: BookItem) = transaction {
+        val insertStatement = FavouriteBooks.insertIgnore { books ->
+            books[userId] = item.userId
+            books[bookId] = item.bookId
+        }
+        if (insertStatement.resultedValues?.singleOrNull() == null) {
+            throw DAOFavouriteItemsException("Failed to add favourite item book with ID: ${item.bookId}")
+        }
+    }
+
+    fun addFavouriteCharacter(item: CharacterItem) = transaction {
+        val insertStatement = FavouriteCharacters.insertIgnore { characters ->
+            characters[userId] = item.userId
+            characters[characterId] = item.characterId
+        }
+        if (insertStatement.resultedValues?.singleOrNull() == null) {
+            throw DAOFavouriteItemsException("Failed to add favourite item character with ID: ${item.characterId}")
+        }
+    }
+
+    fun addFavouriteHouse(item: HouseItem) = transaction {
+        val insertStatement = FavouriteHouses.insertIgnore { houses ->
+            houses[userId] = item.userId
+            houses[houseId] = item.houseId
+        }
+        if (insertStatement.resultedValues?.singleOrNull() == null) {
+            throw DAOFavouriteItemsException("Failed to add favourite item house with ID: ${item.houseId}")
+        }
+    }
+
+    fun addFavouriteMovie(item: MovieItem) = transaction {
+        val insertStatement = FavouriteMovies.insertIgnore { movies ->
+            movies[userId] = item.userId
+            movies[movieId] = item.movieId
+        }
+        if (insertStatement.resultedValues?.singleOrNull() == null) {
+            throw DAOFavouriteItemsException("Failed to add favourite item movie with ID: ${item.movieId}")
+        }
+    }
+
+    fun addFavouritePotion(item: PotionItem) = transaction {
+        val insertStatement = FavouritePotions.insertIgnore { potions ->
+            potions[userId] = item.userId
+            potions[potionId] = item.potionId
+        }
+        if (insertStatement.resultedValues?.singleOrNull() == null) {
+            throw DAOFavouriteItemsException("Failed to add favourite item potion with ID: ${item.potionId}")
+        }
+    }
+
+    fun addFavouriteSpell(item: SpellItem) = transaction {
+        val insertStatement = FavouriteSpells.insertIgnore { spells ->
+            spells[userId] = item.userId
+            spells[spellId] = item.spellId
+        }
+        if (insertStatement.resultedValues?.singleOrNull() == null) {
+            throw DAOFavouriteItemsException("Failed to add favourite item spell with ID: ${item.spellId}")
         }
     }
 
@@ -89,6 +97,8 @@ class DAOFavouriteItems {
         FavouriteSpells.select { FavouriteSpells.userId eq userId }
             .map { it[FavouriteSpells.spellId] }
     }
+
+
 }
 
 val daoFavouriteItems = DAOFavouriteItems()

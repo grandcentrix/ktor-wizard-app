@@ -34,7 +34,7 @@ fun Application.configureStatusPage() {
 
                 is UnauthorizedException -> call.respondRedirect( "/login")
 
-                is DAOUsersException -> {
+                is DAOUsersException, is DAOFavouriteItemsException -> {
                     val userSession = call.sessions.get<UserSession>()
                     call.respondTemplate(
                         "error.ftl",
@@ -75,6 +75,11 @@ fun Application.configureStatusPage() {
 
                 is GravatarProfileException -> {
                     call.request.local.uri
+                }
+
+                is FavouriteItemsException -> {
+                    val message = cause.message ?: "Could not complete the action."
+                    call.respondText(message)
                 }
 
                 else -> {
@@ -123,6 +128,7 @@ fun Application.configureStatusPage() {
 open class StatusException(override val message: String?): Exception()
 
 class DAOUsersException(override val message: String?): StatusException(message)
+class DAOFavouriteItemsException(override val message: String?): StatusException(message)
 class RequestException(override val message: String?): StatusException(message)
 class UserAlreadyExistsException(override val message: String?): StatusException(message)
 class UnauthorizedException(override val message: String?): StatusException(message)
@@ -130,3 +136,5 @@ class GravatarProfileException(
     override val message: String?,
     override val cause: Throwable? = null
 ): StatusException(message)
+
+class FavouriteItemsException(override val message: String?): StatusException(message)

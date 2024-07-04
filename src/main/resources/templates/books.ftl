@@ -28,8 +28,12 @@
                                 </a>
 
                             <#else>
-                                <form method="POST" action="/books/${book.id}/favourite" target="invisible">
-                                    <button class="favourite-button" type="submit">
+                                    <button
+                                            id="favourite-items-button"
+                                            hx-post="/books/${book.id}/favourite"
+                                            class="favourite-button"
+                                            type="submit"
+                                    >
                                         <#assign isFavourite = "false">
 
                                         <#list userFavourites>
@@ -43,10 +47,9 @@
                                         <#if isFavourite == "true">
                                             <span class="material-symbols-outlined favourite-button-icon-red" style="font-size: 30px;">favorite</span>
                                         <#else>
-                                            <span tabindex="0" class="material-symbols-outlined favourite-button-icon-white"  style="font-size: 30px;">favorite</span>
+                                            <span class="material-symbols-outlined favourite-button-icon-white liked"  style="font-size: 30px;">favorite</span>
                                         </#if>
                                     </button>
-                                </form>
                             </#if>
                         </div>
                     </div>
@@ -56,6 +59,13 @@
     </section>
 
     <!-- Invisible iframe to handle form submissions without page reload -->
-    <iframe id="invisible" name="invisible" style="display: none;"></iframe>
+<#--    <iframe id="invisible" name="invisible" style="display: none;"></iframe>-->
 
+<script>
+    document.addEventListener('htmx:afterRequest', function(event) {
+        if (event.detail.elt.id === 'favourite-items-button') {
+            document.getElementById('favourite-items-button').classList.toggle('unsaved');
+        }
+    });
+</script>
 </@layout.base>

@@ -4,15 +4,41 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Table
 
 @Serializable
-data class FavouriteItem (
+data class BookItem (
     val userId: String,
-    val bookId: String? = null,
-    val characterId: String? = null,
-    val houseId: String? = null,
-    val movieId: String? = null,
-    val potionId: String? = null,
-    val spellId: String? = null
+    val bookId: String,
 )
+
+@Serializable
+data class CharacterItem (
+    val userId: String,
+    val characterId: String,
+)
+
+@Serializable
+data class HouseItem (
+    val userId: String,
+    val houseId: String,
+)
+
+@Serializable
+data class MovieItem (
+    val userId: String,
+    val movieId: String,
+)
+
+@Serializable
+data class PotionItem (
+    val userId: String,
+    val potionId: String,
+)
+
+@Serializable
+data class SpellItem (
+    val userId: String,
+    val spellId: String,
+)
+
 
 object FavouriteBooks : Table() {
     val userId = varchar("FK_userID", 128)
