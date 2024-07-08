@@ -8,7 +8,7 @@
         Books
     </h1>
     <section class="content">
-        <ul class="content-list">
+        <ul id="books-list" class="content-list">
             <#list books as book>
                 <li>
                     <img alt="" class="content-img" src="${book.coverUrl}" />
@@ -20,36 +20,48 @@
                             </a>
                         </div>
 
-
                         <div class="favourite-items">
                             <#if session == "null">
                                 <a href="/login" class="favourite-button">
                                     <span class="material-symbols-outlined favourite-button-icon-white" style="font-size: 30px;">favorite</span>
                                 </a>
-
                             <#else>
-                                    <button
-                                            id="favourite-items-button"
-                                            hx-post="/books/${book.id}/favourite"
-                                            class="favourite-button"
-                                            type="submit"
-                                    >
-                                        <#assign isFavourite = "false">
-
-                                        <#list userFavourites>
-                                            <#items as favouriteItem>
-                                                <#if favouriteItem == book["id"]>
-                                                    <#assign isFavourite = "true">
-                                                </#if>
-                                            </#items>
-                                        </#list>
-
-                                        <#if isFavourite == "true">
-                                            <span class="material-symbols-outlined favourite-button-icon-red" style="font-size: 30px;">favorite</span>
-                                        <#else>
-                                            <span class="material-symbols-outlined favourite-button-icon-white liked"  style="font-size: 30px;">favorite</span>
+                                <#assign isFavourite = "false">
+                                <#list userFavourites>
+                                    <#items as favouriteItem>
+                                        <#if favouriteItem == book["id"]>
+                                            <#assign isFavourite = "true">
                                         </#if>
-                                    </button>
+                                    </#items>
+                                </#list>
+
+                                <#if isFavourite == "true">
+                                    <div class="liked-button">
+                                        <button
+                                                id="favourite-items-button"
+                                                hx-delete="/books/${book.id}/favourite"
+                                                hx-target="#books-list"
+                                                hx-select="#books-list"
+                                                class="favourite-button"
+                                                type="submit"
+                                        >
+                                            <span class="material-symbols-outlined favourite-button-icon-red" style="font-size: 30px;">favorite</span>
+                                        </button>
+                                    </div>
+                                <#else>
+                                    <div class="unliked-button">
+                                        <button
+                                                id="favourite-items-button-2"
+                                                hx-post="/books/${book.id}/favourite"
+                                                hx-target="#books-list"
+                                                hx-select="#books-list"
+                                                class="favourite-button unliked"
+                                                type="submit"
+                                        >
+                                            <span class="material-symbols-outlined favourite-button-icon-white"  style="font-size: 30px;">favorite</span>
+                                        </button>
+                                    </div>
+                                </#if>
                             </#if>
                         </div>
                     </div>
@@ -58,14 +70,4 @@
         </ul>
     </section>
 
-    <!-- Invisible iframe to handle form submissions without page reload -->
-<#--    <iframe id="invisible" name="invisible" style="display: none;"></iframe>-->
-
-<script>
-    document.addEventListener('htmx:afterRequest', function(event) {
-        if (event.detail.elt.id === 'favourite-items-button') {
-            document.getElementById('favourite-items-button').classList.toggle('unsaved');
-        }
-    });
-</script>
 </@layout.base>

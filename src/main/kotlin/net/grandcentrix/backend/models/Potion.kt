@@ -11,7 +11,7 @@ data class Potion(
     val difficulty: String?,
     val effect: String?,
     @SerialName("image")
-    val imageUrl: String?,
+    var imageUrl: String?,
     val inventors: String?,
     val ingredients: String?,
     val manufacturers: String?,

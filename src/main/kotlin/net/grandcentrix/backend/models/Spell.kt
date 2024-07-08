@@ -12,7 +12,7 @@ data class Spell(
     val effect: String?,
     val hand: String?,
     @SerialName("image")
-    val imageUrl: String?,
+    var imageUrl: String?,
     val incantation: String?,
     val light: String?,
     val slug: String?,

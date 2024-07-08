@@ -429,12 +429,13 @@ nav.user-menu {
 .content-list {
     width: 100%;
     display: flex;
-    gap: 2% 1%;
     padding: 0;
     margin: 0;
     flex-wrap: wrap;
-    justify-content: flex-start;
+    /* justify-content: center; */
     font-size: 16px;
+    row-gap: 30px;
+    column-gap: 1.25%;
 }
 
 .content-list li {
@@ -443,6 +444,10 @@ nav.user-menu {
     flex-wrap: wrap;
     background: #7C404C;
     border-radius: 10px;
+}
+
+.content-list li.houses {
+    width: calc((100% / 4) - 1%);
 }
 
 .list-item {
@@ -472,11 +477,16 @@ nav.user-menu {
     width: 100%;
     object-position: top center;
     border-radius: 10px 10px 0 0;
+    background-color: #40252A;
 }
 
-li:hover .content-img {
+.content-list li:hover .content-img {
     filter: grayscale(1);
     transition-duration: 0.8s;
+}
+
+.content-list li:hover {
+    background-color: #734136;
 }
 
 .favourite-button {

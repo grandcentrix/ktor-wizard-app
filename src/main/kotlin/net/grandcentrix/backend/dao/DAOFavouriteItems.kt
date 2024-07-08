@@ -2,6 +2,8 @@ package net.grandcentrix.backend.dao
 
 import net.grandcentrix.backend.models.*
 import net.grandcentrix.backend.plugins.DAOFavouriteItemsException
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insertIgnore
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -14,7 +16,7 @@ class DAOFavouriteItems {
             books[bookId] = item.bookId
         }
         if (insertStatement.resultedValues?.singleOrNull() == null) {
-            throw DAOFavouriteItemsException("Failed to add favourite item book with ID: ${item.bookId}")
+            throw DAOFavouriteItemsException("Failed to add favourite book with ID: ${item.bookId}")
         }
     }
 
@@ -24,7 +26,7 @@ class DAOFavouriteItems {
             characters[characterId] = item.characterId
         }
         if (insertStatement.resultedValues?.singleOrNull() == null) {
-            throw DAOFavouriteItemsException("Failed to add favourite item character with ID: ${item.characterId}")
+            throw DAOFavouriteItemsException("Failed to add favourite character with ID: ${item.characterId}")
         }
     }
 
@@ -34,7 +36,7 @@ class DAOFavouriteItems {
             houses[houseId] = item.houseId
         }
         if (insertStatement.resultedValues?.singleOrNull() == null) {
-            throw DAOFavouriteItemsException("Failed to add favourite item house with ID: ${item.houseId}")
+            throw DAOFavouriteItemsException("Failed to add favourite house with ID: ${item.houseId}")
         }
     }
 
@@ -44,7 +46,7 @@ class DAOFavouriteItems {
             movies[movieId] = item.movieId
         }
         if (insertStatement.resultedValues?.singleOrNull() == null) {
-            throw DAOFavouriteItemsException("Failed to add favourite item movie with ID: ${item.movieId}")
+            throw DAOFavouriteItemsException("Failed to add favourite movie with ID: ${item.movieId}")
         }
     }
 
@@ -54,7 +56,7 @@ class DAOFavouriteItems {
             potions[potionId] = item.potionId
         }
         if (insertStatement.resultedValues?.singleOrNull() == null) {
-            throw DAOFavouriteItemsException("Failed to add favourite item potion with ID: ${item.potionId}")
+            throw DAOFavouriteItemsException("Failed to add favourite potion with ID: ${item.potionId}")
         }
     }
 
@@ -64,7 +66,7 @@ class DAOFavouriteItems {
             spells[spellId] = item.spellId
         }
         if (insertStatement.resultedValues?.singleOrNull() == null) {
-            throw DAOFavouriteItemsException("Failed to add favourite item spell with ID: ${item.spellId}")
+            throw DAOFavouriteItemsException("Failed to add favourite spell with ID: ${item.spellId}")
         }
     }
 
@@ -98,7 +100,47 @@ class DAOFavouriteItems {
             .map { it[FavouriteSpells.spellId] }
     }
 
+    fun removeFavouriteBook(item: BookItem) = transaction {
+        val deletedItem = FavouriteBooks.deleteWhere { bookId eq item.bookId }
+        if (deletedItem == 0) {
+            throw DAOFavouriteItemsException("Failed to remove favourite book with ID: ${item.bookId}")
+        }
+    }
 
+    fun removeFavouriteCharacter(item: CharacterItem) = transaction {
+        val deletedItem = FavouriteCharacters.deleteWhere { characterId eq item.characterId }
+        if (deletedItem == 0) {
+            throw DAOFavouriteItemsException("Failed to remove favourite character with ID: ${item.characterId}")
+        }
+    }
+
+    fun removeFavouriteHouse(item: HouseItem) = transaction {
+        val deletedItem = FavouriteHouses.deleteWhere { houseId eq item.houseId }
+        if (deletedItem == 0) {
+            throw DAOFavouriteItemsException("Failed to remove favourite house with ID: ${item.houseId}")
+        }
+    }
+
+    fun removeFavouriteMovie(item: MovieItem) = transaction {
+        val deletedItem = FavouriteMovies.deleteWhere { movieId eq item.movieId }
+        if (deletedItem == 0) {
+            throw DAOFavouriteItemsException("Failed to remove favourite movie with ID: ${item.movieId}")
+        }
+    }
+
+    fun removeFavouritePotion(item: PotionItem) = transaction {
+        val deletedItem = FavouritePotions.deleteWhere { potionId eq item.potionId }
+        if (deletedItem == 0) {
+            throw DAOFavouriteItemsException("Failed to remove favourite potion with ID: ${item.potionId}")
+        }
+    }
+
+    fun removeFavouriteSpell(item: SpellItem) = transaction {
+        val deletedItem = FavouriteSpells.deleteWhere { spellId eq item.spellId }
+        if (deletedItem == 0) {
+            throw DAOFavouriteItemsException("Failed to remove favourite spell with ID: ${item.spellId}")
+        }
+    }
 }
 
 val daoFavouriteItems = DAOFavouriteItems()

@@ -1,9 +1,12 @@
 package net.grandcentrix.backend.controllers
 
-import io.ktor.http.*
+import getBooksTemplate
+import getCharactersTemplate
+import getHousesTemplate
+import getMoviesTemplate
+import getPotionsTemplate
+import getSpellsTemplate
 import io.ktor.server.application.*
-import io.ktor.server.response.*
-import io.ktor.server.sessions.*
 import io.ktor.server.util.*
 import net.grandcentrix.backend.dao.daoFavouriteItems
 import net.grandcentrix.backend.dao.daoUsers
@@ -11,47 +14,55 @@ import net.grandcentrix.backend.models.*
 import net.grandcentrix.backend.plugins.DAOUsersException
 import net.grandcentrix.backend.plugins.FavouriteItemsException
 import net.grandcentrix.backend.plugins.RequestException
-import net.grandcentrix.backend.plugins.UnauthorizedException
 
-suspend fun ApplicationCall.addFavouriteItem() {
+
+suspend fun ApplicationCall.addFavouriteItem(userSession: UserSession) {
+
+    val user = daoUsers.getItem(userSession.username)
+        ?: throw RequestException("Not possible to add favourite item - user not found!")
 
     val item = parameters.getOrFail<String>("item")
     val itemId = parameters.getOrFail<String>("itemId")
-    val username = sessions.get<UserSession>()?.username
-        ?: throw UnauthorizedException("Username for session not found.")
-
-    val user = daoUsers.getItem(username)
-        ?: throw RequestException("Not possible to add favourite item - user not found!")
 
     when (item) {
         "books" -> {
-            val favouriteBook = BookItem(userId = user.id, bookId = itemId)
+            val favouriteBook = BookItem(user.id, bookId = itemId)
             daoFavouriteItems.addFavouriteBook(favouriteBook)
+
+            getBooksTemplate(userSession, item)
         }
         "characters" -> {
-            val favouriteCharacter = CharacterItem(userId = user.id, characterId = itemId)
+            val favouriteCharacter = CharacterItem(user.id, characterId = itemId)
             daoFavouriteItems.addFavouriteCharacter(favouriteCharacter)
+
+            getCharactersTemplate(userSession, item)
         }
         "houses" -> {
-            val favouriteHouse = HouseItem(userId = user.id, houseId = itemId)
+            val favouriteHouse = HouseItem(user.id, houseId = itemId)
             daoFavouriteItems.addFavouriteHouse(favouriteHouse)
+
+            getHousesTemplate(userSession, item)
         }
         "movies" -> {
-            val favouriteMovie = MovieItem(userId = user.id, movieId = itemId)
+            val favouriteMovie = MovieItem(user.id, movieId = itemId)
             daoFavouriteItems.addFavouriteMovie(favouriteMovie)
+
+            getMoviesTemplate(userSession, item)
         }
         "potions" -> {
-            val favouritePotion = PotionItem(userId = user.id, potionId = itemId)
+            val favouritePotion = PotionItem(user.id, potionId = itemId)
             daoFavouriteItems.addFavouritePotion(favouritePotion)
+
+            getPotionsTemplate(userSession, item)
         }
         "spells" -> {
-            val favouriteSpell = SpellItem(userId = user.id, spellId = itemId)
+            val favouriteSpell = SpellItem(user.id, spellId = itemId)
             daoFavouriteItems.addFavouriteSpell(favouriteSpell)
+
+            getSpellsTemplate(userSession, item)
         }
         else -> throw FavouriteItemsException("Failed to favorite item.")
     }
-
-    respond(HttpStatusCode.OK)
 }
 
 fun userFavouriteItems(username: String?, item: String): List<String> {
@@ -66,21 +77,72 @@ fun userFavouriteItems(username: String?, item: String): List<String> {
         "books" -> {
             daoFavouriteItems.getUserFavouriteBooks(userId)
         }
-
+        "characters" -> {
+            daoFavouriteItems.getUserFavouriteCharacters(userId)
+        }
+        "houses" -> {
+            daoFavouriteItems.getUserFavouriteHouses(userId)
+        }
+        "movies" -> {
+            daoFavouriteItems.getUserFavouriteMovies(userId)
+        }
+        "potions" -> {
+            daoFavouriteItems.getUserFavouritePotions(userId)
+        }
+        "spells" -> {
+            daoFavouriteItems.getUserFavouriteSpells(userId)
+        }
         else -> {
             return listOf()
         }
     }
 }
 
-fun removeFavouriteItem(item: String, itemId: String, username: String) {
-    val user = daoUsers.getItem(username)
+suspend fun ApplicationCall.removeFavouriteItem(userSession: UserSession) {
+
+    val user = daoUsers.getItem(userSession.username)
         ?: throw RequestException("Not possible to add favourite item - user not found!")
+
+    val item = parameters.getOrFail<String>("item")
+    val itemId = parameters.getOrFail<String>("itemId")
 
     when (item) {
         "books" -> {
-            val favouriteBook = BookItem(userId = user.id, bookId = itemId)
-            daoFavouriteItems.addFavouriteBook(favouriteBook)
+            val favouriteBook = BookItem(user.id, bookId = itemId)
+            daoFavouriteItems.removeFavouriteBook(favouriteBook)
+
+            getBooksTemplate(userSession, item)
         }
+        "characters" -> {
+            val favouriteCharacter = CharacterItem(user.id, characterId = itemId)
+            daoFavouriteItems.removeFavouriteCharacter(favouriteCharacter)
+
+            getCharactersTemplate(userSession, item)
+        }
+        "houses" -> {
+            val favouriteHouse = HouseItem(user.id, houseId = itemId)
+            daoFavouriteItems.removeFavouriteHouse(favouriteHouse)
+
+            getHousesTemplate(userSession, item)
+        }
+        "movies" -> {
+            val favouriteMovie = MovieItem(user.id, movieId = itemId)
+            daoFavouriteItems.removeFavouriteMovie(favouriteMovie)
+
+            getMoviesTemplate(userSession, item)
+        }
+        "potions" -> {
+            val favouritePotion = PotionItem(user.id, potionId = itemId)
+            daoFavouriteItems.removeFavouritePotion(favouritePotion)
+
+            getPotionsTemplate(userSession, item)
+        }
+        "spells" -> {
+            val favouriteSpell = SpellItem(user.id, spellId = itemId)
+            daoFavouriteItems.removeFavouriteSpell(favouriteSpell)
+
+            getSpellsTemplate(userSession, item)
+        }
+        else -> throw FavouriteItemsException("Failed to favorite item.")
     }
 }

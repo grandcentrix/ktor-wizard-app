@@ -20,7 +20,7 @@ data class Character(
     val familyMembers: List<String>?,
     val house: String?,
     @SerialName("image")
-    val imageUrl: String?,
+    var imageUrl: String?,
     val jobs: List<String>?,
     val nationality: String?,
     val slug: String?,
