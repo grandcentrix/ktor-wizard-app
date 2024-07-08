@@ -34,8 +34,16 @@ object APIRequesting {
              it.attributes
          }
 
+    fun getBookById(id: String): Book = runBlocking<ResponseObject<Book>> {
+        client.get("${API_URL}/books/$id").body()
+    }.data.attributes
+
     fun fetchHouses(): List<House> = runBlocking {
-            client.get("https://wizard-world-api.herokuapp.com/Houses").body()
+        client.get("https://wizard-world-api.herokuapp.com/Houses").body()
+    }
+
+    fun getHouseById(id: String): List<House> = runBlocking {
+        client.get("https://wizard-world-api.herokuapp.com/Houses/$id").body()
     }
 
     fun fetchCharacters(): List<Character> = runBlocking<ResponseData<Character>> {
@@ -45,12 +53,20 @@ object APIRequesting {
             it.attributes
         }
 
+    fun getCharacterById(id: String): Character = runBlocking<ResponseObject<Character>> {
+        client.get("${API_URL}/characters/$id").body()
+    }.data.attributes
+
     fun fetchMovies(): List<Movie> = runBlocking<ResponseData<Movie>> {
             client.get("$API_URL/movies").body()
         }.data.map {
             it.attributes.id = it.id
             it.attributes
         }
+
+    fun getMovieById(id: String): Movie = runBlocking<ResponseObject<Movie>> {
+        client.get("${API_URL}/movies/$id").body()
+    }.data.attributes
 
     fun fetchPotions(): List<Potion> = runBlocking<ResponseData<Potion>> {
             client.get("$API_URL/potions").body()
@@ -59,6 +75,9 @@ object APIRequesting {
             it.attributes
         }
 
+    fun getPotionById(id: String): Potion = runBlocking<ResponseObject<Potion>> {
+        client.get("${API_URL}/potions/$id").body()
+    }.data.attributes
 
     fun fetchSpells(): List<Spell> = runBlocking<ResponseData<Spell>> {
             client.get("$API_URL/spells").body()
@@ -66,6 +85,10 @@ object APIRequesting {
             it.attributes.id = it.id
             it.attributes
         }
+
+    fun getSpellById(id: String): Spell = runBlocking<ResponseObject<Spell>> {
+        client.get("${API_URL}/spells/$id").body()
+    }.data.attributes
 
     fun fetchGravatarProfile(email: String): GravatarProfile {
         val digest = MessageDigest.getInstance("SHA-256")
