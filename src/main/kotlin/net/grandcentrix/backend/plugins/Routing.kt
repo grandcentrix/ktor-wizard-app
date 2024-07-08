@@ -92,8 +92,9 @@ fun Application.configureRouting() {
                             "signup.ftl",
                             mapOf(
                                 "session" to "null",
-                                "houses" to HousesRepositoryInstance.getAll().map { mapOf("id" to it.id, "name" to it.name) },
-                                "profilePictureData" to getProfilePicture(userSession)
+                                "houses" to HousesRepositoryInstance.getAll(),
+                                "profilePictureData" to getProfilePicture(userSession=null),
+                                "message" to ""
                             )
                         )
                     )

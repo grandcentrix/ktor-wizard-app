@@ -6,6 +6,9 @@ import io.ktor.server.response.*
 import io.ktor.server.sessions.*
 import io.ktor.util.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
+import net.grandcentrix.backend.controllers.UserSession
+import java.lang.IllegalArgumentException
+import java.net.URL
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.GravatarProfile
 import net.grandcentrix.backend.plugins.DAOException
@@ -148,7 +151,6 @@ suspend fun ApplicationCall.getHogwartsHouse(userSession: UserSession) {
         throw RequestException("Failed to retrieve house: ${e.localizedMessage}")
     }
 }
-
 fun getGravatarProfile(userSession: UserSession): GravatarProfile {
     val username = userSession.username
     val userEmail = daoUsers.getItem(username)?.email
