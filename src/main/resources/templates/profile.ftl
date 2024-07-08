@@ -50,14 +50,14 @@
     </div>
 
     <div class="user-data" hx-get="/hogwarts-house" hx-swap="outerHTML">
-        <#if house??>
+        <#if houseName??>
             <div class="user-data">
                 <img
-                        src="/static/img/${house}_symbol.png"
-                        alt="${house} Symbol"
+                        src="/static/img/${houseName}_symbol.png"
+                        alt="${houseName} Symbol"
                         style="width: 200px; height: 200px;"
                 />
-                <div style="color: #dab6bd;">Hogwarts House: ${house}</div>
+                <div style="color: #dab6bd;">Hogwarts House: ${houseName}</div>
             </div>
         <#else>
             <p>No Hogwarts house assigned.</p>

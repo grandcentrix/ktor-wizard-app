@@ -51,27 +51,15 @@ class Signup {
         val hashedPassword = generateHash(password, salt)
         val hexSalt = salt.toHexString()
 
-        if (house.isNullOrBlank()) {
-            val user = User(
-                name,
-                surname,
-                email,
-                username,
-                null,
-                hexSalt+hashedPassword,
-            )
-            daoUsers.addItem(user)
-        } else {
-            val user = User(
-                name,
-                surname,
-                email,
-                username,
-                house,
-                hexSalt+hashedPassword,
-            )
-            daoUsers.addItem(user)
-        }
+        val user = User(
+            name,
+            surname,
+            email,
+            username,
+            house,
+            hexSalt + hashedPassword,
+        )
+        daoUsers.addItem(user)
     }
 
     private fun verifyEmail(email: String) {

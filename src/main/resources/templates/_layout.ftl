@@ -34,8 +34,8 @@
                             <div class="tooltiptext">
                                 <#if username??>
                                     <p>Username: ${username}
-                                        <#if house??>
-                                            <img src="/static/img/${house}_symbol.png" alt="${house} Symbol" style="width: 20px; height: 20px; vertical-align: middle;">
+                                        <#if houseName??>
+                                            <img src="/static/img/${houseName}_symbol.png" alt="${houseName} Symbol" style="width: 20px; height: 20px; vertical-align: middle;">
                                         </#if>
                                     </p>
                                 </#if>

@@ -28,15 +28,28 @@ fun Application.configureRouting() {
 
             get {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val username = call.sessions.get<UserSession>()?.username
+                if (userSession != null) {
+                    val userHouseId = daoUsers.getHouse(userSession.username)
+                        ?: throw DAOException("Database error: Not possible to get house ID for user")
+                    val userHouse = HousesRepositoryInstance.getItem(userHouseId)?.name
+                    call.respond(
+                        FreeMarkerContent(
+                            "index.ftl",
+                            mapOf(
+                                "session" to userSession.toString(),
+                                "username" to userSession.username,
+                                "houseName" to userHouse,
+                                "profilePictureData" to getProfilePicture(userSession)
+                            )
+                        )
+                    )
+                }
                 call.respond(
                     FreeMarkerContent(
                         "index.ftl",
                         mapOf(
-                            "session" to userSession.toString(),
-                            "username" to username,
-                            "house" to userSession?.let { daoUsers.getHouse(it.username) },
-                            "profilePictureData" to getProfilePicture(userSession)
+                            "session" to "null",
+                            "profilePictureData" to getDefaultProfilePicture()
                         )
                     )
                 )
@@ -49,7 +62,7 @@ fun Application.configureRouting() {
                         "login.ftl",
                         mapOf(
                             "session" to userSession.toString(),
-                            "profilePictureData" to getProfilePicture(userSession)
+                            "profilePictureData" to getDefaultProfilePicture()
                         )
                     )
                 )
@@ -66,15 +79,17 @@ fun Application.configureRouting() {
             authenticate("auth-session") {
                 get("/profile") {
                     val userSession: UserSession? = call.sessions.get<UserSession>()
-                    val username = call.sessions.get<UserSession>()?.username
+                    val userHouseId = daoUsers.getHouse(userSession!!.username)
+                        ?: throw DAOException("Database error: Not possible to get house ID for user")
+                    val userHouse = HousesRepositoryInstance.getItem(userHouseId)?.name
                     call.respond(
                         FreeMarkerContent(
                             "profile.ftl",
                             mapOf(
-                                "username" to username,
+                                "username" to userSession.username,
                                 "uploadButton" to true,
                                 "session" to userSession.toString(),
-                                "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                                "houseName" to userHouse,
                                 "profilePictureData" to getProfilePicture(userSession)
                             )
                         )
@@ -93,7 +108,7 @@ fun Application.configureRouting() {
                             mapOf(
                                 "session" to "null",
                                 "houses" to HousesRepositoryInstance.getAll(),
-                                "profilePictureData" to getProfilePicture(userSession=null),
+                                "profilePictureData" to getDefaultProfilePicture(),
                                 "message" to ""
                             )
                         )
@@ -114,14 +129,16 @@ fun Application.configureRouting() {
 
             get("/books") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val username = call.sessions.get<UserSession>()?.username
+                val userHouseId = daoUsers.getHouse(userSession!!.username)
+                    ?: throw DAOException("Database error: Not possible to get house ID for user")
+                val userHouse = HousesRepositoryInstance.getItem(userHouseId)?.name
                 call.respondTemplate(
                     "books.ftl",
                     mapOf(
                         "books" to BooksRepositoryInstance.getAll(),
                         "session" to userSession.toString(),
-                        "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                        "username" to userSession.username,
+                        "houseName" to userHouse,
                         "profilePictureData" to getProfilePicture(userSession)
                     )
                 )
@@ -129,14 +146,16 @@ fun Application.configureRouting() {
 
             get("/houses") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val username = call.sessions.get<UserSession>()?.username
+                val userHouseId = daoUsers.getHouse(userSession!!.username)
+                    ?: throw DAOException("Database error: Not possible to get house ID for user")
+                val userHouse = HousesRepositoryInstance.getItem(userHouseId)?.name
                 call.respondTemplate(
                     "houses.ftl",
                     mapOf(
                         "houses" to HousesRepositoryInstance.getAll(),
                         "session" to userSession.toString(),
-                        "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                        "username" to userSession.username,
+                        "houseName" to userHouse,
                         "profilePictureData" to getProfilePicture(userSession)
                     )
                 )
@@ -144,14 +163,16 @@ fun Application.configureRouting() {
 
             get("/characters") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val username = call.sessions.get<UserSession>()?.username
+                val userHouseId = daoUsers.getHouse(userSession!!.username)
+                    ?: throw DAOException("Database error: Not possible to get house ID for user")
+                val userHouse = HousesRepositoryInstance.getItem(userHouseId)?.name
                 call.respondTemplate(
                     "characters.ftl",
                     mapOf(
                         "characters" to CharactersRepositoryInstance.getAll(),
                         "session" to userSession.toString(),
-                        "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                        "username" to userSession.username,
+                        "houseName" to userHouse,
                         "profilePictureData" to getProfilePicture(userSession)
                     )
                 )
@@ -159,15 +180,16 @@ fun Application.configureRouting() {
 
             get("/movies") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val username = call.sessions.get<UserSession>()?.username
-
+                val userHouseId = daoUsers.getHouse(userSession!!.username)
+                    ?: throw DAOException("Database error: Not possible to get house ID for user")
+                val userHouse = HousesRepositoryInstance.getItem(userHouseId)?.name
                 call.respondTemplate(
                     "movies.ftl",
                     mapOf(
                         "movies" to MoviesRepositoryInstance.getAll(),
                         "session" to userSession.toString(),
-                        "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                        "username" to userSession.username,
+                        "houseName" to userHouse,
                         "profilePictureData" to getProfilePicture(userSession)
                     )
                 )
@@ -175,15 +197,16 @@ fun Application.configureRouting() {
 
             get("/potions") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val username = call.sessions.get<UserSession>()?.username
-
+                val userHouseId = daoUsers.getHouse(userSession!!.username)
+                    ?: throw DAOException("Database error: Not possible to get house ID for user")
+                val userHouse = HousesRepositoryInstance.getItem(userHouseId)?.name
                 call.respondTemplate(
                     "potions.ftl",
                     mapOf(
                         "potions" to PotionsRepositoryInstance.getAll(),
                         "session" to userSession.toString(),
-                        "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                        "username" to userSession.username,
+                        "houseName" to userHouse,
                         "profilePictureData" to getProfilePicture(userSession)
                     )
                 )
@@ -191,15 +214,16 @@ fun Application.configureRouting() {
 
             get("/spells") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val username = call.sessions.get<UserSession>()?.username
-
+                val userHouseId = daoUsers.getHouse(userSession!!.username)
+                    ?: throw DAOException("Database error: Not possible to get house ID for user")
+                val userHouse = HousesRepositoryInstance.getItem(userHouseId)?.name
                 call.respondTemplate(
                     "spells.ftl",
                     mapOf(
                         "spells" to SpellsRepositoryInstance.getAll(),
                         "session" to userSession.toString(),
-                        "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                        "username" to userSession.username,
+                        "houseName" to userHouse,
                         "profilePictureData" to getProfilePicture(userSession)
                     )
                 )
