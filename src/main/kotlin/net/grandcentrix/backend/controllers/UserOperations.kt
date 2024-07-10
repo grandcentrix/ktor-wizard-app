@@ -2,13 +2,11 @@ package net.grandcentrix.backend.controllers
 
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.freemarker.*
 import io.ktor.server.response.*
 import io.ktor.server.sessions.*
 import io.ktor.util.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
-import net.grandcentrix.backend.controllers.UserSession
-import java.lang.IllegalArgumentException
-import java.net.URL
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.GravatarProfile
 import net.grandcentrix.backend.plugins.DAOException
@@ -126,8 +124,9 @@ suspend fun ApplicationCall.updateProfilePicture(userSession: UserSession, image
 suspend fun ApplicationCall.removeProfilePicture(userSession: UserSession) {
     try {
         daoUsers.removeProfilePicture(userSession.username)
-        response.headers.append("HX-Redirect", "/profile")
-        respondText("Profile picture removed successfully", status = HttpStatusCode.OK)
+        respondTemplate("")
+//        response.headers.append("HX-Redirect", "/profile")
+//        respondText("Profile picture removed successfully", status = HttpStatusCode.OK)
     } catch (e: IllegalArgumentException) {
         throw RequestException("Invalid argument: ${e.localizedMessage}")
     } catch (e: DAOException) {
@@ -151,6 +150,7 @@ suspend fun ApplicationCall.getHogwartsHouse(userSession: UserSession) {
         throw RequestException("Failed to retrieve house: ${e.localizedMessage}")
     }
 }
+
 fun getGravatarProfile(userSession: UserSession): GravatarProfile {
     val username = userSession.username
     val userEmail = daoUsers.getItem(username)?.email

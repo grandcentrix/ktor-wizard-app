@@ -246,7 +246,7 @@ fun Application.configureRouting() {
                 }
             }
 
-            put("/user/profilepicture") {
+            put("/user/profilePicture") {
                 val userSession = call.verifyUserSession()
                 val multipartData = call.receiveMultipart()
                 val imageDataPart = multipartData.readPart() as? PartData.FileItem
@@ -256,7 +256,7 @@ fun Application.configureRouting() {
                 }
             }
 
-            delete("/user/profilepicture") {
+            delete("/user/profilePicture") {
                 val userSession = call.verifyUserSession()
                 if (userSession != null) {
                     call.removeProfilePicture(userSession)

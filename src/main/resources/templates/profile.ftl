@@ -10,41 +10,55 @@
 </h1>
 
 <section class="content" style="flex-direction: column;">
-    <div class="user-data">
-        <form hx-put="/user/username" hx-trigger="submit" hx-target=".content">
+    <div id="updateUsername" class="user-data">
+        <form hx-put="/user/username" hx-trigger="submit" hx-target="#updateUsername" hx-select="#updateUsername">
             <label for="new-username">New Username:</label>
             <input type="text" id="new-username" name="newUsername" required>
             <input type="submit" value="Update Username">
+            <#if statusMessage??>
+                <span>${statusMessage}</span>
+            </#if>
         </form>
     </div>
 
-    <div class="user-data">
-        <form hx-put="/user/email" hx-trigger="submit" hx-target=".content">
+    <div id="updateEmail"  class="user-data">
+        <form hx-put="/user/email" hx-trigger="submit" hx-target="#updateEmail" hx-select="#updateEmail">
             <label for="new-email">New Email:</label>
             <input type="email" id="new-email" name="newEmail" required>
             <input type="submit" value="Update Email">
         </form>
     </div>
 
-    <div class="user-data">
-        <form hx-put="/user/password" hx-trigger="submit" hx-target=".content">
+    <div id="updatePassword" class="user-data">
+        <form hx-put="/user/password" hx-trigger="submit" hx-target="#update-password" hx-select="#updatePassword">
             <label for="new-password">New Password:</label>
             <input type="password" id="new-password" name="newPassword" required>
             <input type="submit" value="Update Password">
         </form>
     </div>
 
-    <div class="user-data">
+    <div id="updateProfilePicture" class="user-data">
         <p>Profile Picture:</p>
         <form id="upload-form" enctype="multipart/form-data">
             <input type="file" id="picture-upload" name="profilePicture" style="display: none;">
             <button type="button" id="upload-button">Upload Picture</button>
         </form>
-        <button hx-delete="/user/profilepicture" hx-target=".content">Remove Picture</button>
+        <button
+                hx-delete="/user/profilePicture"
+                hx-target="#profile-pic"
+                hx-select="#profile-pic"
+        >
+            Remove Picture
+        </button>
     </div>
 
-    <div class="delete-button">
-        <form hx-delete="/user/account" hx-trigger="submit" hx-target=".content" onsubmit="return confirm('Are you sure you want to delete your account?');">
+    <div id="deleteAccount" class="delete-button">
+        <form
+                hx-delete="/user/account"
+                hx-trigger="submit"
+                hx-target="#deleteAccount"
+                hx-select="#deleteAccount"
+                onsubmit="return confirm('Are you sure you want to delete your account?');">
             <input class="button" style="margin-left: 0;" type="submit" value="Delete Account">
         </form>
     </div>
@@ -96,7 +110,7 @@
                         var formData = new FormData();
                         formData.append('profilePicture', file);
 
-                        fetch('/user/profilepicture', {
+                        fetch('/user/profilePicture', {
                             method: 'PUT',
                             body: formData
                         }).then(response => {

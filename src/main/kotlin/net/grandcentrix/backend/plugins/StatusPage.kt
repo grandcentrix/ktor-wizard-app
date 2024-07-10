@@ -10,6 +10,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.controllers.getProfilePicture
+import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.repository.HousesRepository
 
 fun Application.configureStatusPage() {
@@ -51,12 +52,14 @@ fun Application.configureStatusPage() {
                 is UserAlreadyExistsException -> {
                     val userSession: UserSession? = call.sessions.get<UserSession>()
                     call.respondTemplate(
-                        "error.ftl",
+                        "profile.ftl",
                         mapOf(
-                            "errorMessage" to cause.message,
-                            "redirectLink" to "/signup",
+                            "username" to userSession?.username,
+                            "uploadButton" to true,
                             "session" to userSession.toString(),
-                            "profilePictureData" to getProfilePicture(userSession)
+                            "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                            "profilePictureData" to getProfilePicture(userSession),
+                            "statusMessage" to cause.message
                         )
                     )
                 }
