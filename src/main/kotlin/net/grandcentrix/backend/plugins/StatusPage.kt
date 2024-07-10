@@ -1,5 +1,6 @@
 package net.grandcentrix.backend.plugins
 
+import getProfileTemplate
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.freemarker.*
@@ -10,7 +11,6 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.controllers.getProfilePicture
-import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.repository.HousesRepository
 
 fun Application.configureStatusPage() {
@@ -20,6 +20,7 @@ fun Application.configureStatusPage() {
 
     install(StatusPages) {
         exception<StatusException> { call, cause ->
+
             when (cause) {
                 is RequestException -> {
                     val userSession: UserSession? = call.sessions.get<UserSession>()
@@ -51,17 +52,7 @@ fun Application.configureStatusPage() {
 
                 is UserAlreadyExistsException -> {
                     val userSession: UserSession? = call.sessions.get<UserSession>()
-                    call.respondTemplate(
-                        "profile.ftl",
-                        mapOf(
-                            "username" to userSession?.username,
-                            "uploadButton" to true,
-                            "session" to userSession.toString(),
-                            "house" to userSession?.let { daoUsers.getHouse(it.username) },
-                            "profilePictureData" to getProfilePicture(userSession),
-                            "statusMessage" to cause.message
-                        )
-                    )
+                    call.getProfileTemplate(userSession, statusMessage = cause.message)
                 }
 
                 is SignupException -> {

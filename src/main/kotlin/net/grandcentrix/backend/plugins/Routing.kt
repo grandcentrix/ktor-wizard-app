@@ -1,5 +1,6 @@
 package net.grandcentrix.backend.plugins
 
+import getProfileTemplate
 import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -66,19 +67,7 @@ fun Application.configureRouting() {
             authenticate("auth-session") {
                 get("/profile") {
                     val userSession: UserSession? = call.sessions.get<UserSession>()
-                    val username = call.sessions.get<UserSession>()?.username
-                    call.respond(
-                        FreeMarkerContent(
-                            "profile.ftl",
-                            mapOf(
-                                "username" to username,
-                                "uploadButton" to true,
-                                "session" to userSession.toString(),
-                                "house" to userSession?.let { daoUsers.getHouse(it.username) },
-                                "profilePictureData" to getProfilePicture(userSession)
-                            )
-                        )
-                    )
+                    call.getProfileTemplate(userSession)
                 }
             }
 
@@ -263,7 +252,7 @@ fun Application.configureRouting() {
                 }
             }
 
-            get("/hogwards-house") {
+            get("/hogwarts-house") {
                 val userSession = call.verifyUserSession()
                 if (userSession != null) {
                     call.getHogwartsHouse(userSession)

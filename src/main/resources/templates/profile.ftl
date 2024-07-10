@@ -10,8 +10,14 @@
 </h1>
 
 <section class="content" style="flex-direction: column;">
-    <div id="updateUsername" class="user-data">
-        <form hx-put="/user/username" hx-trigger="submit" hx-target="#updateUsername" hx-select="#updateUsername">
+    <div id="update-username" class="user-data">
+        <form
+                hx-put="/user/username"
+                hx-trigger="submit"
+                hx-target="#update-username"
+                hx-select="#update-username"
+                hx-swap="outerHTML"
+        >
             <label for="new-username">New Username:</label>
             <input type="text" id="new-username" name="newUsername" required>
             <input type="submit" value="Update Username">
@@ -21,23 +27,41 @@
         </form>
     </div>
 
-    <div id="updateEmail"  class="user-data">
-        <form hx-put="/user/email" hx-trigger="submit" hx-target="#updateEmail" hx-select="#updateEmail">
+    <div id="update-email"  class="user-data">
+        <form
+                hx-put="/user/email"
+                hx-trigger="submit"
+                hx-target="#update-email"
+                hx-select="#update-email"
+                hx-swap="outerHTML"
+        >
             <label for="new-email">New Email:</label>
             <input type="email" id="new-email" name="newEmail" required>
             <input type="submit" value="Update Email">
+            <#if statusMessage??>
+                <span>${statusMessage}</span>
+            </#if>
         </form>
     </div>
 
-    <div id="updatePassword" class="user-data">
-        <form hx-put="/user/password" hx-trigger="submit" hx-target="#update-password" hx-select="#updatePassword">
+    <div id="update-password" class="user-data">
+        <form
+                hx-put="/user/password"
+                hx-trigger="submit"
+                hx-target="#update-password"
+                hx-select="#update-password"
+                hx-swap="outerHTML"
+        >
             <label for="new-password">New Password:</label>
             <input type="password" id="new-password" name="newPassword" required>
             <input type="submit" value="Update Password">
+            <#if statusMessage??>
+                <span>${statusMessage}</span>
+            </#if>
         </form>
     </div>
 
-    <div id="updateProfilePicture" class="user-data">
+    <div id="update-profile-picture" class="user-data">
         <p>Profile Picture:</p>
         <form id="upload-form" enctype="multipart/form-data">
             <input type="file" id="picture-upload" name="profilePicture" style="display: none;">
@@ -46,18 +70,18 @@
         <button
                 hx-delete="/user/profilePicture"
                 hx-target="#profile-pic"
-                hx-select="#profile-pic"
+                hx-select-oob="#profile-pic"
         >
             Remove Picture
         </button>
     </div>
 
-    <div id="deleteAccount" class="delete-button">
+    <div id="delete-account" class="delete-button">
         <form
                 hx-delete="/user/account"
                 hx-trigger="submit"
-                hx-target="#deleteAccount"
-                hx-select="#deleteAccount"
+                hx-target="#delete-account"
+                hx-select="#delete-account"
                 onsubmit="return confirm('Are you sure you want to delete your account?');">
             <input class="button" style="margin-left: 0;" type="submit" value="Delete Account">
         </form>

@@ -1,8 +1,8 @@
 package net.grandcentrix.backend.controllers
 
+import getProfileTemplate
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.freemarker.*
 import io.ktor.server.response.*
 import io.ktor.server.sessions.*
 import io.ktor.util.*
@@ -58,8 +58,10 @@ suspend fun ApplicationCall.updateEmail(userSession: UserSession, newEmail: Stri
     }
     try {
         daoUsers.updateEmail(username, newEmail)
-        response.headers.append("HX-Redirect", "/profile")
-        respondText("Email updated successfully", status = HttpStatusCode.OK)
+        val message = "Email updated successfully"
+        getProfileTemplate(userSession, message)
+//        response.headers.append("HX-Redirect", "/profile")
+//        respondText("Email updated successfully", status = HttpStatusCode.OK)
     } catch (e: IllegalArgumentException) {
         throw RequestException("Invalid argument: ${e.localizedMessage}")
     } catch (e: DAOException) {
@@ -124,7 +126,7 @@ suspend fun ApplicationCall.updateProfilePicture(userSession: UserSession, image
 suspend fun ApplicationCall.removeProfilePicture(userSession: UserSession) {
     try {
         daoUsers.removeProfilePicture(userSession.username)
-        respondTemplate("")
+        getProfileTemplate(userSession)
 //        response.headers.append("HX-Redirect", "/profile")
 //        respondText("Profile picture removed successfully", status = HttpStatusCode.OK)
     } catch (e: IllegalArgumentException) {
