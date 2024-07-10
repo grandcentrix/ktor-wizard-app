@@ -19,8 +19,6 @@ import io.ktor.server.util.*
 import net.grandcentrix.backend.controllers.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.dao.daoUsers
-import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBooks
-import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBooksPagination
 
 fun Application.configureRouting() {
 
@@ -116,14 +114,10 @@ fun Application.configureRouting() {
             }
 
             get("/books") {
-                call.respondRedirect("/books/1")
-            }
-
-            get("/books/{pageNumber}") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val pageNumber = call.parameters.getOrFail<String>("pageNumber")
+//                val pageNumber = call.parameters.getOrFail<String>("pageNumber")
                 val item = call.request.local.uri.removePrefix("/")
-                call.getBooksTemplate(userSession, item, pageNumber)
+                call.getBooksTemplate(userSession, item)
             }
 
             get("/houses") {
@@ -133,9 +127,14 @@ fun Application.configureRouting() {
             }
 
             get("/characters") {
+                call.respondRedirect("/characters/1")
+            }
+
+            get("/characters/{pageNumber}") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
+                val pageNumber = call.parameters.getOrFail<String>("pageNumber")
                 val item = call.request.local.uri.removePrefix("/")
-                call.getCharactersTemplate(userSession, item)
+                call.getCharactersTemplate(userSession, item, pageNumber)
             }
 
             get("/movies") {

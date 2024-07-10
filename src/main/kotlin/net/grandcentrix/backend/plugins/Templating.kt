@@ -8,8 +8,8 @@ import net.grandcentrix.backend.controllers.getProfilePicture
 import net.grandcentrix.backend.controllers.userFavouriteItems
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBooks
-import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBooksPagination
-import net.grandcentrix.backend.repository.*
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharacters
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharactersPagination
 
 fun Application.configureTemplating() {
     install(FreeMarker) {
@@ -21,31 +21,34 @@ fun Application.configureTemplating() {
 suspend fun ApplicationCall.getBooksTemplate(
     userSession: UserSession?,
     item: String,
-    pageNumber: String? = null
 ) =
     respondTemplate(
         "books.ftl",
         mapOf(
-            "books" to pageNumber?.let { fetchBooks(it) },
+            "books" to fetchBooks(),
             "session" to userSession.toString(),
             "username" to userSession?.username,
             "house" to userSession?.let { daoUsers.getHouse(it.username) },
             "profilePictureData" to getProfilePicture(userSession),
             "userFavourites" to userFavouriteItems(userSession?.username, item),
-            "pagination" to pageNumber?.let { fetchBooksPagination(it) }
         )
     )
 
-suspend fun ApplicationCall.getCharactersTemplate(userSession: UserSession?, item: String) =
+suspend fun ApplicationCall.getCharactersTemplate(
+    userSession: UserSession?,
+    item: String,
+    pageNumber: String? = null
+) =
     respondTemplate(
         "characters.ftl",
         mapOf(
-            "characters" to CharactersRepository.CharactersRepositoryInstance.getAll(),
+            "characters" to pageNumber?.let { fetchCharacters(it) },
             "session" to userSession.toString(),
             "username" to userSession?.username,
             "house" to userSession?.let { daoUsers.getHouse(it.username) },
             "profilePictureData" to getProfilePicture(userSession),
-            "userFavourites" to userFavouriteItems(userSession?.username, item)
+            "userFavourites" to userFavouriteItems(userSession?.username, item),
+            "pagination" to pageNumber?.let { fetchCharactersPagination(it) }
         )
     )
 
@@ -53,7 +56,7 @@ suspend fun ApplicationCall.getHousesTemplate(userSession: UserSession?, item: S
     respondTemplate(
         "houses.ftl",
         mapOf(
-            "houses" to HousesRepository.HousesRepositoryInstance.getAll(),
+//            "houses" to HousesRepository.HousesRepositoryInstance.getAll(),
             "session" to userSession.toString(),
             "username" to userSession?.username,
             "house" to userSession?.let { daoUsers.getHouse(it.username) },
@@ -66,7 +69,7 @@ suspend fun ApplicationCall.getMoviesTemplate(userSession: UserSession?, item: S
     respondTemplate(
         "movies.ftl",
         mapOf(
-            "movies" to MoviesRepository.MoviesRepositoryInstance.getAll(),
+//            "movies" to MoviesRepository.MoviesRepositoryInstance.getAll(),
             "session" to userSession.toString(),
             "username" to userSession?.username,
             "house" to userSession?.let { daoUsers.getHouse(it.username) },
@@ -79,7 +82,7 @@ suspend fun ApplicationCall.getPotionsTemplate(userSession: UserSession?, item: 
     respondTemplate(
         "potions.ftl",
         mapOf(
-            "potions" to PotionsRepository.PotionsRepositoryInstance.getAll(),
+//            "potions" to PotionsRepository.PotionsRepositoryInstance.getAll(),
             "session" to userSession.toString(),
             "username" to userSession?.username,
             "house" to userSession?.let { daoUsers.getHouse(it.username) },
@@ -92,7 +95,7 @@ suspend fun ApplicationCall.getSpellsTemplate(userSession: UserSession?, item: S
     respondTemplate(
         "spells.ftl",
         mapOf(
-            "spells" to SpellsRepository.SpellsRepositoryInstance.getAll(),
+//            "spells" to SpellsRepository.SpellsRepositoryInstance.getAll(),
             "session" to userSession.toString(),
             "username" to userSession?.username,
             "house" to userSession?.let { daoUsers.getHouse(it.username) },

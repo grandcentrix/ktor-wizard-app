@@ -27,22 +27,18 @@ object APIRequesting {
         }
     }
 
-     fun fetchBooks(pageNumber: String): List<Book> = runBlocking<ResponseData<Book>> {
-              client.get("$API_URL/books?page[number]=$pageNumber").body()
+     fun fetchBooks(): List<Book> = runBlocking<ResponseData<Book>> {
+              client.get("$API_URL/books").body()
          }.data.map {
              it.attributes.id = it.id
              it.attributes
          }
 
-    fun fetchBooksPagination(pageNumber: String): Pagination? = runBlocking<ResponseData<Book>> {
-        client.get("$API_URL/books?page[number]=$pageNumber").body()
-    }.pagination
-
     fun fetchHouses(): List<House> = runBlocking {
             client.get("https://wizard-world-api.herokuapp.com/Houses").body()
     }
 
-    fun fetchCharacters(): List<Character> = runBlocking<ResponseData<Character>> {
+    fun fetchCharacters(pageNumber: String): List<Character> = runBlocking<ResponseData<Character>> {
             client.get("$API_URL/characters").body()
         }.data.map {
             it.attributes.id = it.id
@@ -51,6 +47,10 @@ object APIRequesting {
             }
             it.attributes
         }
+
+    fun fetchCharactersPagination(pageNumber: String): PaginationData = runBlocking<ResponseData<PaginationData>> {
+        client.get("$API_URL/characters?page[number]=$pageNumber").body()
+    }.meta.pagination
 
     fun fetchMovies(): List<Movie> = runBlocking<ResponseData<Movie>> {
             client.get("$API_URL/movies").body()

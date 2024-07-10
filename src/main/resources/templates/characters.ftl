@@ -68,6 +68,7 @@
                 </li>
             </#list>
         </ul>
+        <#include "pagination.ftl">
     </section>
 
 </@layout.base>

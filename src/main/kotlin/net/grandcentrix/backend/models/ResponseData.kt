@@ -6,8 +6,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ResponseData<T> (
     val data: List<DataItem<T>>,
-    val pagination: Pagination? = null,
-    val paginationLinks: PaginationLinks? = null
+    val meta: Pagination,
+//    val links: PaginationLinks
 )
 
 @Serializable
@@ -18,11 +18,16 @@ data class DataItem<T> (
 
 @Serializable
 data class Pagination (
+    val pagination: PaginationData
+)
+
+@Serializable
+data class PaginationData(
     val current: Int,
-    val first: Int?,
-    val previous: Int?,
-    val next: Int?,
-    val last: Int?,
+    val first: Int? = null,
+    val previous: Int? = null,
+    val next: Int? = null,
+    val last: Int? = null,
     val records: Int
 )
 
