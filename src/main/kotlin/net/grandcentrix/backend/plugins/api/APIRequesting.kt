@@ -46,6 +46,9 @@ object APIRequesting {
             client.get("$API_URL/characters").body()
         }.data.map {
             it.attributes.id = it.id
+            if (it.attributes.imageUrl == null) {
+                it.attributes.imageUrl = "/static/img/no_image.png"
+            }
             it.attributes
         }
 
@@ -60,6 +63,9 @@ object APIRequesting {
             client.get("$API_URL/potions").body()
         }.data.map {
             it.attributes.id = it.id
+            if (it.attributes.imageUrl == null) {
+                it.attributes.imageUrl = "/static/img/no_image.png"
+            }
             it.attributes
         }
 
@@ -68,6 +74,9 @@ object APIRequesting {
             client.get("$API_URL/spells").body()
         }.data.map {
             it.attributes.id = it.id
+            if (it.attributes.imageUrl == null) {
+                it.attributes.imageUrl = "/static/img/no_image.png"
+            }
             it.attributes
         }
 

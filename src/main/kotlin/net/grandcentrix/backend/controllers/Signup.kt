@@ -58,7 +58,7 @@ class Signup {
                 email,
                 username,
                 null,
-                hexSalt+hashedPassword,
+                hexSalt+hashedPassword
             )
             daoUsers.addItem(user)
         } else {
@@ -68,7 +68,7 @@ class Signup {
                 email,
                 username,
                 house,
-                hexSalt+hashedPassword,
+                hexSalt+hashedPassword
             )
             daoUsers.addItem(user)
         }

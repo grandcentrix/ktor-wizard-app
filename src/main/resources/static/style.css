@@ -234,7 +234,7 @@ menu.main-menu li:target {
     letter-spacing: 0.3px;
     border-radius: 100px;
     margin-left: 10px;
-/*     padding: 0; */
+    /*     padding: 0; */
     padding: 10px 20px;
     /* background-color: transparent; */
     /* border: 1px solid #dab5bd; */
@@ -426,36 +426,107 @@ nav.user-menu {
     margin-bottom: 30px;
 }
 
-ul.content-list {
+.content-list {
     width: 100%;
     display: flex;
-    gap: 1%;
     padding: 0;
     margin: 0;
     flex-wrap: wrap;
-    justify-content: space-between;
+    /* justify-content: center; */
     font-size: 16px;
+    row-gap: 30px;
+    column-gap: 1.25%;
 }
 
 .content-list li {
-    width: calc((100% / 3) - 1%);
+    width: calc((100% / 5) - 1%);
     display: flex;
-    align-items: center;
-    margin: 1% 0;
+    flex-wrap: wrap;
+    background: #7C404C;
+    border-radius: 10px;
 }
 
-.content-list li a {
-    background-color: #7C404C;
-    padding: 40px;
-    border-radius: 10px;
-    font-weight: bold;
+.content-list li.houses {
+    width: calc((100% / 4) - 1%);
+}
+
+.list-item {
+    position: relative;
     width: 100%;
+    padding: 30px;
+}
+
+.list-item-name {
+    font-weight: bold;
     display: flex;
     justify-content: center;
+    height: 100%;
+    max-height: 130px;
+    align-items: center;
+    width: 100%;
 }
 
-.content-list li a:hover {
+.content-list .list-item:hover {
     background-color: #734136;
+    border-radius: 10px;
+}
+
+.content-img {
+    object-fit: cover;
+    height: 470px;
+    width: 100%;
+    object-position: top center;
+    border-radius: 10px 10px 0 0;
+    background-color: #40252A;
+}
+
+.content-list li:hover .content-img {
+    filter: grayscale(1);
+    transition-duration: 0.8s;
+}
+
+.content-list li:hover {
+    background-color: #734136;
+}
+
+.favourite-button {
+    line-height: 0;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    padding: 0;
+    cursor: pointer;
+    height: auto;
+    display: flex;
+    align-items: flex-start;
+}
+
+.favourite-button .material-symbols-outlined {
+    font-variation-settings:
+            'FILL' 1,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+}
+
+.favourite-items {
+    z-index: 100;
+    position: absolute;
+    margin: -15px 15px 0 0;
+    top: 0;
+    right: 0;
+}
+
+.favourite-button span:hover {
+    color: #d71b1b;
+}
+
+.favourite-button-icon-white {
+    color: #ffffff;
+}
+
+.favourite-button-icon-red {
+    color: #d71b1b;
 }
 
 .tooltiptext {

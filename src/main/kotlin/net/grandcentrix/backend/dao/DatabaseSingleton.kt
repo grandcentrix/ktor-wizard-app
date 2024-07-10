@@ -1,7 +1,7 @@
 package net.grandcentrix.backend.dao
 
 import io.ktor.server.config.*
-import net.grandcentrix.backend.models.Users
+import net.grandcentrix.backend.models.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -22,10 +22,17 @@ object DatabaseSingleton {
         // Connects with the database
         val database = Database.connect(url, driverClassName)
 
-
         transaction(database) {
             // Create or update the Users table schema
-            SchemaUtils.createMissingTablesAndColumns(Users)
+            SchemaUtils.createMissingTablesAndColumns(
+                Users,
+                FavouriteBooks,
+                FavouriteCharacters,
+                FavouriteHouses,
+                FavouriteMovies,
+                FavouritePotions,
+                FavouriteSpells
+            )
         }
 
 
@@ -38,4 +45,6 @@ object DatabaseSingleton {
             println("SQLite database created successfully!")
         }
     }
+
+
 }

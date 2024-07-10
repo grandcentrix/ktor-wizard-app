@@ -1,5 +1,11 @@
 package net.grandcentrix.backend.plugins
 
+import getBooksTemplate
+import getCharactersTemplate
+import getHousesTemplate
+import getMoviesTemplate
+import getPotionsTemplate
+import getSpellsTemplate
 import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -115,97 +121,39 @@ fun Application.configureRouting() {
 
             get("/books/{pageNumber}") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val username = call.sessions.get<UserSession>()?.username
                 val pageNumber = call.parameters.getOrFail<String>("pageNumber")
-                call.respondTemplate(
-                    "books.ftl",
-                    mapOf(
-                        "books" to fetchBooks(pageNumber),
-                        "session" to userSession.toString(),
-                        "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
-                        "profilePictureData" to getProfilePicture(userSession),
-                        "pagination" to fetchBooksPagination(pageNumber)
-                    )
-                )
+                val item = call.request.local.uri.removePrefix("/")
+                call.getBooksTemplate(userSession, item, pageNumber)
             }
 
             get("/houses") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val username = call.sessions.get<UserSession>()?.username
-                call.respondTemplate(
-                    "houses.ftl",
-                    mapOf(
-//                        "houses" to HousesRepositoryInstance.getAll(),
-                        "session" to userSession.toString(),
-                        "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
-                        "profilePictureData" to getProfilePicture(userSession)
-                    )
-                )
+                val item = call.request.local.uri.removePrefix("/")
+                call.getHousesTemplate(userSession, item)
             }
 
             get("/characters") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val username = call.sessions.get<UserSession>()?.username
-                call.respondTemplate(
-                    "characters.ftl",
-                    mapOf(
-//                        "characters" to CharactersRepositoryInstance.getAll(),
-                        "session" to userSession.toString(),
-                        "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
-                        "profilePictureData" to getProfilePicture(userSession)
-                    )
-                )
+                val item = call.request.local.uri.removePrefix("/")
+                call.getCharactersTemplate(userSession, item)
             }
 
             get("/movies") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val username = call.sessions.get<UserSession>()?.username
-
-                call.respondTemplate(
-                    "movies.ftl",
-                    mapOf(
-//                        "movies" to MoviesRepositoryInstance.getAll(),
-                        "session" to userSession.toString(),
-                        "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
-                        "profilePictureData" to getProfilePicture(userSession)
-                    )
-                )
+                val item = call.request.local.uri.removePrefix("/")
+                call.getMoviesTemplate(userSession, item)
             }
 
             get("/potions") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val username = call.sessions.get<UserSession>()?.username
-
-                call.respondTemplate(
-                    "potions.ftl",
-                    mapOf(
-//                        "potions" to PotionsRepositoryInstance.getAll(),
-                        "session" to userSession.toString(),
-                        "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
-                        "profilePictureData" to getProfilePicture(userSession)
-                    )
-                )
+                val item = call.request.local.uri.removePrefix("/")
+                call.getPotionsTemplate(userSession, item)
             }
 
             get("/spells") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val username = call.sessions.get<UserSession>()?.username
-
-                call.respondTemplate(
-                    "spells.ftl",
-                    mapOf(
-//                        "spells" to SpellsRepositoryInstance.getAll(),
-                        "session" to userSession.toString(),
-                        "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
-                        "profilePictureData" to getProfilePicture(userSession)
-                    )
-                )
+                val item = call.request.local.uri.removePrefix("/")
+                call.getSpellsTemplate(userSession, item)
             }
 
             get("/logout") {
@@ -266,10 +214,26 @@ fun Application.configureRouting() {
                 }
             }
 
-            get("/hogwards-house") {
+            get("/hogwarts-house") {
                 val userSession = call.verifyUserSession()
                 if (userSession != null) {
                     call.getHogwartsHouse(userSession)
+                }
+            }
+
+            authenticate("auth-session") {
+                post("/{item}/{itemId}/favourite") {
+                    val userSession = call.sessions.get<UserSession>()
+                        ?: throw UnauthorizedException("User session not found.")
+                    call.addFavouriteItem(userSession)
+                }
+            }
+
+            authenticate("auth-session") {
+                delete("/{item}/{itemId}/favourite") {
+                    val userSession = call.sessions.get<UserSession>()
+                        ?: throw UnauthorizedException("User session not found.")
+                    call.removeFavouriteItem(userSession)
                 }
             }
         }
