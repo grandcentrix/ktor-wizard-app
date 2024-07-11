@@ -1,6 +1,5 @@
 package net.grandcentrix.backend.plugins
 
-import getProfileTemplate
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.freemarker.*

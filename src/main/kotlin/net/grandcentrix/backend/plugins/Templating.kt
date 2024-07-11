@@ -1,3 +1,5 @@
+package net.grandcentrix.backend.plugins
+
 import freemarker.cache.ClassTemplateLoader
 import freemarker.core.HTMLOutputFormat
 import io.ktor.server.application.*

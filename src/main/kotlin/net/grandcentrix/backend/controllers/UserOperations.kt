@@ -1,6 +1,5 @@
 package net.grandcentrix.backend.controllers
 
-import getProfileTemplate
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -9,10 +8,7 @@ import io.ktor.util.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.GravatarProfile
-import net.grandcentrix.backend.plugins.DAOException
-import net.grandcentrix.backend.plugins.GravatarProfileException
-import net.grandcentrix.backend.plugins.RequestException
-import net.grandcentrix.backend.plugins.UserAlreadyExistsException
+import net.grandcentrix.backend.plugins.*
 import net.grandcentrix.backend.plugins.api.APIRequesting
 import java.io.File
 import java.nio.file.NoSuchFileException
@@ -20,6 +16,7 @@ import java.util.*
 
 
 fun ApplicationCall.verifyUserSession(): UserSession? {
+
     val userSession = sessions.get<UserSession>()
     if (userSession == null) {
         throw RequestException("User session is missing")
