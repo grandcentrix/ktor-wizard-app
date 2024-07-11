@@ -39,7 +39,7 @@ object APIRequesting {
     }
 
     fun fetchCharacters(pageNumber: String): List<Character> = runBlocking<ResponseData<Character>> {
-            client.get("$API_URL/characters").body()
+            client.get("$API_URL/characters?page[number]=$pageNumber").body()
         }.data.map {
             it.attributes.id = it.id
             if (it.attributes.imageUrl == null) {
@@ -59,8 +59,8 @@ object APIRequesting {
             it.attributes
         }
 
-    fun fetchPotions(): List<Potion> = runBlocking<ResponseData<Potion>> {
-            client.get("$API_URL/potions").body()
+    fun fetchPotions(pageNumber: String): List<Potion> = runBlocking<ResponseData<Potion>> {
+            client.get("$API_URL/potions?page[number]=$pageNumber").body()
         }.data.map {
             it.attributes.id = it.id
             if (it.attributes.imageUrl == null) {
@@ -69,9 +69,12 @@ object APIRequesting {
             it.attributes
         }
 
+    fun fetchPotionsPagination(pageNumber: String): PaginationData = runBlocking<ResponseData<PaginationData>> {
+        client.get("$API_URL/potions?page[number]=$pageNumber").body()
+    }.meta.pagination
 
-    fun fetchSpells(): List<Spell> = runBlocking<ResponseData<Spell>> {
-            client.get("$API_URL/spells").body()
+    fun fetchSpells(pageNumber: String): List<Spell> = runBlocking<ResponseData<Spell>> {
+            client.get("$API_URL/spells?page[number]=$pageNumber").body()
         }.data.map {
             it.attributes.id = it.id
             if (it.attributes.imageUrl == null) {
@@ -79,6 +82,10 @@ object APIRequesting {
             }
             it.attributes
         }
+
+    fun fetchSpellsPagination(pageNumber: String): PaginationData = runBlocking<ResponseData<PaginationData>> {
+        client.get("$API_URL/spells?page[number]=$pageNumber").body()
+    }.meta.pagination
 
     fun fetchGravatarProfile(email: String): GravatarProfile {
         val digest = MessageDigest.getInstance("SHA-256")

@@ -1,6 +1,9 @@
 <#import "_layout.ftl" as layout />
+<#import "pagination.ftl" as pages>
+
 <#assign userSession = session in layout>
 <#assign profilePicture = profilePictureData in layout>
+<#assign route = "/characters" in pages>
 
 <@layout.base>
     <h1>
@@ -68,7 +71,7 @@
                 </li>
             </#list>
         </ul>
-        <#include "pagination.ftl">
+        <@pages.base></@pages.base>
     </section>
 
 </@layout.base>

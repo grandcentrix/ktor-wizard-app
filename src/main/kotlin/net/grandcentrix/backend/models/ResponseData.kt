@@ -23,12 +23,12 @@ data class Pagination (
 
 @Serializable
 data class PaginationData(
-    val current: Int,
+    val current: Int? = null,
     val first: Int? = null,
     val previous: Int? = null,
     val next: Int? = null,
     val last: Int? = null,
-    val records: Int
+    val records: Int? = null
 )
 
 @Serializable

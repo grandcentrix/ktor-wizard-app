@@ -115,7 +115,6 @@ fun Application.configureRouting() {
 
             get("/books") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-//                val pageNumber = call.parameters.getOrFail<String>("pageNumber")
                 val item = call.request.local.uri.removePrefix("/")
                 call.getBooksTemplate(userSession, item)
             }
@@ -144,15 +143,25 @@ fun Application.configureRouting() {
             }
 
             get("/potions") {
+                call.respondRedirect("/potions/1")
+            }
+
+            get("/potions/{pageNumber}") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
+                val pageNumber = call.parameters.getOrFail<String>("pageNumber")
                 val item = call.request.local.uri.removePrefix("/")
-                call.getPotionsTemplate(userSession, item)
+                call.getPotionsTemplate(userSession, item, pageNumber)
             }
 
             get("/spells") {
+                call.respondRedirect("/spells/1")
+            }
+
+            get("/spells/{pageNumber}") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
+                val pageNumber = call.parameters.getOrFail<String>("pageNumber")
                 val item = call.request.local.uri.removePrefix("/")
-                call.getSpellsTemplate(userSession, item)
+                call.getSpellsTemplate(userSession, item, pageNumber)
             }
 
             get("/logout") {
