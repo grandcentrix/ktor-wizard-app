@@ -18,7 +18,7 @@ import net.grandcentrix.backend.repository.HousesRepository.Companion.HousesRepo
 import net.grandcentrix.backend.repository.MoviesRepository.Companion.MoviesRepositoryInstance
 import net.grandcentrix.backend.repository.PotionsRepository.Companion.PotionsRepositoryInstance
 import net.grandcentrix.backend.repository.SpellsRepository.Companion.SpellsRepositoryInstance
-import respondTemplates
+import respondTemplating
 
 fun Application.configureRouting() {
 
@@ -115,7 +115,7 @@ fun Application.configureRouting() {
             get("/books") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
                 val username = call.sessions.get<UserSession>()?.username
-                call.respondTemplates(
+                call.respondTemplating(
                     "books.ftl",
                     mapOf(
                         "books" to BooksRepositoryInstance.getAll(),
@@ -130,7 +130,7 @@ fun Application.configureRouting() {
             get("/houses") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
                 val username = call.sessions.get<UserSession>()?.username
-                call.respondTemplates(
+                call.respondTemplating(
                     "houses.ftl",
                     mapOf(
                         "houses" to HousesRepositoryInstance.getAll(),
@@ -145,7 +145,7 @@ fun Application.configureRouting() {
             get("/characters") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
                 val username = call.sessions.get<UserSession>()?.username
-                call.respondTemplates(
+                call.respondTemplating(
                     "characters.ftl",
                     mapOf(
                         "characters" to CharactersRepositoryInstance.getAll(),
@@ -161,7 +161,7 @@ fun Application.configureRouting() {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
                 val username = call.sessions.get<UserSession>()?.username
 
-                call.respondTemplates(
+                call.respondTemplating(
                     "movies.ftl",
                     mapOf(
                         "movies" to MoviesRepositoryInstance.getAll(),
@@ -177,7 +177,7 @@ fun Application.configureRouting() {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
                 val username = call.sessions.get<UserSession>()?.username
 
-                call.respondTemplates(
+                call.respondTemplating(
                     "potions.ftl",
                     mapOf(
                         "potions" to PotionsRepositoryInstance.getAll(),
@@ -193,7 +193,7 @@ fun Application.configureRouting() {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
                 val username = call.sessions.get<UserSession>()?.username
 
-                call.respondTemplates(
+                call.respondTemplating(
                     "spells.ftl",
                     mapOf(
                         "spells" to SpellsRepositoryInstance.getAll(),
