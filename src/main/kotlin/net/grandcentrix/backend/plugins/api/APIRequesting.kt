@@ -17,6 +17,7 @@ import java.security.MessageDigest
 object APIRequesting {
 
     private const val API_URL = "https://api.potterdb.com/v1"
+    private const val API_URL_HOUSE = "https://wizard-world-api.herokuapp.com/Houses"
 
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
@@ -41,6 +42,11 @@ object APIRequesting {
     fun fetchMovieById(id: String): Movie = runBlocking<ResponseObject<Movie>> {
         client.get("${API_URL}/movies/$id").body()
     }.data.attributes
+
+    fun fetchHouseById(id: String): House = runBlocking {
+        client.get("${API_URL_HOUSE}/${id}").body()
+
+    }
 
 
     fun fetchHouses(): List<House> = runBlocking {

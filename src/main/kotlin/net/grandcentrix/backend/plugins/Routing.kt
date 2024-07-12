@@ -3,6 +3,7 @@ package net.grandcentrix.backend.plugins
 import getBookById
 import getBooksTemplate
 import getCharactersTemplate
+import getHouseById
 import getHousesTemplate
 import getMovieById
 import getMoviesTemplate
@@ -22,6 +23,7 @@ import net.grandcentrix.backend.controllers.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.plugins.api.APIRequesting
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouseById
 
 fun Application.configureRouting() {
 
@@ -134,6 +136,13 @@ fun Application.configureRouting() {
                 val item = call.request.local.uri.removePrefix("/")
                 val id = call.parameters["id"]!!
                 call.getMovieById(userSession, id, item)
+            }
+
+            get("/houses/{id}") {
+                val userSession: UserSession? = call.sessions.get<UserSession>()
+                val item = call.request.local.uri.removePrefix("/")
+                val id = call.parameters["id"]!!
+                call.getHouseById(userSession, id, item)
             }
 
             get("/houses") {
@@ -261,6 +270,6 @@ fun Application.configureRouting() {
                     call.removeFavouriteItem(userSession)
                 }
             }
-        }
     }
+}
 }

@@ -7,6 +7,7 @@ import net.grandcentrix.backend.dao.DatabaseSingleton
 import net.grandcentrix.backend.plugins.configureAuthentication
 import net.grandcentrix.backend.plugins.configureRouting
 import net.grandcentrix.backend.plugins.configureStatusPage
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouseById
 
 fun main(args: Array<String>) {
     EngineMain.main(args)

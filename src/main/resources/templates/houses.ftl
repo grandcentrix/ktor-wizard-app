@@ -14,7 +14,7 @@
                     <div class="list-item">
 
                         <div class="list-item-name">
-                            <a href="/houses/${house.name}">
+                            <a href="/houses/${house.id}">
                                 ${house.name}
                             </a>
                         </div>

@@ -9,11 +9,11 @@ import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.controllers.getProfilePicture
 import net.grandcentrix.backend.controllers.userFavouriteItems
 import net.grandcentrix.backend.dao.daoUsers
-import net.grandcentrix.backend.plugins.api.APIRequesting
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBookById
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBooks
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharacters
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharactersPagination
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouseById
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouses
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchMovieById
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchMovies
@@ -90,6 +90,30 @@ suspend fun ApplicationCall.getMovieById(
         respond(HttpStatusCode.NotFound, "Book not found")
     }
 }
+
+suspend fun ApplicationCall.getHouseById(
+    userSession: UserSession?,
+    id: String,
+    item: String,
+) {
+    val house = fetchHouseById(id)
+    if (house != null) {
+        respondTemplate(
+            "house.ftl",
+            mapOf(
+                "house" to house,
+                "session" to userSession.toString(),
+                "username" to userSession?.username,
+                "userhouse" to userSession?.let { daoUsers.getHouse(it.username) },
+                "profilePictureData" to getProfilePicture(userSession),
+                "userFavourites" to userFavouriteItems(userSession?.username, item),
+            )
+        )
+    } else {
+        respond(HttpStatusCode.NotFound, "Book not found")
+    }
+}
+
 
 suspend fun ApplicationCall.getCharactersTemplate(
     userSession: UserSession?,
