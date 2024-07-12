@@ -17,6 +17,10 @@ data class DataItem<T> (
 )
 
 @Serializable
+data class ResponseObject<T> (
+    val data: DataItem<T>
+)
+@Serializable
 data class Pagination (
     val pagination: PaginationData
 )

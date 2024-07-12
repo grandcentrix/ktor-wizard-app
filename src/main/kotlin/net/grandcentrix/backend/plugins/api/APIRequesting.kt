@@ -34,6 +34,11 @@ object APIRequesting {
              it.attributes
          }
 
+    fun getBookById(id: String): Book = runBlocking<ResponseObject<Book>> {
+        client.get("${API_URL}/books/$id").body()
+    }.data.attributes
+
+
     fun fetchHouses(): List<House> = runBlocking {
             client.get("https://wizard-world-api.herokuapp.com/Houses").body()
     }
@@ -105,4 +110,5 @@ object APIRequesting {
             throw GravatarProfileException("Gravatar API failed", cause)
         }
     }
+
 }
