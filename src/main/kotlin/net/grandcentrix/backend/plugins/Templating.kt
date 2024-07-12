@@ -49,7 +49,7 @@ suspend fun ApplicationCall.getBookById(
     id: String,
     item: String,
 ) {
-    val book = APIRequesting.fetchBookById(id)
+    val book = fetchBookById(id)
     if (book != null) {
         respondTemplate(
             "book.ftl",

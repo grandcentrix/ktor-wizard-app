@@ -38,6 +38,12 @@ object APIRequesting {
         client.get("${API_URL}/books/$id").body()
     }.data.attributes
 
+    fun fetchCharacterById(id: String): Character = runBlocking {
+        val response = client.get("${API_URL}/characters/$id")
+        val responseBody = response.body<ResponseObject<Character>>()
+        println("Response: ${responseBody.data.attributes}")
+        responseBody.data.attributes
+    }
 
     fun fetchHouses(): List<House> = runBlocking {
             client.get("https://wizard-world-api.herokuapp.com/Houses").body()

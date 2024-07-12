@@ -18,7 +18,7 @@
                     <div class="list-item">
 
                         <div class="list-item-name">
-                            <a href="/characters/${character.slug}">
+                            <a href="/characters/${character.id}">
                                 ${character.name}
                             </a>
                         </div>
