@@ -15,7 +15,7 @@
                     <div class="list-item">
 
                         <div class="list-item-name">
-                            <a href="/movies/${movie.slug}">
+                            <a href="/movies/${movie.id}">
                                 ${movie.title}
                             </a>
                         </div>

@@ -15,6 +15,7 @@ import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBooks
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharacters
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharactersPagination
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouses
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchMovieById
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchMovies
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchPotions
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchPotionsPagination
@@ -55,6 +56,29 @@ suspend fun ApplicationCall.getBookById(
             "book.ftl",
             mapOf(
                 "book" to book,
+                "session" to userSession.toString(),
+                "username" to userSession?.username,
+                "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                "profilePictureData" to getProfilePicture(userSession),
+                "userFavourites" to userFavouriteItems(userSession?.username, item),
+            )
+        )
+    } else {
+        respond(HttpStatusCode.NotFound, "Book not found")
+    }
+}
+
+suspend fun ApplicationCall.getMovieById(
+    userSession: UserSession?,
+    id: String,
+    item: String,
+) {
+    val movie = fetchMovieById(id)
+    if (movie != null) {
+        respondTemplate(
+            "movie.ftl",
+            mapOf(
+                "movie" to movie,
                 "session" to userSession.toString(),
                 "username" to userSession?.username,
                 "house" to userSession?.let { daoUsers.getHouse(it.username) },

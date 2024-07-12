@@ -4,6 +4,7 @@ import getBookById
 import getBooksTemplate
 import getCharactersTemplate
 import getHousesTemplate
+import getMovieById
 import getMoviesTemplate
 import getPotionsTemplate
 import getSpellsTemplate
@@ -126,6 +127,13 @@ fun Application.configureRouting() {
                 val item = call.request.local.uri.removePrefix("/")
                 val id = call.parameters["id"]!!
                 call.getBookById(userSession, id, item)
+            }
+
+            get("/movies/{id}") {
+                val userSession: UserSession? = call.sessions.get<UserSession>()
+                val item = call.request.local.uri.removePrefix("/")
+                val id = call.parameters["id"]!!
+                call.getMovieById(userSession, id, item)
             }
 
             get("/houses") {
