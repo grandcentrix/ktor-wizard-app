@@ -28,13 +28,11 @@ fun Application.configureRouting() {
 
             get {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val username = call.sessions.get<UserSession>()?.username
                 call.respond(
                     FreeMarkerContent(
                         "index.ftl",
                         mapOf(
-                            "session" to userSession.toString(),
-                            "username" to username,
+                            "userSession" to userSession,
                             "house" to userSession?.let { daoUsers.getHouse(it.username) },
                             "profilePictureData" to getProfilePicture(userSession)
                         )
@@ -48,7 +46,7 @@ fun Application.configureRouting() {
                     FreeMarkerContent(
                         "login.ftl",
                         mapOf(
-                            "session" to userSession.toString(),
+                            "userSession" to userSession,
                             "profilePictureData" to getProfilePicture(userSession)
                         )
                     )
@@ -73,7 +71,7 @@ fun Application.configureRouting() {
                             mapOf(
                                 "username" to username,
                                 "uploadButton" to true,
-                                "session" to userSession.toString(),
+                                "userSession" to userSession,
                                 "house" to userSession?.let { daoUsers.getHouse(it.username) },
                                 "profilePictureData" to getProfilePicture(userSession)
                             )
@@ -91,10 +89,10 @@ fun Application.configureRouting() {
                         FreeMarkerContent(
                             "signup.ftl",
                             mapOf(
-                                "session" to "null",
+                                "userSession" to null,
                                 "houses" to HousesRepositoryInstance.getAll(),
                                 "profilePictureData" to getProfilePicture(userSession=null),
-                                "message" to ""
+                                "statusMessage" to null
                             )
                         )
                     )
@@ -119,7 +117,7 @@ fun Application.configureRouting() {
                     "books.ftl",
                     mapOf(
                         "books" to BooksRepositoryInstance.getAll(),
-                        "session" to userSession.toString(),
+                        "userSession" to userSession,
                         "username" to username,
                         "house" to userSession?.let { daoUsers.getHouse(it.username) },
                         "profilePictureData" to getProfilePicture(userSession)
@@ -134,7 +132,7 @@ fun Application.configureRouting() {
                     "houses.ftl",
                     mapOf(
                         "houses" to HousesRepositoryInstance.getAll(),
-                        "session" to userSession.toString(),
+                        "userSession" to userSession,
                         "username" to username,
                         "house" to userSession?.let { daoUsers.getHouse(it.username) },
                         "profilePictureData" to getProfilePicture(userSession)
@@ -149,7 +147,7 @@ fun Application.configureRouting() {
                     "characters.ftl",
                     mapOf(
                         "characters" to CharactersRepositoryInstance.getAll(),
-                        "session" to userSession.toString(),
+                        "userSession" to userSession,
                         "username" to username,
                         "house" to userSession?.let { daoUsers.getHouse(it.username) },
                         "profilePictureData" to getProfilePicture(userSession)
@@ -165,7 +163,7 @@ fun Application.configureRouting() {
                     "movies.ftl",
                     mapOf(
                         "movies" to MoviesRepositoryInstance.getAll(),
-                        "session" to userSession.toString(),
+                        "userSession" to userSession,
                         "username" to username,
                         "house" to userSession?.let { daoUsers.getHouse(it.username) },
                         "profilePictureData" to getProfilePicture(userSession)
@@ -181,7 +179,7 @@ fun Application.configureRouting() {
                     "potions.ftl",
                     mapOf(
                         "potions" to PotionsRepositoryInstance.getAll(),
-                        "session" to userSession.toString(),
+                        "userSession" to userSession,
                         "username" to username,
                         "house" to userSession?.let { daoUsers.getHouse(it.username) },
                         "profilePictureData" to getProfilePicture(userSession)
@@ -197,7 +195,7 @@ fun Application.configureRouting() {
                     "spells.ftl",
                     mapOf(
                         "spells" to SpellsRepositoryInstance.getAll(),
-                        "session" to userSession.toString(),
+                        "userSession" to userSession,
                         "username" to username,
                         "house" to userSession?.let { daoUsers.getHouse(it.username) },
                         "profilePictureData" to getProfilePicture(userSession)
@@ -246,7 +244,7 @@ fun Application.configureRouting() {
                 }
             }
 
-            put("/user/profilepicture") {
+            post("/user/profilepicture") {
                 val userSession = call.verifyUserSession()
                 val multipartData = call.receiveMultipart()
                 val imageDataPart = multipartData.readPart() as? PartData.FileItem

@@ -1,5 +1,4 @@
 <#import "_layout.ftl" as layout />
-<#assign profilePicture = profilePictureData in layout>
 
 <@layout.base>
 
