@@ -34,7 +34,7 @@ object APIRequesting {
              it.attributes
          }
 
-    fun getBookById(id: String): Book = runBlocking<ResponseObject<Book>> {
+    fun fetchBookById(id: String): Book = runBlocking<ResponseObject<Book>> {
         client.get("${API_URL}/books/$id").body()
     }.data.attributes
 

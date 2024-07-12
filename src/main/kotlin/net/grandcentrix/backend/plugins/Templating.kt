@@ -1,12 +1,16 @@
 
 import freemarker.cache.ClassTemplateLoader
 import freemarker.core.HTMLOutputFormat
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.freemarker.*
+import io.ktor.server.response.*
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.controllers.getProfilePicture
 import net.grandcentrix.backend.controllers.userFavouriteItems
 import net.grandcentrix.backend.dao.daoUsers
+import net.grandcentrix.backend.plugins.api.APIRequesting
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBookById
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBooks
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharacters
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharactersPagination
@@ -39,6 +43,29 @@ suspend fun ApplicationCall.getBooksTemplate(
             "userFavourites" to userFavouriteItems(userSession?.username, item),
         )
     )
+
+suspend fun ApplicationCall.getBookById(
+    userSession: UserSession?,
+    id: String,
+    item: String,
+) {
+    val book = APIRequesting.fetchBookById(id)
+    if (book != null) {
+        respondTemplate(
+            "book.ftl",
+            mapOf(
+                "book" to book,
+                "session" to userSession.toString(),
+                "username" to userSession?.username,
+                "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                "profilePictureData" to getProfilePicture(userSession),
+                "userFavourites" to userFavouriteItems(userSession?.username, item),
+            )
+        )
+    } else {
+        respond(HttpStatusCode.NotFound, "Book not found")
+    }
+}
 
 suspend fun ApplicationCall.getCharactersTemplate(
     userSession: UserSession?,

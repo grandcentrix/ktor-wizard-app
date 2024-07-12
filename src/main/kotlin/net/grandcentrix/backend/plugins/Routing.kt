@@ -1,5 +1,6 @@
 package net.grandcentrix.backend.plugins
 
+import getBookById
 import getBooksTemplate
 import getCharactersTemplate
 import getHousesTemplate
@@ -19,6 +20,7 @@ import io.ktor.server.util.*
 import net.grandcentrix.backend.controllers.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.dao.daoUsers
+import net.grandcentrix.backend.plugins.api.APIRequesting
 
 fun Application.configureRouting() {
 
@@ -117,6 +119,13 @@ fun Application.configureRouting() {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
                 val item = call.request.local.uri.removePrefix("/")
                 call.getBooksTemplate(userSession, item)
+            }
+
+            get("/books/{id}") {
+                val userSession: UserSession? = call.sessions.get<UserSession>()
+                val item = call.request.local.uri.removePrefix("/")
+                val id = call.parameters["id"]!!
+                call.getBookById(userSession, id, item)
             }
 
             get("/houses") {
