@@ -2,6 +2,7 @@ package net.grandcentrix.backend.plugins
 
 import getBookById
 import getBooksTemplate
+import getCharacterById
 import getCharactersTemplate
 import getHouseById
 import getHousesTemplate
@@ -129,6 +130,21 @@ fun Application.configureRouting() {
                 val item = call.request.local.uri.removePrefix("/")
                 val id = call.parameters["id"]!!
                 call.getBookById(userSession, id, item)
+            }
+
+            get("/characters/{id}") {
+                val id = call.parameters["id"]!!
+                if (id.toIntOrNull() in 1..500) {
+                    val pageNumber = id
+                    val userSession: UserSession? = call.sessions.get<UserSession>()
+                    val item = call.request.local.uri.removePrefix("/")
+                    call.getCharactersTemplate(userSession, item, pageNumber)
+                } else {
+                    val characterId = id
+                    val userSession: UserSession? = call.sessions.get<UserSession>()
+                    val item = call.request.local.uri.removePrefix("/")
+                    call.getCharacterById(userSession, characterId, item)
+                }
             }
 
             get("/movies/{id}") {

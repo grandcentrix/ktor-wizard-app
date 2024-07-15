@@ -21,6 +21,17 @@ data class ResponseObject<T> (
     val data: DataItem<T>
 )
 
+@Serializable
+data class CharacterResponseData(
+    val data: CharacterDataItem
+)
+
+@Serializable
+data class CharacterDataItem(
+    val id: String,
+    val type: String,
+    val attributes: Character
+)
 
 @Serializable
 data class Pagination (

@@ -11,6 +11,7 @@ import net.grandcentrix.backend.controllers.userFavouriteItems
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBookById
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBooks
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharacterById
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharacters
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharactersPagination
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouseById
@@ -114,7 +115,6 @@ suspend fun ApplicationCall.getHouseById(
     }
 }
 
-
 suspend fun ApplicationCall.getCharactersTemplate(
     userSession: UserSession?,
     item: String,
@@ -194,3 +194,26 @@ suspend fun ApplicationCall.getSpellsTemplate(
             "pagination" to pageNumber?.let { fetchSpellsPagination(it) }
         )
     )
+
+suspend fun ApplicationCall.getCharacterById(
+    userSession: UserSession?,
+    id: String,
+    item: String,
+) {
+    val character = fetchCharacterById(id)
+    if (character != null) {
+        respondTemplate(
+            "character.ftl",
+            mapOf(
+                "character" to character,
+                "session" to userSession.toString(),
+                "username" to userSession?.username,
+                "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                "profilePictureData" to getProfilePicture(userSession),
+                "userFavourites" to userFavouriteItems(userSession?.username, item),
+            )
+        )
+    } else {
+        respond(HttpStatusCode.NotFound, "Book not found")
+    }
+}
