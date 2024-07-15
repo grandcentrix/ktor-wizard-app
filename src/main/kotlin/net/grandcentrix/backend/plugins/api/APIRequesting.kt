@@ -70,6 +70,12 @@ object APIRequesting {
         responseData.data.attributes
     }
 
+    fun fetchSpellById(id: String): Spell = runBlocking {
+        val response = client.get("$API_URL/spells/$id")
+        val responseData = response.body<SpellResponseData>()
+        responseData.data.attributes
+    }
+
     fun fetchCharactersPagination(pageNumber: String): PaginationData = runBlocking<ResponseData<PaginationData>> {
         client.get("$API_URL/characters?page[number]=$pageNumber").body()
     }.meta.pagination

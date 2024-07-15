@@ -10,6 +10,7 @@ import getMovieById
 import getMoviesTemplate
 import getPotionsTemplate
 import getSpellsTemplate
+import getspellById
 import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -144,6 +145,21 @@ fun Application.configureRouting() {
                     val userSession: UserSession? = call.sessions.get<UserSession>()
                     val item = call.request.local.uri.removePrefix("/")
                     call.getCharacterById(userSession, characterId, item)
+                }
+            }
+
+            get("/spells/{id}") {
+                val id = call.parameters["id"]!!
+                if (id.toIntOrNull() in 1..500) {
+                    val pageNumber = id
+                    val userSession: UserSession? = call.sessions.get<UserSession>()
+                    val item = call.request.local.uri.removePrefix("/")
+                    call.getSpellsTemplate(userSession, item, pageNumber)
+                } else {
+                    val spellid = id
+                    val userSession: UserSession? = call.sessions.get<UserSession>()
+                    val item = call.request.local.uri.removePrefix("/")
+                    call.getspellById(userSession, spellid, item)
                 }
             }
 

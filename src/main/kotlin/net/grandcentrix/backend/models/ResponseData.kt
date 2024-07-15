@@ -34,6 +34,18 @@ data class CharacterDataItem(
 )
 
 @Serializable
+data class SpellResponseData(
+    val data: SpellDataItem
+)
+
+@Serializable
+data class SpellDataItem(
+    val id: String,
+    val type: String,
+    val attributes: Spell
+)
+
+@Serializable
 data class Pagination (
     val pagination: PaginationData
 )
