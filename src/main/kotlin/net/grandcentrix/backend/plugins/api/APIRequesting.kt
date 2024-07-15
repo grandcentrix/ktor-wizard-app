@@ -5,7 +5,6 @@ import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
-import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
@@ -65,23 +64,10 @@ object APIRequesting {
             it.attributes
         }
 
-    suspend fun fetchCharacterById(id: String): Character? {
-        return try {
-            val response = client.get("$API_URL/characters/$id")
-            if (response.status.isSuccess()) {
-                val responseData = response.body<CharacterResponseData>()
-                responseData.data?.attributes?.let {
-                    it.id = it.id.toString()
-                    it
-                }
-            } else {
-                null
-            }
-        } catch (e: Exception) {
-            println("Failed to fetch character by ID: $id")
-            e.printStackTrace()
-            null
-        }
+    fun fetchCharacterById(id: String): Character = runBlocking {
+        val response = client.get("$API_URL/characters/$id")
+        val responseData = response.body<CharacterResponseData>()
+        responseData.data.attributes
     }
 
     fun fetchCharactersPagination(pageNumber: String): PaginationData = runBlocking<ResponseData<PaginationData>> {

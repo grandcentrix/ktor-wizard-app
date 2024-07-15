@@ -21,8 +21,5 @@ fun Application.module() {
     configureStatusPage()
     configureTemplating()
 
-    //fun sad() = fetchCharacterById("2ac83f4d-c50e-4475-b09c-15e5a80da030")
-   // println(sad())
-
 }
 
