@@ -76,6 +76,12 @@ object APIRequesting {
         responseData.data.attributes
     }
 
+    fun fetchPotionById(id: String): Potion = runBlocking {
+        val response = client.get("$API_URL/potions/$id")
+        val responseData = response.body<PotionResponseData>()
+        responseData.data.attributes
+    }
+
     fun fetchCharactersPagination(pageNumber: String): PaginationData = runBlocking<ResponseData<PaginationData>> {
         client.get("$API_URL/characters?page[number]=$pageNumber").body()
     }.meta.pagination

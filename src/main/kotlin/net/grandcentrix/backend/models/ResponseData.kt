@@ -39,6 +39,18 @@ data class SpellResponseData(
 )
 
 @Serializable
+data class PotionResponseData(
+    val data: PotionDataItem
+)
+
+@Serializable
+data class PotionDataItem(
+    val id: String,
+    val type: String,
+    val attributes: Potion
+)
+
+@Serializable
 data class SpellDataItem(
     val id: String,
     val type: String,

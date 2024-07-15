@@ -18,6 +18,7 @@ import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouseById
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouses
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchMovieById
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchMovies
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchPotionById
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchPotions
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchPotionsPagination
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchSpellById
@@ -219,12 +220,35 @@ suspend fun ApplicationCall.getCharacterById(
     }
 }
 
-suspend fun ApplicationCall.getspellById(
+suspend fun ApplicationCall.getSpellById(
     userSession: UserSession?,
     id: String,
     item: String,
 ) {
     val spell = fetchSpellById(id)
+    if (spell != null) {
+        respondTemplate(
+            "spell.ftl",
+            mapOf(
+                "spell" to spell,
+                "session" to userSession.toString(),
+                "username" to userSession?.username,
+                "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                "profilePictureData" to getProfilePicture(userSession),
+                "userFavourites" to userFavouriteItems(userSession?.username, item),
+            )
+        )
+    } else {
+        respond(HttpStatusCode.NotFound, "Book not found")
+    }
+}
+
+suspend fun ApplicationCall.getPotionById(
+    userSession: UserSession?,
+    id: String,
+    item: String,
+) {
+    val spell = fetchPotionById(id)
     if (spell != null) {
         respondTemplate(
             "spell.ftl",
