@@ -248,12 +248,12 @@ suspend fun ApplicationCall.getPotionById(
     id: String,
     item: String,
 ) {
-    val spell = fetchPotionById(id)
-    if (spell != null) {
+    val potion = fetchPotionById(id)
+    if (potion != null) {
         respondTemplate(
-            "spell.ftl",
+            "potion.ftl",
             mapOf(
-                "spell" to spell,
+                "potion" to potion,
                 "session" to userSession.toString(),
                 "username" to userSession?.username,
                 "house" to userSession?.let { daoUsers.getHouse(it.username) },

@@ -9,7 +9,7 @@
         }
     </style>
     <h1>
-        <span class="material-symbols-outlined">book</span>
+        <span class="material-symbols-outlined">person</span>
         Character Details
     </h1>
     <section class="content">

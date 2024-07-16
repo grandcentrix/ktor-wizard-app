@@ -11,6 +11,7 @@ data class Spell(
     val creator: String?,
     val effect: String?,
     val hand: String?,
+    val wiki: String,
     @SerialName("image")
     var imageUrl: String?,
     val incantation: String?,

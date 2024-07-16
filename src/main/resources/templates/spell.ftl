@@ -9,13 +9,23 @@
         }
     </style>
     <h1>
-        <span class="material-symbols-outlined">book</span>
-        Book Details
+        <span class="material-symbols-outlined">flare</span>
+        Spell Details
+
     </h1>
     <section class="content">
-        <h2>Book Information</h2>
+        <h2>Spell Information</h2>
         <ul class="content-block">
-            <li>Spell Name: ${spell.name!}</li>
+            <li>Spell Name: ${spell.name!'Unknown'}</li>
+            <li>Category: ${spell.category!'Unknown'}</li>
+            <li>Creator: ${spell.creator!'Unknown'}</li>
+            <li>Effect: ${spell.effect!'Unknown'}</li>
+            <li>Hand: ${spell.hand!'Unknown'}</li>
+            <li>Incantation: ${spell.incantation!'Unknown'}</li>
+            <li>Light: ${spell.light!'Unknown'}</li>
+            <li>Hand: ${spell.hand!'Unknown'}</li>
+            <li>Wiki: <a href="${spell.wiki!}">${spell.wiki!}</a></li>
+
         </ul>
     </section>
 </@layout.base>

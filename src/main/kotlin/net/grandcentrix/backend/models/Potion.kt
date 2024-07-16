@@ -10,6 +10,7 @@ data class Potion(
     val characteristics: String?,
     val difficulty: String?,
     val effect: String?,
+    val wiki: String,
     @SerialName("image")
     var imageUrl: String?,
     val inventors: String?,

@@ -9,7 +9,7 @@
         }
     </style>
     <h1>
-        <span class="material-symbols-outlined">Movie</span>
+        <span class="material-symbols-outlined">movie</span>
         Movie Details
     </h1>
     <section class="content">
