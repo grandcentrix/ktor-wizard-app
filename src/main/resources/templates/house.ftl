@@ -16,14 +16,23 @@
         <h2>House Information</h2>
         <ul class="content-block">
             <li>Name: ${house.name}</li>
+            <br>
             <li>Colors: ${house.colors}</li>
+            <br>
             <li>Founder: ${house.founder}</li>
+            <br>
             <li>Animal: ${house.animal}</li>
+            <br>
             <li>Element: ${house.element}</li>
+            <br>
             <li>Ghost: ${house.ghost}</li>
+            <br>
             <li>CommonRoom: ${house.commonRoom}</li>
+            <br>
             <li>Heads: ${house.heads?join(', ')}</li>
+            <br>
             <li>Traits: ${house.traits?join(', ')}</li>
+            <br>
 
             <#if house.id == "0367baf3-1cb6-4baf-bede-48e17e1cd005">
                 <li>Slogan: “Their daring, nerve and chivalry set Gryffindors apart."</li>

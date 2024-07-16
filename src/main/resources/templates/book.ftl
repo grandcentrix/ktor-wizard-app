@@ -16,10 +16,15 @@
         <h2>Book Information</h2>
         <ul class="content-block">
             <li>Title: ${book.title!}</li>
+            <br>
             <li>Author: ${book.author!}</li>
+            <br>
             <li>Summary: ${book.summary!}</li>
+            <br>
             <li>Pages: ${book.pages!}</li>
+            <br>
             <li>Dedication: ${book.dedication!}</li>
+            <br>
             <li>Wiki: <a href="${book.wiki!}">${book.wiki!}</a></li>
         </ul>
     </section>

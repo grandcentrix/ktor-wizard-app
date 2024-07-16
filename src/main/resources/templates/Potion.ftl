@@ -16,14 +16,23 @@
         <h2>Potion Information</h2>
         <ul class="content-block">
             <li>Potion Name: ${potion.name!}</li>
+            <br>
             <li>Characteristics: ${potion.characteristics!'Unknown'}</li>
+            <br>
             <li>Effect: ${potion.effect!'Unknown'}</li>
+            <br>
             <li>Side Effects: ${potion.sideEffects!'Unknown'}</li>
+            <br>
             <li>Ingredients: ${potion.ingredients!'Unknown'}</li>
+            <br>
             <li>Time: ${potion.time!'Unknown'}</li>
+            <br>
             <li>Difficulty: ${potion.difficulty!'Unknown'}</li>
+            <br>
             <li>Manufacturers: ${potion.manufacturers!'Unknown'}</li>
+            <br>
             <li>Inventors: ${potion.inventors!'Unknown'}</li>
+            <br>
             <li>Wiki: <a href="${potion.wiki!}">${potion.wiki!}</a></li>
         </ul>
     </section>
