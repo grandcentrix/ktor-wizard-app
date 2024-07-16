@@ -7,6 +7,16 @@
         a {
             color: #4682B4; /* Lighter shade of blue */
         }
+
+        .book-detail {
+            font-size: 1.4em; /* make the text a bit bigger */
+            text-decoration: underline;
+        }
+
+        .larger-text {
+            font-size: 1.2em; /* make the text even bigger */
+        }
+
     </style>
     <h1>
         <span class="material-symbols-outlined">book</span>
@@ -15,17 +25,17 @@
     <section class="content">
         <h2>Book Information</h2>
         <ul class="content-block">
-            <li>Title: ${book.title!}</li>
+            <li><span class="book-detail">Title:</span> <span class="larger-text">${book.title!}</span></li>
             <br>
-            <li>Author: ${book.author!}</li>
+            <li><span class="book-detail">Author:</span> <span class="larger-text">${book.author!}</span></li>
             <br>
-            <li>Summary: ${book.summary!}</li>
+            <li><span class="book-detail">Summary:</span> <span class="larger-text">${book.summary!}</span></li>
             <br>
-            <li>Pages: ${book.pages!}</li>
+            <li><span class="book-detail">Pages:</span> <span class="larger-text">${book.pages!}</span></li>
             <br>
-            <li>Dedication: ${book.dedication!}</li>
+            <li><span class="book-detail">Dedication:</span> <span class="larger-text">${book.dedication!}</span></li>
             <br>
-            <li>Wiki: <a href="${book.wiki!}">${book.wiki!}</a></li>
+            <li><span class="book-detail">Wiki:</span> <a href="${book.wiki!}"><span class="larger-text">${book.wiki!}</span></a></li>
         </ul>
     </section>
 </@layout.base>

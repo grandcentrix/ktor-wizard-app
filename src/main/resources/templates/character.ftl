@@ -7,6 +7,15 @@
         a {
             color: #4682B4; /* Lighter shade of blue */
         }
+
+        .character-detail {
+            font-size: 1.4em; /* make the text a bit bigger */
+            text-decoration: underline;
+        }
+
+        .larger-text {
+            font-size: 1.2em; /* make the text even bigger */
+        }
     </style>
     <h1>
         <span class="material-symbols-outlined">person</span>
@@ -15,87 +24,87 @@
     <section class="content">
         <h2>Character Information</h2>
         <ul class="content-block">
-            <li>Name: ${character.name!}</li>
+            <li><span class="character-detail">Name:</span> <span class="larger-text">${character.name!}</span></li>
             <br>
-            <li>Alias:
+            <li><span class="character-detail">Alias:</span>
                 <#if character.aliasNames??>
                     <#if character.aliasNames?size gt 0>
-                        ${character.aliasNames?join(', ')}
+                        <span class="larger-text">${character.aliasNames?join(', ')}</span>
                     <#else>
-                        Unknown
+                        <span class="larger-text">Unknown</span>
                     </#if>
                 <#else>
-                    Unknown
+                    <span class="larger-text">Unknown</span>
                 </#if>
             </li>
             <br>
-            <li>Animagus: ${(character.animagus)!'Unknown'}</li>
+            <li><span class="character-detail">Animagus:</span> <span class="larger-text">${(character.animagus)!'Unknown'}</span></li>
             <br>
-            <li>Boggart: ${(character.boggart)!'Unknown'}</li>
+            <li><span class="character-detail">Boggart:</span> <span class="larger-text">${(character.boggart)!'Unknown'}</span></li>
             <br>
-            <li>Birth: ${(character.birth)!'Unknown'}</li>
+            <li><span class="character-detail">Birth:</span> <span class="larger-text">${(character.birth)!'Unknown'}</span></li>
             <br>
-            <li>Death: ${(character.death)!'Unknown'}</li>
+            <li><span class="character-detail">Death:</span> <span class="larger-text">${(character.death)!'Unknown'}</span></li>
             <br>
-            <li>Family Members:
+            <li><span class="character-detail">Family Members:</span>
                 <#if character.familyMembers??>
                     <#if character.familyMembers?size gt 0>
-                        ${character.familyMembers?join(', ')}
+                        <span class="larger-text">${character.familyMembers?join(', ')}</span>
                     <#else>
-                        Unknown
+                        <span class="larger-text">Unknown</span>
                     </#if>
                 <#else>
-                    Unknown
+                    <span class="larger-text">Unknown</span>
                 </#if>
-                <br>
-            <li>House: ${(character.house)!'Unknown'}</li>
+            </li>
             <br>
-            <li>Nationality: ${(character.nationality)!'Unknown'}</li>
+            <li><span class="character-detail">House:</span> <span class="larger-text">${(character.house)!'Unknown'}</span></li>
             <br>
-            <li>Gender: ${(character.gender)!'Unknown'}</li>
+            <li><span class="character-detail">Nationality:</span> <span class="larger-text">${(character.nationality)!'Unknown'}</span></li>
             <br>
-            <li>Blood Status: ${(character.blood_status)!'Unknown'}</li>
+            <li><span class="character-detail">Gender:</span> <span class="larger-text">${(character.gender)!'Unknown'}</span></li>
             <br>
-            <li>Species: ${(character.species)!'Unknown'}</li>
+            <li><span class="character-detail">Blood Status:</span> <span class="larger-text">${(character.blood_status)!'Unknown'}</span></li>
             <br>
-            <li>Jobs:
+            <li><span class="character-detail">Species:</span> <span class="larger-text">${(character.species)!'Unknown'}</span></li>
+            <br>
+            <li><span class="character-detail">Jobs:</span>
                 <#if character.jobs??>
                     <#if character.jobs?size gt 0>
-                        ${character.jobs?join(', ')}
+                        <span class="larger-text">${character.jobs?join(', ')}</span>
                     <#else>
-                        Unknown
+                        <span class="larger-text">Unknown</span>
                     </#if>
                 <#else>
-                    Unknown
+                    <span class="larger-text">Unknown</span>
                 </#if>
-            <li>
-                <br>
-                Titles:
+            </li>
+            <br>
+            <li><span class="character-detail">Titles:</span>
                 <#if character.titles??>
                     <#if character.titles?size gt 0>
-                        ${character.titles?join(', ')}
+                        <span class="larger-text">${character.titles?join(', ')}</span>
                     <#else>
-                        Unknown
+                        <span class="larger-text">Unknown</span>
                     </#if>
                 <#else>
-                    Unknown
+                    <span class="larger-text">Unknown</span>
                 </#if>
-            <li>
-                <br>
-                wands:
+            </li>
+            <br>
+            <li><span class="character-detail">Wands:</span>
                 <#if character.wands??>
                     <#if character.wands?size gt 0>
-                        ${character.wands?join(', ')}
+                        <span class="larger-text">${character.wands?join(', ')}</span>
                     <#else>
-                        Unknown
+                        <span class="larger-text">Unknown</span>
                     </#if>
                 <#else>
-                    Unknown
+                    <span class="larger-text">Unknown</span>
                 </#if>
-            <li>
-                <br>
-                Wiki: <a href="${character.wiki!}">${character.wiki!}</a></li>
             </li>
+            <br>
+            <li><span class="character-detail">Wiki:</span> <a href="${character.wiki!}"><span class="larger-text">${character.wiki!}</span></a></li>
         </ul>
     </section>
 </@layout.base>

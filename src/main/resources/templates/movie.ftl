@@ -7,43 +7,56 @@
         a {
             color: #4682B4; /* Lighter shade of blue */
         }
+
+
+        .movie_details{
+            font-size: 1.4em; /* make the text a bit bigger */
+            text-decoration: underline;
+        }
+
+        .larger-text {
+            font-size: 1.2em; /* make the text even bigger */
+        }
     </style>
+
     <h1>
         <span class="material-symbols-outlined">movie</span>
         Movie Details
     </h1>
+
     <section class="content">
         <h2>Movie Information</h2>
+
         <ul class="content-block">
-            <li>Summary: ${movie.summary!}</li>
+            <li><span class="movie_details">Summary:</span> <span class="larger-text"> ${movie.summary!}</span></li>
             <br>
-            <li>BoxOffice: ${movie.boxOffice!}</li>
+            <li><span class="movie_details">Box Office:</span> <span class="larger-text"> ${movie.boxOffice!}</span></li>
             <br>
-            <li>Budget: ${movie.budget!}</li>
+            <li><span class="movie_details">Budget:</span> <span class="larger-text"> ${movie.budget!}</span></li>
             <br>
-            <li>Distributors: ${movie.distributors?join(', ')}</li>
+            <li><span class="movie_details">Distributors:</span> <span class="larger-text"> ${movie.distributors?join(', ')}</span></li>
             <br>
-            <li>rating: ${movie.rating!}</li>
+            <li><span class="movie_details">Rating:</span> <span class="larger-text"> ${movie.rating!}</span></li>
             <br>
-            <li>Release Date: ${movie.releaseDate!}</li>
+            <li><span class="movie_details">Release Date:</span> <span class="larger-text"> ${movie.releaseDate!}</span></li>
             <br>
-            <li>Duration: ${movie.duration!}</li>
+            <li><span class="movie_details">Duration:</span> <span class="larger-text"> ${movie.duration!}</span></li>
             <br>
-            <li>Cinematographers: ${movie.cinematographers?join(', ')}</li>
+            <li><span class="movie_details">Cinematographers:</span> <span class="larger-text"> ${movie.cinematographers?join(', ')}</span></li>
             <br>
-            <li>Directors: ${movie.directors?join(', ')}</li>
+            <li><span class="movie_details">Directors:</span> <span class="larger-text"> ${movie.directors?join(', ')}</span></li>
             <br>
-            <li>Screenwriters: ${movie.screenwriters?join(', ')}</li>
+            <li><span class="movie_details">Screenwriters:</span> <span class="larger-text"> ${movie.screenwriters?join(', ')}</span></li>
             <br>
-            <li>Producer: ${movie.producers?join(', ')}</li>
+            <li><span class="movie_details">Producer:</span> <span class="larger-text">${movie.producers?join(', ')}</span></li>
             <br>
-            <li>Editors: ${movie.editors?join(', ')}</li>
+            <li><span class="movie_details">Editors:</span> <span class="larger-text"> ${movie.editors?join(', ')}</span></li>
             <br>
-            <li>Music Composers: ${movie.music_composers?join(', ')}</li>
+            <li><span class="movie_details">Music Composers:</span> <span class="larger-text">${movie.music_composers?join(', ')}</span></li>
             <br>
-            <li>Trailer: <a href="${movie.trailer!}">${movie.trailer!}</a></li>
+            <li><span class="movie_details">Trailer:</span> <span class="larger-text"> <a href="${movie.trailer!}">${movie.trailer!}</a></span></li>
             <br>
-            <li>Wiki: <a href="${movie.wiki!}">${movie.wiki!}</a></li>
+            <li><span class="movie_details">Wiki:</span> <span class="larger-text"> <a href="${movie.wiki!}">${movie.wiki!}</a></span></li>
         </ul>
     </section>
 </@layout.base>

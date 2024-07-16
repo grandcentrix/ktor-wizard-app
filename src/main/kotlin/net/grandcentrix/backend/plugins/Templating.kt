@@ -99,15 +99,15 @@ suspend fun ApplicationCall.getHouseById(
     id: String,
     item: String,
 ) {
-    val house = fetchHouseById(id)
-    if (house != null) {
+    val detail_house = fetchHouseById(id)
+    if (detail_house != null) {
         respondTemplate(
             "house.ftl",
             mapOf(
-                "house" to house,
+                "house" to userSession?.let { daoUsers.getHouse(it.username) },
                 "session" to userSession.toString(),
                 "username" to userSession?.username,
-                "userhouse" to userSession?.let { daoUsers.getHouse(it.username) },
+                "detail_house" to detail_house,
                 "profilePictureData" to getProfilePicture(userSession),
                 "userFavourites" to userFavouriteItems(userSession?.username, item),
             )
