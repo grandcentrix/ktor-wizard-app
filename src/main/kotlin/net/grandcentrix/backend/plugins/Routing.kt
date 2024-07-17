@@ -12,6 +12,7 @@ import getPotionById
 import getPotionsTemplate
 import getSpellById
 import getSpellsTemplate
+import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -26,6 +27,7 @@ import net.grandcentrix.backend.controllers.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.plugins.api.APIRequesting
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBooks
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouses
 
 
@@ -116,6 +118,100 @@ fun Application.configureRouting() {
                 SignupInstance.createUser(formParameters)
                 call.respondRedirect("/login")
             }
+
+            get("/search-suggestions") {
+                val query = call.request.queryParameters["search"].orEmpty().lowercase()
+
+
+                val books = fetchBooks().associateBy { it.title.lowercase() }
+                val houses = APIRequesting.fetchHouses().associateBy { it.name.lowercase() }
+                val characters = APIRequesting.fetchCharacters("").associateBy { it.name.lowercase() }
+                val movies = APIRequesting.fetchMovies().associateBy { it.title.lowercase() }
+                val potions = APIRequesting.fetchPotions("").associateBy { it.name.lowercase() }
+                val spells = APIRequesting.fetchSpells("").associateBy { it.name.lowercase() }
+
+
+                val routes = mapOf(
+                    "books" to "/books",
+                    "houses" to "/houses",
+                    "characters" to "/characters",
+                    "movies" to "/movies",
+                    "potions" to "/potions",
+                    "spells" to "/spells"
+                )
+
+
+                val options = routes.keys.filter { it.startsWith(query) } +
+                        books.keys.filter { it.startsWith(query) } +
+                        houses.keys.filter { it.startsWith(query) } +
+                        characters.keys.filter { it.startsWith(query) } +
+                        movies.keys.filter { it.startsWith(query) } +
+                        potions.keys.filter { it.startsWith(query) } +
+                        spells.keys.filter { it.startsWith(query) }
+
+
+                val response = options.joinToString(separator = "") {
+                    when {
+                        books.containsKey(it) -> "<option value=\"${it}\">${it.capitalize()} (Book)</option>"
+                        houses.containsKey(it) -> "<option value=\"${it}\">${it.capitalize()} (House)</option>"
+                        characters.containsKey(it) -> "<option value=\"${it}\">${it.capitalize()} (Character)</option>"
+                        movies.containsKey(it) -> "<option value=\"${it}\">${it.capitalize()} (Movie)</option>"
+                        potions.containsKey(it) -> "<option value=\"${it}\">${it.capitalize()} (Potion)</option>"
+                        spells.containsKey(it) -> "<option value=\"${it}\">${it.capitalize()} (Spell)</option>"
+                        else -> "<option value=\"${it}\">${it.capitalize()}</option>"
+                    }
+                }
+
+
+                call.respondText(response, ContentType.Text.Html)
+            }
+
+
+            post("/search-redirect") {
+                val query = call.receiveParameters()["search"]?.lowercase()
+
+
+                val books = fetchBooks().associateBy { it.title.lowercase() }
+                val houses = fetchHouses().associateBy { it.name.lowercase() }
+                val characters = APIRequesting.fetchCharacters("").associateBy { it.name.lowercase() }
+                val movies = APIRequesting.fetchMovies().associateBy { it.title.lowercase() }
+                val potions = APIRequesting.fetchPotions("").associateBy { it.name.lowercase() }
+                val spells = APIRequesting.fetchSpells("").associateBy { it.name.lowercase() }
+
+
+                if (query != null) {
+                    if (books.containsKey(query)) {
+                        call.respondRedirect("/books/${books[query]!!.slug}")
+                    } else if (houses.containsKey(query)) {
+                        call.respondRedirect("/houses/${houses[query]!!.id}")
+                    } else if (characters.containsKey(query)) {
+                        call.respondRedirect("/characters/${characters[query]!!.id}")
+                    } else if (movies.containsKey(query)) {
+                        call.respondRedirect("/movies/${movies[query]!!.id}")
+                    } else if (potions.containsKey(query)) {
+                        call.respondRedirect("/potions/${potions[query]!!.id}")
+                    } else if (spells.containsKey(query)) {
+                        call.respondRedirect("/spells/${spells[query]!!.id}")
+                    } else {
+                        val routes = mapOf(
+                            "books" to "/books",
+                            "houses" to "/houses",
+                            "characters" to "/characters",
+                            "movies" to "/movies",
+                            "potions" to "/potions",
+                            "spells" to "/spells"
+                        )
+
+
+                        if (routes.containsKey(query)) {
+                            call.respondRedirect(routes[query]!!)
+                        } else {
+                            call.respond(HttpStatusCode.NotFound, "Route not found for '$query'")
+                        }
+                    }
+                }
+            }
+
 
             get("/logout") {
                 call.sessions.clear<UserSession>()
