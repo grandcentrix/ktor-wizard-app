@@ -21,3 +21,16 @@ data class Book(
 )
 
 
+@Serializable
+data class ChapterDataItem(
+    val id: String,
+    val type: String,
+    val attributes: Chapter
+)
+
+@Serializable
+data class Chapter(
+    val title: String,
+    val summary: String?,
+)
+

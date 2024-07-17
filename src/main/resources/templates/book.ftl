@@ -13,10 +13,31 @@
             text-decoration: underline;
         }
 
+        .book-chapter {
+            font-size: 1.4em; /* make the text a bit bigger */
+            color: #4682B4; /* same color as links */
+        }
+
         .larger-text {
             font-size: 1.2em; /* make the text even bigger */
         }
 
+        .chapter-summary {
+            display: none;
+        }
+
+        input[type="checkbox"] {
+            display: none;
+        }
+
+        input[type="checkbox"]:checked ~.chapter-summary {
+            display: block;
+        }
+
+        label {
+            color: #4682B4; /* same color as links */
+            cursor: pointer; /* make the label look like a clickable link */
+        }
     </style>
     <h1>
         <span class="material-symbols-outlined">book</span>
@@ -40,7 +61,11 @@
             <ul>
                 <h2>Chapters</h2>
                 <#list chapters as chapter>
-                    <li>${chapter.title} - ${chapter.summary}</li>
+                    <li>
+                        <input type="checkbox" id="${chapter.title?replace(" ", "_")}-checkbox">
+                        <span class="book-chapter"><label for="${chapter.title?replace(" ", "_")}-checkbox">${chapter.title}</span></label>
+                        <div class="chapter-summary">${chapter.summary!}</div>
+                    </li>
                 </#list>
             </ul>
 
