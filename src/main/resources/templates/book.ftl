@@ -36,6 +36,14 @@
             <li><span class="book-detail">Dedication:</span> <span class="larger-text">${book.dedication!}</span></li>
             <br>
             <li><span class="book-detail">Wiki:</span> <a href="${book.wiki!}"><span class="larger-text">${book.wiki!}</span></a></li>
+            <br>
+            <ul>
+                <h2>Chapters</h2>
+                <#list chapters as chapter>
+                    <li>${chapter.title} - ${chapter.summary}</li>
+                </#list>
+            </ul>
+
         </ul>
     </section>
 </@layout.base>

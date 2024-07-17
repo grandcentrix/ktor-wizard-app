@@ -11,6 +11,7 @@ import net.grandcentrix.backend.controllers.userFavouriteItems
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBookById
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBooks
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchChapters
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharacterById
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharacters
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharactersPagination
@@ -54,11 +55,13 @@ suspend fun ApplicationCall.getBookById(
     item: String,
 ) {
     val book = fetchBookById(id)
+    val chapters = fetchChapters(id)
     if (book != null) {
         respondTemplate(
             "book.ftl",
             mapOf(
                 "book" to book,
+                "chapters" to chapters,
                 "session" to userSession.toString(),
                 "username" to userSession?.username,
                 "house" to userSession?.let { daoUsers.getHouse(it.username) },

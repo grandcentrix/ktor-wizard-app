@@ -73,6 +73,26 @@ data class PaginationData(
 )
 
 @Serializable
+data class ChapterResponseData(
+    val data: ChapterDataItem
+)
+
+@Serializable
+data class ChapterDataItem(
+    val id: String,
+    val type: String,
+    val attributes: Chapter
+)
+
+@Serializable
+data class Chapter(
+    val title: String,
+    val summary: String,
+    val description: String? = "", // Make it nullable
+    val imageUrl: String? = null
+)
+
+@Serializable
 data class PaginationLinks (
     val self: String,
     val current: String,

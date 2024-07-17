@@ -16,5 +16,8 @@ data class Book(
     val releaseDate: String,
     val summary: String,
     val slug: String,
-    val title: String
+    val title: String,
+    val chapters: List<Chapter> = emptyList()
 )
+
+

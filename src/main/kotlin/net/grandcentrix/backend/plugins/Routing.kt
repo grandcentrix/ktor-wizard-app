@@ -25,6 +25,7 @@ import io.ktor.server.util.*
 import net.grandcentrix.backend.controllers.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.dao.daoUsers
+import net.grandcentrix.backend.plugins.api.APIRequesting
 
 
 fun Application.configureRouting() {
@@ -132,6 +133,7 @@ fun Application.configureRouting() {
                 val id = call.parameters["id"]!!
                 call.getBookById(userSession, id, item)
             }
+
 
             get("/characters/{id}") {
                 val id = call.parameters["id"]!!
