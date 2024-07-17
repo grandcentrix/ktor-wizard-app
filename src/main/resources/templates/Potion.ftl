@@ -3,20 +3,6 @@
 <#assign profilePicture = profilePictureData in layout>
 
 <@layout.base>
-    <style>
-        a {
-            color: #4682B4; /* Lighter shade of blue */
-        }
-
-        .potion-detail {
-            font-size: 1.4em; /* make the text a bit bigger */
-            text-decoration: underline;
-        }
-
-        .larger-text {
-            font-size: 1.2em; /* make the text even bigger */
-        }
-    </style>
     <h1>
         <span class="material-symbols-outlined">stockpot</span>
         Potion Details
@@ -42,7 +28,7 @@
             <br>
             <li><span class="potion-detail">Inventors:</span> <span class="larger-text">${potion.inventors!'Unknown'}</span></li>
             <br>
-            <li><span class="potion-detail">Wiki:</span> <a href="${potion.wiki!}"><span class="larger-text">${potion.wiki!}</span></a></li>
+            <li><span class="potion-detail">Wiki:</span> <a href="${potion.wiki!}"><span class="wiki-text">${potion.wiki!}</span></a></li>
         </ul>
     </section>
 </@layout.base>

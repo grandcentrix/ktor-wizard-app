@@ -3,20 +3,6 @@
 <#assign profilePicture = profilePictureData in layout>
 
 <@layout.base>
-    <style>
-        a {
-            color: #4682B4; /* Lighter shade of blue */
-        }
-        .house_details{
-            font-size: 1.4em; /* make the text a bit bigger */
-            text-decoration: underline;
-        }
-
-        .larger-text {
-            font-size: 1.2em; /* make the text even bigger */
-        }
-
-    </style>
     <h1>
         <span class="material-symbols-outlined">House</span>
         House Details

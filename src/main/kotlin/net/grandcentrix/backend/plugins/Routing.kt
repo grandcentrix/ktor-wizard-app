@@ -26,6 +26,7 @@ import net.grandcentrix.backend.controllers.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.plugins.api.APIRequesting
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouses
 
 
 fun Application.configureRouting() {
@@ -101,7 +102,7 @@ fun Application.configureRouting() {
                             "signup.ftl",
                             mapOf(
                                 "session" to "null",
-//                                "houses" to HousesRepositoryInstance.getAll(),
+                                 "houses" to fetchHouses(),
                                 "profilePictureData" to getProfilePicture(userSession=null),
                                 "message" to ""
                             )

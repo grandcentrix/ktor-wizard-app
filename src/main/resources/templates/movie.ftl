@@ -3,22 +3,6 @@
 <#assign profilePicture = profilePictureData in layout>
 
 <@layout.base>
-    <style>
-        a {
-            color: #4682B4; /* Lighter shade of blue */
-        }
-
-
-        .movie_details{
-            font-size: 1.4em; /* make the text a bit bigger */
-            text-decoration: underline;
-        }
-
-        .larger-text {
-            font-size: 1.2em; /* make the text even bigger */
-        }
-    </style>
-
     <h1>
         <span class="material-symbols-outlined">movie</span>
         Movie Details
@@ -54,9 +38,9 @@
             <br>
             <li><span class="movie_details">Music Composers:</span> <span class="larger-text">${movie.music_composers?join(', ')}</span></li>
             <br>
-            <li><span class="movie_details">Trailer:</span> <span class="larger-text"> <a href="${movie.trailer!}">${movie.trailer!}</a></span></li>
+            <li><span class="movie_details">Trailer:</span> <a href="${movie.trailer!}"><span class="wiki-text">${movie.trailer!}</span></a></li>
             <br>
-            <li><span class="movie_details">Wiki:</span> <span class="larger-text"> <a href="${movie.wiki!}">${movie.wiki!}</a></span></li>
+            <li><span class="movie_details">Wiki:</span> <a href="${movie.wiki!}"><span class="wiki-text">${movie.wiki!}</span></a></li>
         </ul>
     </section>
 </@layout.base>

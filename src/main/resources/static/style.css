@@ -554,3 +554,68 @@ nav.user-menu {
 .pagination li.current {
     background-color: #734136;
 }
+
+.book-details a {
+    color: #4682B4; /* Lighter shade of blue */
+}
+
+.book-detail {
+    font-size: 1.4em; /* make the text a bit bigger */
+    text-decoration: underline;
+}
+
+.book-chapter {
+    font-size: 1.4em; /* make the text a bit bigger */
+    color: #4682B4; /* same color as links */
+}
+
+.larger-text {
+    font-size: 1.2em; /* make the text even bigger */
+}
+
+.wiki-text {
+    font-size: 1.2em; /* make the text even bigger */
+    color: #4682B4;
+}
+
+.chapter-summary {
+    display: none;
+}
+
+input[type="checkbox"] {
+    display: none;
+}
+
+input[type="checkbox"]:checked ~.chapter-summary {
+    display: block;
+}
+
+.book-chapter label {
+    color: #4682B4; /* same color as links */
+    cursor: pointer; /* make the label look like a clickable link */
+}
+
+.character-detail {
+    font-size: 1.4em; /* make the text a bit bigger */
+    text-decoration: underline;
+}
+
+.house_details{
+    font-size: 1.4em; /* make the text a bit bigger */
+    text-decoration: underline;
+}
+
+.movie_details{
+    font-size: 1.4em; /* make the text a bit bigger */
+    text-decoration: underline;
+}
+
+.potion-detail {
+    font-size: 1.4em; /* make the text a bit bigger */
+    text-decoration: underline;
+}
+
+.spell-detail {
+    font-size: 1.4em; /* make the text a bit bigger */
+    text-decoration: underline;
+}

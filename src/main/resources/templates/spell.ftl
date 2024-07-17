@@ -3,20 +3,6 @@
 <#assign profilePicture = profilePictureData in layout>
 
 <@layout.base>
-    <style>
-        a {
-            color: #4682B4; /* Lighter shade of blue */
-        }
-
-        .spell-detail {
-            font-size: 1.4em; /* make the text a bit bigger */
-            text-decoration: underline;
-        }
-
-        .larger-text {
-            font-size: 1.2em; /* make the text even bigger */
-        }
-    </style>
     <h1>
         <span class="material-symbols-outlined">flare</span>
         Spell Details
@@ -40,7 +26,7 @@
             <br>
             <li><span class="spell-detail">Hand:</span> <span class="larger-text">${spell.hand!'Unknown'}</span></li>
             <br>
-            <li><span class="spell-detail">Wiki:</span> <a href="${spell.wiki!}"><span class="larger-text">${spell.wiki!}</span></a></li>
+            <li><span class="spell-detail">Wiki:</span> <a href="${spell.wiki!}"><span class="wiki-text">${spell.wiki!}</span></a></li>
         </ul>
     </section>
 </@layout.base>
