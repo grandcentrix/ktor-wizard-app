@@ -29,7 +29,7 @@ class Signup {
         val email = formParameters["email"]
         val username = formParameters["username"]
         val password = formParameters["password"]
-        val house = formParameters["houses"]
+        val house = formParameters["house"]
 
         if (
             name.isNullOrBlank() ||
@@ -90,7 +90,7 @@ class Signup {
             email.startsWith(".") ||
             email.endsWith("@") ||
             email.endsWith(".") ||
-            (!email.contains("@") && !email.contains(".")) ||
+            (!email.contains("@") || !email.contains(".")) ||
             email.contains("@.")
         ) {
             throw SignupException("Must be a valid format for e-mail address.")

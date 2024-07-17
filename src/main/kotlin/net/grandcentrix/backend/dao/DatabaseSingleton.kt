@@ -1,5 +1,7 @@
 package net.grandcentrix.backend.dao
 
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.config.*
 import net.grandcentrix.backend.models.Users
 import org.jetbrains.exposed.sql.Database
@@ -10,8 +12,15 @@ import java.sql.DriverManager
 
 object DatabaseSingleton {
     fun init(config: ApplicationConfig) {
-        val driverClassName = config.property("storage.driverClassName").getString()
+        val driver = config.property("storage.driverClassName").getString()
         val url = config.property("storage.jdbcURL").getString()
+        val poolSize = config.property("storage.maxPoolSize").getString().toInt()
+
+        val hikariConfig: HikariConfig = HikariConfig().apply {
+            jdbcUrl = url
+            driverClassName = driver
+            maximumPoolSize = poolSize
+        }
 
         // Check if a database exists
         val databaseFile = File(url.substringAfter("jdbc:sqlite:"))
@@ -20,14 +29,13 @@ object DatabaseSingleton {
         }
 
         // Connects with the database
-        val database = Database.connect(url, driverClassName)
+        val database = Database.connect(HikariDataSource(hikariConfig))
 
 
         transaction(database) {
             // Create or update the Users table schema
             SchemaUtils.createMissingTablesAndColumns(Users)
         }
-
 
         println("Database initialized successfully!")
 

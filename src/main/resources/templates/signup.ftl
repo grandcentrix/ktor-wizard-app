@@ -39,7 +39,7 @@
 
             <div class="register-fields">
                 <label class="select-label" for="houses">Choose your Hogwarts' House:</label>
-                <select class="round-arrow" name="houses" id="houses">
+                <select class="round-arrow" name="house" id="houses">
                     <#list houses as house>
                         <option name="house" value="${house["id"]}">${house["name"]}</option>
                     </#list>

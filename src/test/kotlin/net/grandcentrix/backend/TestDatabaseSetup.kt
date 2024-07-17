@@ -14,7 +14,7 @@ object TestDatabaseSetup {
     private const val JDBC_URL = "jdbc:sqlite::memory:"
     private const val MAX_POOL_SIZE = 6
 
-    fun startDatabase() {
+    fun init(config: HikariConfig) {
 
         DriverManager.getConnection(JDBC_URL).use {
             println("SQLite database created successfully!")

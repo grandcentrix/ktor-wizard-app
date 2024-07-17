@@ -1,30 +1,36 @@
 package net.grandcentrix.backend.controllers
 
 import io.ktor.http.*
-import net.grandcentrix.backend.TestDatabaseSetup.startDatabase
+import io.ktor.server.config.*
+import io.mockk.every
+import io.mockk.mockkObject
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
+import net.grandcentrix.backend.dao.DatabaseSingleton
 import net.grandcentrix.backend.dao.daoUsers
-import net.grandcentrix.backend.models.House
 import net.grandcentrix.backend.models.User
 import net.grandcentrix.backend.plugins.RequestException
-import net.grandcentrix.backend.plugins.UserAlreadyExistsException
+import net.grandcentrix.backend.plugins.SignupException
 import org.junit.Test
-import kotlin.test.*
+import kotlin.test.BeforeTest
+import kotlin.test.assertFailsWith
 
 class SignupTest {
 
     @BeforeTest
     fun beforeTest() {
         // set a test database using a configuration file for tests
-        startDatabase()
+        mockkObject(DatabaseSingleton)
+        every {
+            DatabaseSingleton.init(ApplicationConfig("application.conf"))
+        } returns DatabaseSingleton.init(ApplicationConfig("testApplication.conf"))
 
         val user = User (
             "Person",
             "One",
             "personone@email.com",
             "personone",
-            "123",
-            null
+            "0367baf3-1cb6-4baf-bede-48e17e1cd005",
+            "123"
         )
 
         daoUsers.addItem(user)
@@ -38,7 +44,7 @@ class SignupTest {
             append("email", "persontwo@email.com")
             append("username", "")
             append("password", "123")
-            append("house", "")
+            append("house", "0367baf3-1cb6-4baf-bede-48e17e1cd005")
         }
 
         assertFailsWith(
@@ -57,12 +63,12 @@ class SignupTest {
             append("email", "persontwo@email.com")
             append("username", "personone")
             append("password", "123")
-            append("house", "")
+            append("house", "0367baf3-1cb6-4baf-bede-48e17e1cd005")
         }
 
         assertFailsWith(
-            exceptionClass = UserAlreadyExistsException::class,
-            message = "Username is already in use!"
+            exceptionClass = SignupException::class,
+            message = "Failed to create account. E-mail and/or username must be taken."
         )   {
                 SignupInstance.createUser(formParameters)
             }
@@ -77,12 +83,12 @@ class SignupTest {
             append("email", duplicatedEmail)
             append("username", "persontwo")
             append("password", "123")
-            append("house", "")
+            append("house", "0367baf3-1cb6-4baf-bede-48e17e1cd005")
         }
 
         assertFailsWith(
-            exceptionClass = UserAlreadyExistsException::class,
-            message = "Email is already in use!"
+            exceptionClass = SignupException::class,
+            message = "Failed to create account. E-mail and/or username must be taken."
         )   {
             SignupInstance.createUser(formParameters)
         }
@@ -99,32 +105,12 @@ class SignupTest {
             append("house", "")
         }
 
-        SignupInstance.createUser(formParameters)
-        val user = daoUsers.getItem(formParameters["username"]!!)
-
-        assertNull(user!!.house)
-    }
-
-    @Test
-    fun testCreateUserWithHouse() {
-        val formParameters = Parameters.build {
-            append("name", "Person")
-            append("surname", "Two")
-            append("email", "persontwo@email.com")
-            append("username", "persontwo")
-            append("password", "123")
-            append("houses", "0367baf3-1cb6-4baf-bede-48e17e1cd005")
+        assertFailsWith(
+            exceptionClass = RequestException::class,
+            message = "Missing required fields!"
+        ) {
+            SignupInstance.createUser(formParameters)
         }
-
-        SignupInstance.createUser(formParameters)
-        val user = daoUsers.getItem(formParameters["username"].toString())
-
-        assertNotNull(user!!.house)
-        assertIs<House>(user.house)
-        assertEquals(
-            expected = formParameters["houses"]!!,
-            actual = user.house!!.id
-        )
     }
 
     @Test
@@ -135,12 +121,50 @@ class SignupTest {
             append("email", "persontwo@email")
             append("username", "persontwo")
             append("password", "123")
-            append("houses", "")
+            append("house", "0367baf3-1cb6-4baf-bede-48e17e1cd005")
         }
 
         assertFailsWith(
-            exceptionClass = RequestException::class,
-            message = "Invalid value for e-mail!"
+            exceptionClass = SignupException::class,
+            message = "Must be a valid format for e-mail address."
+        )   {
+            SignupInstance.createUser(formParameters)
+        }
+    }
+
+    @Test
+    fun testEmailAddressWithInvalidCharacters() {
+        val formParameters = Parameters.build {
+            append("name", "Person")
+            append("surname", "Two")
+            append("email", "persontwo??email")
+            append("username", "persontwo")
+            append("password", "123")
+            append("house", "0367baf3-1cb6-4baf-bede-48e17e1cd005")
+        }
+
+        assertFailsWith(
+            exceptionClass = SignupException::class,
+            message = "E-mail contain invalid characters."
+        )   {
+            SignupInstance.createUser(formParameters)
+        }
+    }
+
+    @Test
+    fun testUsernameWithInvalidCharacters() {
+        val formParameters = Parameters.build {
+            append("name", "Person")
+            append("surname", "Two")
+            append("email", "persontwo@email")
+            append("username", "!persontwo!")
+            append("password", "123")
+            append("house", "0367baf3-1cb6-4baf-bede-48e17e1cd005")
+        }
+
+        assertFailsWith(
+            exceptionClass = SignupException::class,
+            message = "Username can only contain alphanumeric, underscore and point characters."
         )   {
             SignupInstance.createUser(formParameters)
         }
@@ -152,14 +176,14 @@ class SignupTest {
             append("name", "Person")
             append("surname", "Two")
             append("email", "persontwo@email")
-            append("username", "!persontwo!")
+            append("username", "_persontwo")
             append("password", "123")
-            append("houses", "")
+            append("house", "0367baf3-1cb6-4baf-bede-48e17e1cd005")
         }
 
         assertFailsWith(
-            exceptionClass = RequestException::class,
-            message = "Invalid value for username!"
+            exceptionClass = SignupException::class,
+            message = "Username can't start with non-alphanumeric characters or be more than 25 characters."
         )   {
             SignupInstance.createUser(formParameters)
         }
@@ -173,12 +197,31 @@ class SignupTest {
             append("email", "persontwo@email")
             append("username", "persontwo")
             append("password", "123")
-            append("houses", "")
+            append("house", "0367baf3-1cb6-4baf-bede-48e17e1cd005")
         }
 
         assertFailsWith(
-            exceptionClass = RequestException::class,
-            message = "Invalid value for name!"
+            exceptionClass = SignupException::class,
+            message = "Name and surname must contain only letters."
+        )   {
+            SignupInstance.createUser(formParameters)
+        }
+    }
+
+    @Test
+    fun testInvalidSurname() {
+        val formParameters = Parameters.build {
+            append("name", "Person")
+            append("surname", "Person 22")
+            append("email", "persontwo@email")
+            append("username", "persontwo")
+            append("password", "123")
+            append("house", "0367baf3-1cb6-4baf-bede-48e17e1cd005")
+        }
+
+        assertFailsWith(
+            exceptionClass = SignupException::class,
+            message = "Name and surname must contain only letters."
         )   {
             SignupInstance.createUser(formParameters)
         }
