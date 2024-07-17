@@ -59,7 +59,7 @@
         </menu>
             <label class="search-bar">
                 <span class="material-symbols-outlined">search</span>
-                <form id="search-form" hx-post="/search-redirect" hx-target="#search-results"  hx-select="#search-results">
+                <form id="search-form" hx-post="/search-redirect" hx-target="#search-results"  hx-select-oob="#search-results">
                     <input name="search" placeholder="Search something..." type="text" id="search-input" list="search-options"
                            hx-get="/search-suggestions" hx-trigger="input" hx-target="#search-options">
                     <datalist id="search-options"></datalist>
