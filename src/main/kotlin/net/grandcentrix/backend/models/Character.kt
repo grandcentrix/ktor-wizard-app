@@ -6,8 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Character(
     var id: String? = null,
-    val name: String,
-    val wiki: String,
+    val name: String?,
     @SerialName("alias_names")
     val aliasNames: List<String>?,
     val animagus: String?,
@@ -29,5 +28,7 @@ data class Character(
     val titles: List<String>?,
     val wands: List<String>?,
     val gender: String?,
-    val blood_status: String?,
+    @SerialName("blood_status")
+    val bloodStatus: String?,
+    val wiki: String,
 )

@@ -51,34 +51,23 @@ class Signup {
         val hashedPassword = generateHash(password, salt)
         val hexSalt = salt.toHexString()
 
-        if (house.isNullOrBlank()) {
-            val user = User(
-                name,
-                surname,
-                email,
-                username,
-                null,
-                hexSalt+hashedPassword
-            )
-            daoUsers.addItem(user)
-        } else {
-            val user = User(
-                name,
-                surname,
-                email,
-                username,
-                house,
-                hexSalt+hashedPassword
-            )
-            daoUsers.addItem(user)
-        }
+        val user = User(
+            name,
+            surname,
+            email,
+            username,
+            hexSalt + hashedPassword,
+            house
+        )
+        daoUsers.addItem(user)
     }
 
     private fun verifyEmail(email: String) {
 
         email.toCharArray().map { character ->
             if (!isAlphanumeric(character) &&
-                (character.toString() != "@" && character.toString() != ".")) {
+                (character.toString() != "@" && character.toString() != ".")
+            ) {
                 throw SignupException(
                     "E-mail contain invalid characters."
                 )
@@ -118,7 +107,8 @@ class Signup {
 
         username.toCharArray().map { character ->
             if (!isAlphanumeric(character) &&
-                (character.toString() != "." && character.toString() != "_")) {
+                (character.toString() != "." && character.toString() != "_")
+            ) {
                 throw SignupException(
                     "Username can only contain alphanumeric, underscore and point characters."
                 )
@@ -139,8 +129,8 @@ class Signup {
 
     private fun isAlphanumeric(character: Char) =
         character in '0'..'9' ||
-        character in 'A'..'Z' ||
-        character in 'a'..'z'
+                character in 'A'..'Z' ||
+                character in 'a'..'z'
 
 
     fun generateRandomSalt(): ByteArray {
@@ -155,8 +145,10 @@ class Signup {
     fun generateHash(password: String, salt: ByteArray): String {
         // Returns a SecretKeyFactory object that converts secret keys of the specified algorithm
         val factory: SecretKeyFactory = SecretKeyFactory.getInstance(ALGORITHM)
-        val spec: KeySpec = PBEKeySpec(password.toCharArray(), salt, ITERATIONS, KEY_LENGTH_BYTES) // derived key specifications
-        val key: SecretKey = factory.generateSecret(spec) // generates the key through the chosen algorithm using the key spec
+        val spec: KeySpec =
+            PBEKeySpec(password.toCharArray(), salt, ITERATIONS, KEY_LENGTH_BYTES) // derived key specifications
+        val key: SecretKey =
+            factory.generateSecret(spec) // generates the key through the chosen algorithm using the key spec
         val hash: ByteArray = key.encoded // encodes the key to byte array
         return hash.toHexString() // transforms the encoded key to a hex string
     }

@@ -36,29 +36,16 @@ object APIRequesting {
              it.attributes
          }
 
-    fun fetchBookById(id: String): Book = runBlocking<ResponseObject<Book>> {
+    fun getBookById(id: String): Book = runBlocking<ResponseObject<Book>> {
         client.get("${API_URL}/books/$id").body()
     }.data.attributes
 
-    fun fetchChapters(bookId: String): List<Chapter> = runBlocking<ResponseData<Chapter>> {
-        client.get("$API_URL/books/$bookId/chapters").body()
-    }.data.map {
-        Chapter(it.attributes.title, it.attributes.summary)
-    }
-
-    fun fetchMovieById(id: String): Movie = runBlocking<ResponseObject<Movie>> {
-        client.get("${API_URL}/movies/$id").body()
-    }.data.attributes
-
-
-    fun fetchHouseById(id: String): House = runBlocking {
-        client.get("${API_URL_HOUSE}/${id}").body()
-
-    }
-
-
     fun fetchHouses(): List<House> = runBlocking {
-            client.get("https://wizard-world-api.herokuapp.com/Houses").body()
+        client.get("https://wizard-world-api.herokuapp.com/Houses").body()
+    }
+
+    fun getHouseById(id: String): List<House> = runBlocking {
+        client.get("https://wizard-world-api.herokuapp.com/Houses/$id").body()
     }
 
     fun fetchCharacters(pageNumber: String): List<Character> = runBlocking<ResponseData<Character>> {
@@ -71,27 +58,13 @@ object APIRequesting {
             it.attributes
         }
 
-    fun fetchCharacterById(id: String): Character = runBlocking {
-        val response = client.get("$API_URL/characters/$id")
-        val responseData = response.body<CharacterResponseData>()
-        responseData.data.attributes
-    }
-
-    fun fetchSpellById(id: String): Spell = runBlocking {
-        val response = client.get("$API_URL/spells/$id")
-        val responseData = response.body<SpellResponseData>()
-        responseData.data.attributes
-    }
-
-    fun fetchPotionById(id: String): Potion = runBlocking {
-        val response = client.get("$API_URL/potions/$id")
-        val responseData = response.body<PotionResponseData>()
-        responseData.data.attributes
-    }
-
     fun fetchCharactersPagination(pageNumber: String): PaginationData = runBlocking<ResponseData<PaginationData>> {
         client.get("$API_URL/characters?page[number]=$pageNumber").body()
     }.meta.pagination
+
+    fun getCharacterById(id: String): Character = runBlocking<ResponseObject<Character>> {
+        client.get("${API_URL}/characters/$id").body()
+    }.data.attributes
 
     fun fetchMovies(): List<Movie> = runBlocking<ResponseData<Movie>> {
             client.get("$API_URL/movies").body()
@@ -100,8 +73,12 @@ object APIRequesting {
             it.attributes
         }
 
-    fun fetchPotions(pageNumber: String): List<Potion> = runBlocking<ResponseData<Potion>> {
-            client.get("$API_URL/potions?page[number]=$pageNumber").body()
+    fun getMovieById(id: String): Movie = runBlocking<ResponseObject<Movie>> {
+        client.get("${API_URL}/movies/$id").body()
+    }.data.attributes
+
+    fun fetchPotions(): List<Potion> = runBlocking<ResponseData<Potion>> {
+            client.get("$API_URL/potions").body()
         }.data.map {
             it.attributes.id = it.id
             if (it.attributes.imageUrl == null) {
@@ -113,6 +90,10 @@ object APIRequesting {
     fun fetchPotionsPagination(pageNumber: String): PaginationData = runBlocking<ResponseData<PaginationData>> {
         client.get("$API_URL/potions?page[number]=$pageNumber").body()
     }.meta.pagination
+
+    fun getPotionById(id: String): Potion = runBlocking<ResponseObject<Potion>> {
+        client.get("${API_URL}/potions/$id").body()
+    }.data.attributes
 
     fun fetchSpells(pageNumber: String): List<Spell> = runBlocking<ResponseData<Spell>> {
             client.get("$API_URL/spells?page[number]=$pageNumber").body()
@@ -127,6 +108,10 @@ object APIRequesting {
     fun fetchSpellsPagination(pageNumber: String): PaginationData = runBlocking<ResponseData<PaginationData>> {
         client.get("$API_URL/spells?page[number]=$pageNumber").body()
     }.meta.pagination
+
+    fun getSpellById(id: String): Spell = runBlocking<ResponseObject<Spell>> {
+        client.get("${API_URL}/spells/$id").body()
+    }.data.attributes
 
     fun fetchGravatarProfile(email: String): GravatarProfile {
         val digest = MessageDigest.getInstance("SHA-256")
