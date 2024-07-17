@@ -73,10 +73,6 @@ fun Application.configureStatusPage() {
                     )
                 }
 
-                is GravatarProfileException -> {
-                    call.request.local.uri
-                }
-
                 else -> {
                     val userSession = call.sessions.get<UserSession>()
                     call.respondTemplate(

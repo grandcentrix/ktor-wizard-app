@@ -6,9 +6,6 @@ import io.ktor.server.response.*
 import io.ktor.server.sessions.*
 import io.ktor.util.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
-import net.grandcentrix.backend.controllers.UserSession
-import java.lang.IllegalArgumentException
-import java.net.URL
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.GravatarProfile
 import net.grandcentrix.backend.plugins.DAOException
@@ -176,10 +173,14 @@ fun getProfilePicture(userSession: UserSession?): String {
         return if (profilePictureData?.isNotEmpty() == true) {
             "data:image/png;base64," + Base64.getEncoder().encodeToString(profilePictureData)
         } else {
-            val gravatarProfile = getGravatarProfile(userSession)
-            return if (gravatarProfile.error.isEmpty()) {
-                gravatarProfile.avatarUrl
-            } else {
+            try {
+                val gravatarProfile = getGravatarProfile(userSession)
+                return if (gravatarProfile.error.isEmpty()) {
+                    gravatarProfile.avatarUrl
+                } else {
+                    return getDefaultProfilePicture()
+                }
+            } catch (e: GravatarProfileException) {
                 return getDefaultProfilePicture()
             }
         }
