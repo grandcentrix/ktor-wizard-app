@@ -9,22 +9,22 @@ import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.controllers.getProfilePicture
 import net.grandcentrix.backend.controllers.userFavouriteItems
 import net.grandcentrix.backend.dao.daoUsers
-import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBookById
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBooks
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchChapters
-import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharacterById
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharacters
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharactersPagination
-import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouseById
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouses
-import net.grandcentrix.backend.plugins.api.APIRequesting.fetchMovieById
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchMovies
-import net.grandcentrix.backend.plugins.api.APIRequesting.fetchPotionById
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchPotions
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchPotionsPagination
-import net.grandcentrix.backend.plugins.api.APIRequesting.fetchSpellById
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchSpells
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchSpellsPagination
+import net.grandcentrix.backend.plugins.api.APIRequesting.getBookById
+import net.grandcentrix.backend.plugins.api.APIRequesting.getCharacterById
+import net.grandcentrix.backend.plugins.api.APIRequesting.getHouseById
+import net.grandcentrix.backend.plugins.api.APIRequesting.getMovieById
+import net.grandcentrix.backend.plugins.api.APIRequesting.getPotionById
+import net.grandcentrix.backend.plugins.api.APIRequesting.getSpellById
 
 fun Application.configureTemplating() {
     install(FreeMarker) {
@@ -49,12 +49,12 @@ suspend fun ApplicationCall.getBooksTemplate(
         )
     )
 
-suspend fun ApplicationCall.getBookById(
+suspend fun ApplicationCall.getBookTemplate(
     userSession: UserSession?,
     id: String,
     item: String,
 ) {
-    val book = fetchBookById(id)
+    val book = getBookById(id)
     val chapters = fetchChapters(id)
     if (book != null) {
         respondTemplate(
@@ -74,12 +74,12 @@ suspend fun ApplicationCall.getBookById(
     }
 }
 
-suspend fun ApplicationCall.getMovieById(
+suspend fun ApplicationCall.getMovieTemplate(
     userSession: UserSession?,
     id: String,
     item: String,
 ) {
-    val movie = fetchMovieById(id)
+    val movie = getMovieById(id)
     if (movie != null) {
         respondTemplate(
             "movie.ftl",
@@ -97,12 +97,12 @@ suspend fun ApplicationCall.getMovieById(
     }
 }
 
-suspend fun ApplicationCall.getHouseById(
+suspend fun ApplicationCall.getHouseTemplate(
     userSession: UserSession?,
     id: String,
     item: String,
 ) {
-    val detail_house = fetchHouseById(id)
+    val detail_house = getHouseById(id)
     if (detail_house != null) {
         respondTemplate(
             "house.ftl",
@@ -200,12 +200,12 @@ suspend fun ApplicationCall.getSpellsTemplate(
         )
     )
 
-suspend fun ApplicationCall.getCharacterById(
+suspend fun ApplicationCall.getCharacterTemplate(
     userSession: UserSession?,
     id: String,
     item: String,
 ) {
-    val character = fetchCharacterById(id)
+    val character = getCharacterById(id)
     if (character != null) {
         respondTemplate(
             "character.ftl",
@@ -223,12 +223,12 @@ suspend fun ApplicationCall.getCharacterById(
     }
 }
 
-suspend fun ApplicationCall.getSpellById(
+suspend fun ApplicationCall.getSpellTemplate(
     userSession: UserSession?,
     id: String,
     item: String,
 ) {
-    val spell = fetchSpellById(id)
+    val spell = getSpellById(id)
     if (spell != null) {
         respondTemplate(
             "spell.ftl",
@@ -246,12 +246,12 @@ suspend fun ApplicationCall.getSpellById(
     }
 }
 
-suspend fun ApplicationCall.getPotionById(
+suspend fun ApplicationCall.getPotionTemplate(
     userSession: UserSession?,
     id: String,
     item: String,
 ) {
-    val potion = fetchPotionById(id)
+    val potion = getPotionById(id)
     if (potion != null) {
         respondTemplate(
             "potion.ftl",

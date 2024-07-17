@@ -11,50 +11,14 @@ data class ResponseData<T> (
 )
 
 @Serializable
-data class DataItem<T> (
-    val id: String,
-    val attributes: T
-)
-
-@Serializable
-data class ResponseObject<T> (
+data class ResponseObject<T>(
     val data: DataItem<T>
 )
 
 @Serializable
-data class CharacterResponseData(
-    val data: CharacterDataItem
-)
-
-@Serializable
-data class CharacterDataItem(
+data class DataItem<T> (
     val id: String,
-    val type: String,
-    val attributes: Character
-)
-
-@Serializable
-data class SpellResponseData(
-    val data: SpellDataItem
-)
-
-@Serializable
-data class PotionResponseData(
-    val data: PotionDataItem
-)
-
-@Serializable
-data class PotionDataItem(
-    val id: String,
-    val type: String,
-    val attributes: Potion
-)
-
-@Serializable
-data class SpellDataItem(
-    val id: String,
-    val type: String,
-    val attributes: Spell
+    val attributes: T
 )
 
 @Serializable

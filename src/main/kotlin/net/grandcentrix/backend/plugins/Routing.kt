@@ -1,16 +1,16 @@
 package net.grandcentrix.backend.plugins
 
-import getBookById
+import getBookTemplate
 import getBooksTemplate
-import getCharacterById
+import getCharacterTemplate
 import getCharactersTemplate
-import getHouseById
+import getHouseTemplate
 import getHousesTemplate
-import getMovieById
+import getMovieTemplate
 import getMoviesTemplate
-import getPotionById
+import getPotionTemplate
 import getPotionsTemplate
-import getSpellById
+import getSpellTemplate
 import getSpellsTemplate
 import io.ktor.http.content.*
 import io.ktor.server.application.*
@@ -25,13 +25,7 @@ import io.ktor.server.util.*
 import net.grandcentrix.backend.controllers.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.dao.daoUsers
-import net.grandcentrix.backend.plugins.api.APIRequesting
-import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBooks
-import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharacters
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouses
-import net.grandcentrix.backend.plugins.api.APIRequesting.fetchMovies
-import net.grandcentrix.backend.plugins.api.APIRequesting.fetchPotions
-import net.grandcentrix.backend.plugins.api.APIRequesting.fetchSpells
 
 fun Application.configureRouting() {
 
@@ -136,7 +130,7 @@ fun Application.configureRouting() {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
                 val item = call.request.local.uri.removePrefix("/")
                 val id = call.parameters["id"]!!
-                call.getBookById(userSession, id, item)
+                call.getBookTemplate(userSession, id, item)
             }
 
 
@@ -151,7 +145,7 @@ fun Application.configureRouting() {
                     val characterId = id
                     val userSession: UserSession? = call.sessions.get<UserSession>()
                     val item = call.request.local.uri.removePrefix("/")
-                    call.getCharacterById(userSession, characterId, item)
+                    call.getCharacterTemplate(userSession, characterId, item)
                 }
             }
 
@@ -166,7 +160,7 @@ fun Application.configureRouting() {
                     val spellid = id
                     val userSession: UserSession? = call.sessions.get<UserSession>()
                     val item = call.request.local.uri.removePrefix("/")
-                    call.getSpellById(userSession, spellid, item)
+                    call.getSpellTemplate(userSession, spellid, item)
                 }
             }
 
@@ -181,7 +175,7 @@ fun Application.configureRouting() {
                     val potionid = id
                     val userSession: UserSession? = call.sessions.get<UserSession>()
                     val item = call.request.local.uri.removePrefix("/")
-                    call.getPotionById(userSession, potionid, item)
+                    call.getPotionTemplate(userSession, potionid, item)
                 }
             }
 
@@ -189,14 +183,14 @@ fun Application.configureRouting() {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
                 val item = call.request.local.uri.removePrefix("/")
                 val id = call.parameters["id"]!!
-                call.getMovieById(userSession, id, item)
+                call.getMovieTemplate(userSession, id, item)
             }
 
             get("/houses/{id}") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
                 val item = call.request.local.uri.removePrefix("/")
                 val id = call.parameters["id"]!!
-                call.getHouseById(userSession, id, item)
+                call.getHouseTemplate(userSession, id, item)
             }
 
             get("/houses") {

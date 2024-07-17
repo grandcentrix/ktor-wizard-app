@@ -40,11 +40,17 @@ object APIRequesting {
         client.get("${API_URL}/books/$id").body()
     }.data.attributes
 
+    fun fetchChapters(bookId: String): List<Chapter> = runBlocking<ResponseData<Chapter>> {
+        client.get("$API_URL/books/$bookId/chapters").body()
+    }.data.map {
+        Chapter(it.attributes.title, it.attributes.summary)
+    }
+
     fun fetchHouses(): List<House> = runBlocking {
         client.get("https://wizard-world-api.herokuapp.com/Houses").body()
     }
 
-    fun getHouseById(id: String): List<House> = runBlocking {
+    fun getHouseById(id: String): House = runBlocking {
         client.get("https://wizard-world-api.herokuapp.com/Houses/$id").body()
     }
 
@@ -77,8 +83,8 @@ object APIRequesting {
         client.get("${API_URL}/movies/$id").body()
     }.data.attributes
 
-    fun fetchPotions(): List<Potion> = runBlocking<ResponseData<Potion>> {
-            client.get("$API_URL/potions").body()
+    fun fetchPotions(pageNumber: String): List<Potion> = runBlocking<ResponseData<Potion>> {
+            client.get("$API_URL/potions?page[number]=$pageNumber").body()
         }.data.map {
             it.attributes.id = it.id
             if (it.attributes.imageUrl == null) {

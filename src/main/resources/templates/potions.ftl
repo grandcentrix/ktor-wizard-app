@@ -55,7 +55,7 @@
                                     <div class="unliked-button">
                                         <button
                                                 id="favourite-items-button-2"
-                                                hx-post="/potions/${spell.id}/favourite"
+                                                hx-post="/potions/${potion.id}/favourite"
                                                 hx-target="#potions-list"
                                                 hx-select="#potions-list"
                                                 class="favourite-button unliked"
