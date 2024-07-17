@@ -1,5 +1,8 @@
 services:
   web:
     build: .
+#    image: "ktor-wizard-app:1.0"
     ports:
       - "8080:8080"
+#    volumes:
+#      - "/src/main/resources"

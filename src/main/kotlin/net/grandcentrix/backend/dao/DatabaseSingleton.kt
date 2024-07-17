@@ -42,7 +42,7 @@ object DatabaseSingleton {
     }
 
     private fun createDatabase(url: String) {
-        DriverManager.getConnection(url).use { connection ->
+        DriverManager.getConnection(url).use {
             println("SQLite database created successfully!")
         }
     }
