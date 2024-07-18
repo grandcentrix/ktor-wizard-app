@@ -20,6 +20,7 @@ object APIRequesting {
 
     private const val API_URL = "https://api.potterdb.com/v1"
     private const val API_URL_HOUSE = "https://wizard-world-api.herokuapp.com/Houses"
+    val daoApi = DAOApi()
 
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
@@ -71,11 +72,8 @@ object APIRequesting {
             }
             it.attributes
         }
-
         // Save the characters to the database
-        val daoApi = DAOApi()
         daoApi.saveCharacters(characters)
-
         characters
     }
 

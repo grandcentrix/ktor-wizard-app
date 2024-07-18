@@ -2,7 +2,6 @@ package net.grandcentrix.backend.dao
 
 import net.grandcentrix.backend.models.*
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object Characters : Table("characters") {
@@ -63,26 +62,26 @@ class DAOApi {
     fun getCharacters(): List<Character> = transaction {
         Characters.selectAll().map { row ->
             Character(
-                id = row[Characters.id]?: "",
-                name = row[Characters.name]?: "",
-                wiki = row[Characters.wiki]?: "",
+                id = row[Characters.id],
+                name = row[Characters.name],
+                wiki = row[Characters.wiki],
                 aliasNames = row[Characters.aliasNames]?.split(","),
-                animagus = row[Characters.animagus]?: "",
-                boggart = row[Characters.boggart]?: "",
-                patronus = row[Characters.patronus]?: "",
-                birth = row[Characters.birth]?: "",
-                death = row[Characters.death]?: "",
+                animagus = row[Characters.animagus],
+                boggart = row[Characters.boggart],
+                patronus = row[Characters.patronus],
+                birth = row[Characters.birth],
+                death = row[Characters.death],
                 familyMembers = row[Characters.familyMembers]?.split(","),
-                house = row[Characters.house]?: "",
-                imageUrl = row[Characters.imageUrl]?: "",
+                house = row[Characters.house],
+                imageUrl = row[Characters.imageUrl],
                 jobs = row[Characters.jobs]?.split(","),
-                nationality = row[Characters.nationality]?: "",
-                slug = row[Characters.slug]?: "",
-                species = row[Characters.species]?: "",
+                nationality = row[Characters.nationality],
+                slug = row[Characters.slug],
+                species = row[Characters.species],
                 titles = row[Characters.titles]?.split(","),
                 wands = row[Characters.wands]?.split(","),
-                gender = row[Characters.gender]?: "",
-                blood_status = row[Characters.bloodStatus]?: "",
+                gender = row[Characters.gender],
+                blood_status = row[Characters.bloodStatus],
             )
         }
     }

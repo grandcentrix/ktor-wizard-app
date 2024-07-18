@@ -4,7 +4,6 @@ import io.ktor.server.config.*
 import net.grandcentrix.backend.models.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
 import java.sql.DriverManager
