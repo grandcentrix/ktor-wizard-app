@@ -17,6 +17,7 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.freemarker.*
 import io.ktor.server.http.content.*
+import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -128,7 +129,7 @@ fun Application.configureRouting() {
 
             get("/books/{id}") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val item = call.request.local.uri.removePrefix("/")
+                val item = call.request.origin.uri
                 val id = call.parameters["id"]!!
                 call.getBookTemplate(userSession, id, item)
             }

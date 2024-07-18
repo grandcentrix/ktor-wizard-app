@@ -10,7 +10,7 @@
         <span class="material-symbols-outlined">flare</span>
         Spells
     </h1>
-    <section class="content">
+    <section class="content column">
         <ul id="spells-list" class="content-list">
             <#list spells as spell>
                 <li>

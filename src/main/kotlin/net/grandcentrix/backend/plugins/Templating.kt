@@ -1,14 +1,13 @@
 
 import freemarker.cache.ClassTemplateLoader
 import freemarker.core.HTMLOutputFormat
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.freemarker.*
-import io.ktor.server.response.*
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.controllers.getProfilePicture
 import net.grandcentrix.backend.controllers.userFavouriteItems
 import net.grandcentrix.backend.dao.daoUsers
+import net.grandcentrix.backend.plugins.api.APIRequesting
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBooks
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchChapters
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharacters
@@ -21,7 +20,6 @@ import net.grandcentrix.backend.plugins.api.APIRequesting.fetchSpells
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchSpellsPagination
 import net.grandcentrix.backend.plugins.api.APIRequesting.getBookById
 import net.grandcentrix.backend.plugins.api.APIRequesting.getCharacterById
-import net.grandcentrix.backend.plugins.api.APIRequesting.getHouseById
 import net.grandcentrix.backend.plugins.api.APIRequesting.getMovieById
 import net.grandcentrix.backend.plugins.api.APIRequesting.getPotionById
 import net.grandcentrix.backend.plugins.api.APIRequesting.getSpellById
@@ -48,77 +46,6 @@ suspend fun ApplicationCall.getBooksTemplate(
             "userFavourites" to userFavouriteItems(userSession?.username, item),
         )
     )
-
-suspend fun ApplicationCall.getBookTemplate(
-    userSession: UserSession?,
-    id: String,
-    item: String,
-) {
-    val book = getBookById(id)
-    val chapters = fetchChapters(id)
-    if (book != null) {
-        respondTemplate(
-            "book.ftl",
-            mapOf(
-                "book" to book,
-                "chapters" to chapters,
-                "session" to userSession.toString(),
-                "username" to userSession?.username,
-                "house" to userSession?.let { daoUsers.getHouse(it.username) },
-                "profilePictureData" to getProfilePicture(userSession),
-                "userFavourites" to userFavouriteItems(userSession?.username, item),
-            )
-        )
-    } else {
-        respond(HttpStatusCode.NotFound, "Book not found")
-    }
-}
-
-suspend fun ApplicationCall.getMovieTemplate(
-    userSession: UserSession?,
-    id: String,
-    item: String,
-) {
-    val movie = getMovieById(id)
-    if (movie != null) {
-        respondTemplate(
-            "movie.ftl",
-            mapOf(
-                "movie" to movie,
-                "session" to userSession.toString(),
-                "username" to userSession?.username,
-                "house" to userSession?.let { daoUsers.getHouse(it.username) },
-                "profilePictureData" to getProfilePicture(userSession),
-                "userFavourites" to userFavouriteItems(userSession?.username, item),
-            )
-        )
-    } else {
-        respond(HttpStatusCode.NotFound, "Book not found")
-    }
-}
-
-suspend fun ApplicationCall.getHouseTemplate(
-    userSession: UserSession?,
-    id: String,
-    item: String,
-) {
-    val detail_house = getHouseById(id)
-    if (detail_house != null) {
-        respondTemplate(
-            "house.ftl",
-            mapOf(
-                "house" to userSession?.let { daoUsers.getHouse(it.username) },
-                "session" to userSession.toString(),
-                "username" to userSession?.username,
-                "detail_house" to detail_house,
-                "profilePictureData" to getProfilePicture(userSession),
-                "userFavourites" to userFavouriteItems(userSession?.username, item),
-            )
-        )
-    } else {
-        respond(HttpStatusCode.NotFound, "Book not found")
-    }
-}
 
 suspend fun ApplicationCall.getCharactersTemplate(
     userSession: UserSession?,
@@ -200,71 +127,107 @@ suspend fun ApplicationCall.getSpellsTemplate(
         )
     )
 
+suspend fun ApplicationCall.getBookTemplate(
+    userSession: UserSession?,
+    id: String,
+    item: String,
+) =
+    respondTemplate(
+        "book.ftl",
+        mapOf(
+            "book" to getBookById(id),
+            "chapters" to fetchChapters(id),
+            "session" to userSession.toString(),
+            "username" to userSession?.username,
+            "house" to userSession?.let { daoUsers.getHouse(it.username) },
+            "profilePictureData" to getProfilePicture(userSession),
+            "userFavourites" to userFavouriteItems(userSession?.username, item),
+        )
+    )
+
+suspend fun ApplicationCall.getMovieTemplate(
+    userSession: UserSession?,
+    id: String,
+    item: String,
+) =
+    respondTemplate(
+        "movie.ftl",
+        mapOf(
+            "movie" to getMovieById(id),
+            "session" to userSession.toString(),
+            "username" to userSession?.username,
+            "house" to userSession?.let { daoUsers.getHouse(it.username) },
+            "profilePictureData" to getProfilePicture(userSession),
+            "userFavourites" to userFavouriteItems(userSession?.username, item),
+        )
+    )
+
+suspend fun ApplicationCall.getHouseTemplate(
+    userSession: UserSession?,
+    id: String,
+    item: String,
+) =
+    respondTemplate(
+        "house.ftl",
+        mapOf(
+            "house" to userSession?.let { daoUsers.getHouse(it.username) },
+            "session" to userSession.toString(),
+            "username" to userSession?.username,
+            "houseDetail" to APIRequesting.getHouseById(id),
+            "profilePictureData" to getProfilePicture(userSession),
+            "userFavourites" to userFavouriteItems(userSession?.username, item),
+        )
+    )
+
+
 suspend fun ApplicationCall.getCharacterTemplate(
     userSession: UserSession?,
     id: String,
     item: String,
-) {
-    val character = getCharacterById(id)
-    if (character != null) {
-        respondTemplate(
-            "character.ftl",
-            mapOf(
-                "character" to character,
-                "session" to userSession.toString(),
-                "username" to userSession?.username,
-                "house" to userSession?.let { daoUsers.getHouse(it.username) },
-                "profilePictureData" to getProfilePicture(userSession),
-                "userFavourites" to userFavouriteItems(userSession?.username, item),
-            )
+) =
+    respondTemplate(
+        "character.ftl",
+        mapOf(
+            "character" to getCharacterById(id),
+            "session" to userSession.toString(),
+            "username" to userSession?.username,
+            "house" to userSession?.let { daoUsers.getHouse(it.username) },
+            "profilePictureData" to getProfilePicture(userSession),
+            "userFavourites" to userFavouriteItems(userSession?.username, item),
         )
-    } else {
-        respond(HttpStatusCode.NotFound, "Book not found")
-    }
-}
+    )
 
 suspend fun ApplicationCall.getSpellTemplate(
     userSession: UserSession?,
     id: String,
     item: String,
-) {
-    val spell = getSpellById(id)
-    if (spell != null) {
-        respondTemplate(
-            "spell.ftl",
-            mapOf(
-                "spell" to spell,
-                "session" to userSession.toString(),
-                "username" to userSession?.username,
-                "house" to userSession?.let { daoUsers.getHouse(it.username) },
-                "profilePictureData" to getProfilePicture(userSession),
-                "userFavourites" to userFavouriteItems(userSession?.username, item),
-            )
+) =
+    respondTemplate(
+        "spell.ftl",
+        mapOf(
+            "spell" to getSpellById(id),
+            "session" to userSession.toString(),
+            "username" to userSession?.username,
+            "house" to userSession?.let { daoUsers.getHouse(it.username) },
+            "profilePictureData" to getProfilePicture(userSession),
+            "userFavourites" to userFavouriteItems(userSession?.username, item),
         )
-    } else {
-        respond(HttpStatusCode.NotFound, "Book not found")
-    }
-}
+    )
+
 
 suspend fun ApplicationCall.getPotionTemplate(
     userSession: UserSession?,
     id: String,
     item: String,
-) {
-    val potion = getPotionById(id)
-    if (potion != null) {
-        respondTemplate(
-            "potion.ftl",
-            mapOf(
-                "potion" to potion,
-                "session" to userSession.toString(),
-                "username" to userSession?.username,
-                "house" to userSession?.let { daoUsers.getHouse(it.username) },
-                "profilePictureData" to getProfilePicture(userSession),
-                "userFavourites" to userFavouriteItems(userSession?.username, item),
-            )
+) =
+    respondTemplate(
+        "potion.ftl",
+        mapOf(
+            "potion" to getPotionById(id),
+            "session" to userSession.toString(),
+            "username" to userSession?.username,
+            "house" to userSession?.let { daoUsers.getHouse(it.username) },
+            "profilePictureData" to getProfilePicture(userSession),
+            "userFavourites" to userFavouriteItems(userSession?.username, item),
         )
-    } else {
-        respond(HttpStatusCode.NotFound, "Book not found")
-    }
-}
+    )

@@ -10,7 +10,7 @@
         <span class="material-symbols-outlined">stockpot</span>
         Potions
     </h1>
-    <section class="content">
+    <section class="content column">
         <ul id="potions-list" class="content-list">
             <#list potions as potion>
                 <li>

@@ -43,7 +43,7 @@ object APIRequesting {
     fun fetchChapters(bookId: String): List<Chapter> = runBlocking<ResponseData<Chapter>> {
         client.get("$API_URL/books/$bookId/chapters").body()
     }.data.map {
-        Chapter(it.attributes.title, it.attributes.summary)
+        it.attributes
     }
 
     fun fetchHouses(): List<House> = runBlocking {

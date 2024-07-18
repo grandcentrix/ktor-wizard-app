@@ -7,7 +7,7 @@
         <span class="material-symbols-outlined">book</span>
         Books
     </h1>
-    <section class="content">
+    <section class="content column">
         <ul id="books-list" class="content-list">
             <#list books as book>
                 <li>

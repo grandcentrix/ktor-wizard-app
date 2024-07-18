@@ -10,7 +10,7 @@
         <span class="material-symbols-outlined">person</span>
         Characters
     </h1>
-    <section class="content">
+    <section class="content column">
         <ul id="characters-list" class="content-list">
             <#list characters as character>
                 <li>

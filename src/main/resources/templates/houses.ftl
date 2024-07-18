@@ -7,7 +7,7 @@
         <span class="material-symbols-outlined">house</span>
         Houses
     </h1>
-    <section class="content">
+    <section class="content column">
         <ul id="houses-list" class="content-list">
             <#list houses as house>
                 <li class="houses">

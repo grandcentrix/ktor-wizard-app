@@ -9,7 +9,7 @@
     Welcome, ${username}!
 </h1>
 
-<section class="content" style="flex-direction: column;">
+<section class="content column">
     <div class="user-data">
         <form hx-put="/user/username" hx-trigger="submit" hx-target=".content">
             <label for="new-username">New Username:</label>

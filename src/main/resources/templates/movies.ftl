@@ -7,7 +7,7 @@
         <span class="material-symbols-outlined">movie</span>
         Movies
     </h1>
-    <section class="content">
+    <section class="content column">
         <ul id="movies-list" class="content-list">
             <#list movies as movie>
                 <li>
