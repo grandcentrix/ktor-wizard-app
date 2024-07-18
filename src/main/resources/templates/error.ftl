@@ -6,7 +6,7 @@
 <@layout.base>
     <h2>${errorMessage}</h2>
 
-    <section class="content">
+    <section class="content column">
         <a class="button" href="${redirectLink}">Back</a>
     </section>
 </@layout.base>

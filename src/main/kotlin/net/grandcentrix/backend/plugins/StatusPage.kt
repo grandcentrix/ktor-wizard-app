@@ -10,7 +10,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.controllers.getProfilePicture
-import net.grandcentrix.backend.repository.HousesRepository
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouses
 
 fun Application.configureStatusPage() {
     routing {
@@ -19,6 +19,7 @@ fun Application.configureStatusPage() {
 
     install(StatusPages) {
         exception<StatusException> { call, cause ->
+
             when (cause) {
                 is RequestException -> {
                     val userSession: UserSession? = call.sessions.get<UserSession>()
@@ -35,7 +36,7 @@ fun Application.configureStatusPage() {
 
                 is UnauthorizedException -> call.respondRedirect( "/login")
 
-                is DAOException -> {
+                is DAOUsersException -> {
                     val userSession = call.sessions.get<UserSession>()
                     call.respondTemplate(
                         "error.ftl",
@@ -66,7 +67,7 @@ fun Application.configureStatusPage() {
                         "signup.ftl",
                         mapOf(
                             "userSession" to "null",
-                            "houses" to HousesRepository.HousesRepositoryInstance.getAll(),
+                            "houses" to fetchHouses(),
                             "profilePictureData" to getProfilePicture(userSession=null),
                             "message" to cause.message
                         )
@@ -74,6 +75,18 @@ fun Application.configureStatusPage() {
                 }
 
                 is GravatarProfileException -> {
+                    call.request.local.uri //FIXME
+                }
+
+                is FavouriteItemsException -> {
+                    val message = cause.message ?: "Could not complete the action."
+                    //TODO("log the message")
+                    call.request.local.uri
+                }
+
+                is DAOFavouriteItemsException -> {
+                    val message = cause.message ?: "Database error: Could not complete the action."
+                    // TODO("log the message)
                     call.request.local.uri
                 }
 
@@ -121,7 +134,9 @@ fun Application.configureStatusPage() {
 
 
 open class StatusException(override val message: String?): Exception()
-class DAOException(override val message: String?): StatusException(message)
+
+class DAOUsersException(override val message: String?): StatusException(message)
+class DAOFavouriteItemsException(override val message: String?): StatusException(message)
 class RequestException(override val message: String?): StatusException(message)
 class UserAlreadyExistsException(override val message: String?): StatusException(message)
 class SignupException(override val message: String?): StatusException(message)
@@ -130,3 +145,9 @@ class GravatarProfileException(
     override val message: String?,
     override val cause: Throwable? = null
 ): StatusException(message)
+
+class FavouriteItemsException(override val message: String?): StatusException(message)
+
+fun Unit.addErrorMessage(errorMessage: String): String {
+    return errorMessage
+}

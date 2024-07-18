@@ -7,6 +7,8 @@ import kotlinx.serialization.Serializable
 data class Book(
     var id: String? = null,
     val author: String,
+    val wiki: String,
+    val dedication: String,
     @SerialName("cover")
     val coverUrl: String?,
     val pages: Int,
@@ -16,3 +18,10 @@ data class Book(
     val slug: String,
     val title: String
 )
+
+@Serializable
+data class Chapter(
+    val title: String,
+    val summary: String?,
+)
+

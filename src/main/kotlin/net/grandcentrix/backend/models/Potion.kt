@@ -7,16 +7,17 @@ import kotlinx.serialization.Serializable
 data class Potion(
     var id: String? = null,
     val name: String,
-    val characteristics: List<String>,
-    val difficulty: String,
-    val effect: String,
+    val characteristics: String?,
+    val difficulty: String?,
+    val effect: String?,
+    val wiki: String,
     @SerialName("image")
-    val imageUrl: String,
-    val inventors: List<String>,
-    val ingredients: List<String>,
-    val manufacturers: List<String>,
+    var imageUrl: String?,
+    val inventors: String?,
+    val ingredients: String?,
+    val manufacturers: String?,
     @SerialName("side_effects")
-    val sideEffects: String,
-    val slug: String,
-    val time: String
+    val sideEffects: String?,
+    val slug: String?,
+    val time: String?
 )

@@ -4,7 +4,7 @@
 
 <@layout.base>
 
-    <section class="content">
+    <section class="content row">
             <article style="background-image: url('/static/img/book.png')" class="home-items">
                 <h2><a href="/books" >Books</a></h2>
             </article>

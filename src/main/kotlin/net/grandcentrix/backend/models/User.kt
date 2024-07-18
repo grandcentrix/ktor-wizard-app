@@ -10,8 +10,8 @@ data class User(
     val surname: String,
     val email: String,
     val username: String,
-    val house: String?,
     val password: String,
+    val house: String,
     val favouriteItems: MutableList<String> = mutableListOf(),
     val id: String = UUID.randomUUID().toString(),
     val profilePictureData: ByteArray? = null //to store profile picture data as a ByteArray. This allows storing the image data directly in the database.
@@ -43,7 +43,6 @@ object Users : Table() {
     val username = varchar("username", 128).uniqueIndex()
     val password = varchar("password", 64)
     val house = varchar("house", 128)
-    val favouriteItems = varchar("favouriteItems", 128)
     val profilePictureData = binary("profilePictureData").nullable() // Allows storing raw binary data for the profile picture, and permits NULL values if no image is provided.
     override val primaryKey = PrimaryKey(id)
 }

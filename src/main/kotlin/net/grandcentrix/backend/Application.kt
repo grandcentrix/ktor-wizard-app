@@ -8,6 +8,7 @@ import net.grandcentrix.backend.plugins.configureAuthentication
 import net.grandcentrix.backend.plugins.configureRouting
 import net.grandcentrix.backend.plugins.configureStatusPage
 
+
 fun main(args: Array<String>) {
     EngineMain.main(args)
 }
@@ -19,3 +20,4 @@ fun Application.module() {
     configureStatusPage()
     configureTemplating()
 }
+
