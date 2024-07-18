@@ -11,7 +11,7 @@ import java.lang.IllegalArgumentException
 import java.net.URL
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.GravatarProfile
-import net.grandcentrix.backend.plugins.DAOException
+import net.grandcentrix.backend.plugins.DAOUsersException
 import net.grandcentrix.backend.plugins.GravatarProfileException
 import net.grandcentrix.backend.plugins.RequestException
 import net.grandcentrix.backend.plugins.UserAlreadyExistsException
@@ -43,7 +43,7 @@ suspend fun ApplicationCall.updateUsername(userSession: UserSession, newUsername
         respondText("Username updated successfully", status = HttpStatusCode.OK)
     } catch (e: IllegalArgumentException) {
         throw RequestException("Invalid argument: ${e.localizedMessage}")
-    } catch (e: DAOException) {
+    } catch (e: DAOUsersException) {
         throw RequestException("Database error: ${e.localizedMessage}")
     } catch (e: Exception) {
         throw RequestException("Failed to update username: ${e.localizedMessage}")
@@ -64,8 +64,8 @@ suspend fun ApplicationCall.updateEmail(userSession: UserSession, newEmail: Stri
         respondText("Email updated successfully", status = HttpStatusCode.OK)
     } catch (e: IllegalArgumentException) {
         throw RequestException("Invalid argument: ${e.localizedMessage}")
-    } catch (e: DAOException) {
-        throw DAOException("Database error: ${e.localizedMessage}")
+    } catch (e: DAOUsersException) {
+        throw DAOUsersException("Database error: ${e.localizedMessage}")
     } catch (e: Exception) {
         throw RequestException("Failed to update email: ${e.localizedMessage}")
     }
@@ -85,8 +85,8 @@ suspend fun ApplicationCall.updatePassword(userSession: UserSession, newPassword
         respondText("Password updated successfully", status = HttpStatusCode.OK)
     } catch (e: IllegalArgumentException) {
         throw RequestException("Invalid argument: ${e.localizedMessage}")
-    } catch (e: DAOException) {
-        throw DAOException("Database error: ${e.localizedMessage}")
+    } catch (e: DAOUsersException) {
+    throw DAOUsersException("Database error: ${e.localizedMessage}")
     } catch (e: Exception) {
         throw RequestException("Failed to update password: ${e.localizedMessage}")
     }
@@ -100,8 +100,8 @@ suspend fun ApplicationCall.deleteAccount(userSession: UserSession) {
         respondText("Account deleted successfully", status = HttpStatusCode.OK)
     } catch (e: IllegalArgumentException) {
         throw RequestException("Invalid argument: ${e.localizedMessage}")
-    } catch (e: DAOException) {
-        throw DAOException("Database error: ${e.localizedMessage}")
+    } catch (e: DAOUsersException) {
+        throw DAOUsersException("Database error: ${e.localizedMessage}")
     } catch (e: Exception) {
         throw RequestException("Failed to delete account: ${e.localizedMessage}")
     }
@@ -116,8 +116,8 @@ suspend fun ApplicationCall.updateProfilePicture(userSession: UserSession, image
         respondText("Profile picture uploaded successfully", status = HttpStatusCode.OK)
     } catch (e: IllegalArgumentException) {
         throw RequestException("Invalid argument: ${e.localizedMessage}")
-    } catch (e: DAOException) {
-        throw DAOException("Database error: ${e.localizedMessage}")
+    } catch (e: DAOUsersException) {
+        throw DAOUsersException("Database error: ${e.localizedMessage}")
     } catch (e: Exception) {
         throw RequestException("Failed to upload profile picture: ${e.localizedMessage}")
     }
@@ -130,8 +130,8 @@ suspend fun ApplicationCall.removeProfilePicture(userSession: UserSession) {
         respondText("Profile picture removed successfully", status = HttpStatusCode.OK)
     } catch (e: IllegalArgumentException) {
         throw RequestException("Invalid argument: ${e.localizedMessage}")
-    } catch (e: DAOException) {
-        throw DAOException("Database error: ${e.localizedMessage}")
+    } catch (e: DAOUsersException) {
+        throw DAOUsersException("Database error: ${e.localizedMessage}")
     } catch (e: Exception) {
         throw RequestException("Failed to remove profile picture: ${e.localizedMessage}")
     }
@@ -145,8 +145,8 @@ suspend fun ApplicationCall.getHogwartsHouse(userSession: UserSession) {
         } else {
             throw RequestException("House not found")
         }
-    } catch (e: DAOException) {
-        throw DAOException("Database error: ${e.localizedMessage}")
+    } catch (e: DAOUsersException) {
+        throw DAOUsersException("Database error: ${e.localizedMessage}")
     } catch (e: Exception) {
         throw RequestException("Failed to retrieve house: ${e.localizedMessage}")
     }

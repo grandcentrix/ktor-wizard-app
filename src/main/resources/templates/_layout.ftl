@@ -57,14 +57,20 @@
             <li style="padding: 0 10px;">//</li>
             <li><a href="/profile">My account</a></li>
         </menu>
-        <label class="search-bar">
-            <span class="material-symbols-outlined">search</span>
-            <input name="search" placeholder="Search something..." type="text">
-        </label>
-    <div class="bg-effect"></div>
-    </header>
+            <label class="search-bar">
+                <span class="material-symbols-outlined">search</span>
+                <form id="search-form" hx-post="/search-redirect" hx-target="#search-results"  hx-select-oob="#search-results">
+                    <input name="search" placeholder="Search something..." type="text" id="search-input" list="search-options"
+                           hx-get="/search-suggestions" hx-trigger="input" hx-target="#search-options">
+                    <datalist id="search-options"></datalist>
+                </form>
+            </label>
+            <div class="bg-effect"></div>
+        </header>
 
-    <section class="container">
-        <#nested>
-    </section>
+
+        <section class="container" id="search-results">
+            <#nested>
+        </section>
+
 </#macro>
