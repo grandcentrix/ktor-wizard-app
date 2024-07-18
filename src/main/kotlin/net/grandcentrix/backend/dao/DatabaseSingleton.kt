@@ -4,6 +4,7 @@ import io.ktor.server.config.*
 import net.grandcentrix.backend.models.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
 import java.sql.DriverManager
@@ -12,6 +13,7 @@ object DatabaseSingleton {
     fun init(config: ApplicationConfig) {
         val driverClassName = config.property("storage.driverClassName").getString()
         val url = config.property("storage.jdbcURL").getString()
+
 
         // Check if a database exists
         val databaseFile = File(url.substringAfter("jdbc:sqlite:"))
@@ -31,13 +33,13 @@ object DatabaseSingleton {
                 FavouriteHouses,
                 FavouriteMovies,
                 FavouritePotions,
-                FavouriteSpells
+                FavouriteSpells,
+                Characters
             )
-        }
 
+            }
 
         println("Database initialized successfully!")
-
     }
 
     private fun createDatabase(url: String) {
@@ -45,6 +47,7 @@ object DatabaseSingleton {
             println("SQLite database created successfully!")
         }
     }
-
-
 }
+
+
+

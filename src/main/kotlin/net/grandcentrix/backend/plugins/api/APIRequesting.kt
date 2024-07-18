@@ -9,6 +9,7 @@ import io.ktor.serialization.kotlinx.json.*
 import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
+import net.grandcentrix.backend.dao.DAOApi
 import net.grandcentrix.backend.models.*
 import net.grandcentrix.backend.plugins.GravatarProfileException
 import java.nio.charset.StandardCharsets
@@ -61,15 +62,22 @@ object APIRequesting {
             client.get("https://wizard-world-api.herokuapp.com/Houses").body()
     }
 
-    fun fetchCharacters(pageNumber: String): List<Character> = runBlocking<ResponseData<Character>> {
-            client.get("$API_URL/characters?page[number]=$pageNumber").body()
-        }.data.map {
+    fun fetchCharacters(pageNumber: String): List<Character> = runBlocking {
+        val response = client.get("$API_URL/characters?page[number]=$pageNumber").body<ResponseData<Character>>()
+        val characters = response.data.map {
             it.attributes.id = it.id
             if (it.attributes.imageUrl == null) {
                 it.attributes.imageUrl = "/static/img/no_image.png"
             }
             it.attributes
         }
+
+        // Save the characters to the database
+        val daoApi = DAOApi()
+        daoApi.saveCharacters(characters)
+
+        characters
+    }
 
     fun fetchCharacterById(id: String): Character = runBlocking {
         val response = client.get("$API_URL/characters/$id")
