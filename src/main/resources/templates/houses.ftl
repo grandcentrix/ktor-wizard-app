@@ -11,17 +11,21 @@
         <ul id="houses-list" class="content-list">
             <#list houses as house>
                 <li class="houses">
-                    <div class="list-item">
-                        <#if house.name == "Gryffindor">
-                            <img src="/static/img/Gryffindor_symbol.png" alt="Gryffindor Symbol" style="width: 100%; height: 100px; object-fit: contain; margin-bottom: 10px;">
-                        <#elseif house.name == "Slytherin">
-                            <img src="/static/img/Slytherin_symbol.png" alt="Slytherin Symbol" style="width: 100%; height: 100px; object-fit: contain; margin-bottom: 10px;">
-                        <#elseif house.name == "Ravenclaw">
-                            <img src="/static/img/Ravenclaw_symbol.png" alt="Ravenclaw Symbol" style="width: 100%; height: 100px; object-fit: contain; margin-bottom: 10px;">
-                        <#elseif house.name == "Hufflepuff">
-                            <img src="/static/img/Hufflepuff_symbol.png" alt="Hufflepuff Symbol" style="width: 100%; height: 100px; object-fit: contain; margin-bottom: 10px;">
-                        </#if>
+                    <#if house.name == "Gryffindor">
+                        <img class="content-img" src="/static/img/Gryffindor_symbol.png" alt="Gryffindor Symbol"
+                             style="object-fit: contain; object-position: center;">
+                    <#elseif house.name == "Slytherin">
+                        <img class="content-img" src="/static/img/Slytherin_symbol.png" alt="Slytherin Symbol"
+                             style="object-fit: contain; object-position: center;">
+                    <#elseif house.name == "Ravenclaw">
+                        <img class="content-img" src="/static/img/Ravenclaw_symbol.png" alt="Ravenclaw Symbol"
+                             style="object-fit: contain; object-position: center;">
+                    <#elseif house.name == "Hufflepuff">
+                        <img class="content-img" src="/static/img/Hufflepuff_symbol.png" alt="Hufflepuff Symbol"
+                             style="object-fit: contain; object-position: center;">
+                    </#if>
 
+                    <div class="list-item">
                         <div class="list-item-name">
                             <a href="/houses/${house.id}">
                                 ${house.name}
