@@ -106,29 +106,38 @@ object APIRequesting {
             it.attributes
         }
 
-    fun fetchPotions(pageNumber: String): List<Potion> = runBlocking<ResponseData<Potion>> {
-            client.get("$API_URL/potions?page[number]=$pageNumber").body()
-        }.data.map {
-            it.attributes.id = it.id
-            if (it.attributes.imageUrl == null) {
-                it.attributes.imageUrl = "/static/img/no_image.png"
+    fun fetchPotions(pageNumber: String): List<Potion> = runBlocking {
+        val response = client.get("$API_URL/potions?page[number]=$pageNumber").body<ResponseData<Potion>>()
+        val potions = response.data.map { potion ->
+            potion.attributes.id = potion.id
+            if (potion.attributes.imageUrl == null) {
+                potion.attributes.imageUrl = "/static/img/no_image.png"
             }
-            it.attributes
+            potion.attributes
         }
+        // Save the potions to the database
+        daoApi.savePotions(potions)
+        potions
+    }
+
 
     fun fetchPotionsPagination(pageNumber: String): PaginationData = runBlocking<ResponseData<PaginationData>> {
         client.get("$API_URL/potions?page[number]=$pageNumber").body()
     }.meta.pagination
 
-    fun fetchSpells(pageNumber: String): List<Spell> = runBlocking<ResponseData<Spell>> {
-            client.get("$API_URL/spells?page[number]=$pageNumber").body()
-        }.data.map {
-            it.attributes.id = it.id
-            if (it.attributes.imageUrl == null) {
-                it.attributes.imageUrl = "/static/img/no_image.png"
+    fun fetchSpells(pageNumber: String): List<Spell> = runBlocking {
+        val response = client.get("$API_URL/spells?page[number]=$pageNumber").body<ResponseData<Spell>>()
+        val spells = response.data.map { spell ->
+            spell.attributes.id = spell.id
+            if (spell.attributes.imageUrl == null) {
+                spell.attributes.imageUrl = "/static/img/no_image.png"
             }
-            it.attributes
+            spell.attributes
         }
+        // Save the potions to the database
+        daoApi.saveSpells(spells)
+        spells
+    }
 
     fun fetchSpellsPagination(pageNumber: String): PaginationData = runBlocking<ResponseData<PaginationData>> {
         client.get("$API_URL/spells?page[number]=$pageNumber").body()

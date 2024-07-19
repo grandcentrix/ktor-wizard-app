@@ -25,8 +25,8 @@ import io.ktor.server.sessions.*
 import io.ktor.server.util.*
 import net.grandcentrix.backend.controllers.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
-import net.grandcentrix.backend.dao.daoCharacters
 import net.grandcentrix.backend.dao.daoUsers
+import net.grandcentrix.backend.dao.daoapi
 import net.grandcentrix.backend.plugins.api.APIRequesting
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBooks
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouses
@@ -126,10 +126,10 @@ fun Application.configureRouting() {
 
                 val books = fetchBooks().associateBy { it.title.lowercase() }
                 val houses = APIRequesting.fetchHouses().associateBy { it.name.lowercase() }
-                val characters = daoCharacters.getCharacters().associateBy { it.name.lowercase() }
-                val movies = APIRequesting.fetchMovies().associateBy { it.title.lowercase() }
-                val potions = APIRequesting.fetchPotions("2").associateBy { it.name.lowercase() }
-                val spells = APIRequesting.fetchSpells("2").associateBy { it.name.lowercase() }
+                val characters = daoapi.getCharacters().associateBy { it.name.lowercase() }
+                val movies = APIRequesting.fetchMovies().associateBy { it.slug!!.lowercase() }
+                val potions = daoapi.getPotions().associateBy { it.name.lowercase() }
+                val spells = daoapi.getSpells().associateBy { it.name.lowercase() }
 
 
                 val routes = mapOf(
@@ -174,10 +174,10 @@ fun Application.configureRouting() {
 
                 val books = fetchBooks().associateBy { it.title.lowercase() }
                 val houses = fetchHouses().associateBy { it.name.lowercase() }
-                val characters = daoCharacters.getCharacters().associateBy { it.name.lowercase() }
+                val characters = daoapi.getCharacters().associateBy { it.name.lowercase() }
                 val movies = APIRequesting.fetchMovies().associateBy { it.title.lowercase() }
-                val potions = APIRequesting.fetchPotions("2").associateBy { it.name.lowercase() }
-                val spells = APIRequesting.fetchSpells("2").associateBy { it.name.lowercase() }
+                val potions = daoapi.getPotions().associateBy { it.name.lowercase() }
+                val spells = daoapi.getSpells().associateBy { it.name.lowercase() }
 
 
                 if (query != null) {

@@ -1,5 +1,6 @@
 package net.grandcentrix.backend.dao
 
+import kotlinx.serialization.SerialName
 import net.grandcentrix.backend.models.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -25,6 +26,36 @@ object Characters : Table("characters") {
     val wands = text("wands")
     val gender = varchar("gender", 255)
     val bloodStatus = varchar("blood_status", 255)
+}
+
+object Potions : Table("potions") {
+    val id = varchar("id", 255)
+    val name = varchar("name", 255)
+    val characteristics = text("characteristics")
+    val difficulty = varchar("difficulty", 255)
+    val effect = varchar("effect", 255)
+    val wiki = varchar("wiki", 255)
+    val imageUrl = varchar("image_url", 255)
+    val inventors = text("inventors")
+    val ingredients = text("ingredients")
+    val manufacturers = text("manufacturers")
+    val sideEffects = text("side_effects")
+    val slug = varchar("slug", 255)
+    val time = varchar("time", 255)
+}
+
+object Spells : Table("spells") {
+    val id = varchar("id", 255)
+    val name = varchar("name", 255)
+    val category = varchar("category", 255)
+    val creator = varchar("creator", 255)
+    val effect = varchar("effect", 255)
+    val hand = varchar("hand", 255)
+    val wiki = varchar("wiki", 255)
+    val imageUrl = varchar("image_url", 255)
+    val incantation = varchar("incantation", 255)
+    val light = varchar("light", 255)
+    val slug = varchar("slug", 255)
 }
 
 class DAOApi {
@@ -59,6 +90,50 @@ class DAOApi {
         }
     }
 
+    fun savePotions(potions: List<Potion>) = transaction {
+        potions.forEach { potion ->
+            val existingPotion = Potions.select { Potions.name eq potion.name }.firstOrNull()
+            if (existingPotion == null) {
+                Potions.insert {
+                    it[id] = potion.id?: ""
+                    it[name] = potion.name?: ""
+                    it[characteristics] = potion.characteristics?.split(",")?.joinToString(separator = ",")?: ""
+                    it[difficulty] = potion.difficulty?: ""
+                    it[effect] = potion.effect?: ""
+                    it[wiki] = potion.wiki?: ""
+                    it[imageUrl] = potion.imageUrl?: ""
+                    it[inventors] = potion.inventors?.split(",")?.joinToString(separator = ",")?: ""
+                    it[ingredients] = potion.ingredients?.split(",")?.joinToString(separator = ",")?: ""
+                    it[manufacturers] = potion.manufacturers?.split(",")?.joinToString(separator = ",")?: ""
+                    it[sideEffects] = potion.sideEffects?.split(",")?.joinToString(separator = ",")?: ""
+                    it[slug] = potion.slug?: ""
+                    it[time] = potion.time?: ""
+                }
+            }
+        }
+    }
+
+    fun saveSpells(spells: List<Spell>) = transaction {
+        spells.forEach { spell ->
+            val existingSpell = Spells.select { Spells.name eq spell.name }.firstOrNull()
+            if (existingSpell == null) {
+                Spells.insert {
+                    it[id] = spell.id?: ""
+                    it[name] = spell.name
+                    it[category] = spell.category?: ""
+                    it[creator] = spell.creator?: ""
+                    it[effect] = spell.effect?: ""
+                    it[hand] = spell.hand?: ""
+                    it[wiki] = spell.wiki
+                    it[imageUrl] = spell.imageUrl?: ""
+                    it[incantation] = spell.incantation?: ""
+                    it[light] = spell.light?: ""
+                    it[slug] = spell.slug?: ""
+                }
+            }
+        }
+    }
+
     fun getCharacters(): List<Character> = transaction {
         Characters.selectAll().map { row ->
             Character(
@@ -85,6 +160,44 @@ class DAOApi {
             )
         }
     }
+
+    fun getPotions(): List<Potion> = transaction {
+        Potions.selectAll().map { row ->
+            Potion(
+                id = row[Potions.id],
+                name = row[Potions.name],
+                characteristics = row[Potions.characteristics]?.split(",").toString(),
+                difficulty = row[Potions.difficulty],
+                effect = row[Potions.effect],
+                wiki = row[Potions.wiki],
+                imageUrl = row[Potions.imageUrl],
+                inventors = row[Potions.inventors]?.split(",").toString(),
+                ingredients = row[Potions.ingredients]?.split(",").toString(),
+                manufacturers = row[Potions.manufacturers]?.split(",").toString(),
+                sideEffects = row[Potions.sideEffects]?.split(",").toString(),
+                slug = row[Potions.slug],
+                time = row[Potions.time],
+            )
+        }
+    }
+
+    fun getSpells(): List<Spell> = transaction {
+        Spells.selectAll().map { row ->
+            Spell(
+                id = row[Spells.id],
+                name = row[Spells.name],
+                category = row[Spells.category],
+                creator = row[Spells.creator],
+                effect = row[Spells.effect],
+                hand = row[Spells.hand],
+                wiki = row[Spells.wiki],
+                imageUrl = row[Spells.imageUrl],
+                incantation = row[Spells.incantation],
+                light = row[Spells.light],
+                slug = row[Spells.slug],
+            )
+        }
+    }
 }
 
-val daoCharacters = DAOApi()
+val daoapi = DAOApi()

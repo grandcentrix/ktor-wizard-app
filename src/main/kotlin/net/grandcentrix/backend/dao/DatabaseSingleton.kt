@@ -33,7 +33,9 @@ object DatabaseSingleton {
                 FavouriteMovies,
                 FavouritePotions,
                 FavouriteSpells,
-                Characters
+                Characters,
+                Potions,
+                Spells
             )
 
             }
