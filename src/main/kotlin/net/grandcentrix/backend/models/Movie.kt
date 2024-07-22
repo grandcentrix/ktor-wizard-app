@@ -18,7 +18,7 @@ data class Movie(
     val music_composers: List<String>?,
     val distributors: List<String>?,
     @SerialName("poster")
-    val posterUrl: String?,
+    var posterUrl: String?,
     val producers: List<String>?,
     val rating: String?,
     @SerialName("release_date")

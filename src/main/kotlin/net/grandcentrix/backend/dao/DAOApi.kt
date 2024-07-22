@@ -2,6 +2,7 @@ package net.grandcentrix.backend.dao
 
 import net.grandcentrix.backend.models.*
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -58,6 +59,28 @@ object Spells : Table("spells") {
     val slug = varchar("slug", 255)
 }
 
+object Movies : Table("movies") {
+    val id = varchar("id", 255)
+    val title = varchar("title", 255)
+    val wiki = varchar("wiki", 255)
+    val boxOffice = varchar("box_office", 255)
+    val budget = varchar("budget", 255)
+    val cinematographers = text("cinematographers")
+    val directors = text("directors")
+    val screenwriters = text("screenwriters")
+    val editors = text("editors")
+    val music_composers = text("music_composers")
+    val distributors = text("distributors")
+    val posterUrl = varchar("poster", 255)
+    val producers = text("producers")
+    val rating = varchar("rating", 255)
+    val releaseDate = varchar("release_date", 255)
+    val summary = text("summary")
+    val duration = varchar("running_time", 255)
+    val slug = varchar("slug", 255)
+    val trailer = varchar("trailer", 255)
+}
+
 class DAOApi {
 
     fun saveCharacters(characters: List<Character>) = transaction {
@@ -90,6 +113,87 @@ class DAOApi {
         }
     }
 
+
+    fun getMovieByID(id: String): Movie? = transaction {
+        Movies.select { Movies.id eq id }.firstOrNull()?.let { row ->
+            Movie(
+                id = row[Movies.id],
+                title = row[Movies.title],
+                wiki = row[Movies.wiki],
+                boxOffice = row[Movies.boxOffice],
+                budget = row[Movies.budget],
+                cinematographers = row[Movies.cinematographers]?.split(","),
+                directors = row[Movies.directors]?.split(","),
+                screenwriters = row[Movies.screenwriters]?.split(","),
+                editors = row[Movies.editors]?.split(","),
+                music_composers = row[Movies.music_composers]?.split(","),
+                distributors = row[Movies.distributors]?.split(","),
+                posterUrl = row[Movies.posterUrl],
+                producers = row[Movies.producers]?.split(","),
+                rating = row[Movies.rating],
+                releaseDate = row[Movies.releaseDate],
+                summary = row[Movies.summary],
+                duration = row[Movies.duration],
+                slug = row[Movies.slug],
+                trailer = row[Movies.trailer],
+            )
+        }
+    }
+
+    fun getMovies(): List<Movie> = transaction {
+        Movies.selectAll().map { row ->
+            Movie(
+                id = row[Movies.id],
+                title = row[Movies.title],
+                wiki = row[Movies.wiki],
+                boxOffice = row[Movies.boxOffice],
+                budget = row[Movies.budget],
+                cinematographers = row[Movies.cinematographers]?.split(","),
+                directors = row[Movies.directors]?.split(","),
+                screenwriters = row[Movies.screenwriters]?.split(","),
+                editors = row[Movies.editors]?.split(","),
+                music_composers = row[Movies.music_composers]?.split(","),
+                distributors = row[Movies.distributors]?.split(","),
+                posterUrl = row[Movies.posterUrl],
+                producers = row[Movies.producers]?.split(","),
+                rating = row[Movies.rating],
+                releaseDate = row[Movies.releaseDate],
+                summary = row[Movies.summary],
+                duration = row[Movies.duration],
+                slug = row[Movies.slug],
+                trailer = row[Movies.trailer],
+            )
+        }
+    }
+
+    fun saveMovies(movies: List<Movie>) = transaction {
+        movies.forEach { movie ->
+            val existingMovie = Movies.select { Movies.title eq movie.title }.firstOrNull()
+            if (existingMovie == null) {
+                Movies.insert {
+                    it[id] = movie.id?: ""
+                    it[title] = movie.title
+                    it[wiki] = movie.wiki
+                    it[boxOffice] = movie.boxOffice?: ""
+                    it[budget] = movie.budget?: ""
+                    it[cinematographers] = movie.cinematographers?.joinToString(separator = ",")?: ""
+                    it[directors] = movie.directors?.joinToString(separator = ",")?: ""
+                    it[screenwriters] = movie.screenwriters?.joinToString(separator = ",")?: ""
+                    it[editors] = movie.editors?.joinToString(separator = ",")?: ""
+                    it[music_composers] = movie.music_composers?.joinToString(separator = ",")?: ""
+                    it[distributors] = movie.distributors?.joinToString(separator = ",")?: ""
+                    it[posterUrl] = movie.posterUrl?: ""
+                    it[producers] = movie.producers?.joinToString(separator = ",")?: ""
+                    it[rating] = movie.rating?: ""
+                    it[releaseDate] = movie.releaseDate?: ""
+                    it[summary] = movie.summary
+                    it[duration] = movie.duration?: ""
+                    it[slug] = movie.slug?: ""
+                    it[trailer] = movie.trailer?: ""
+                }
+            }
+        }
+    }
 
     fun savePotions(potions: List<Potion>) = transaction {
         potions.forEach { potion ->
@@ -192,7 +296,6 @@ class DAOApi {
     fun getCharactersByPage(pageNumber: Int, pageSize: Int = 100): List<Character> = transaction {
         Characters.select(Characters.id.like("%$pageNumber%"))
             .limit(pageSize, ((pageNumber - 1) * pageSize).toLong())
-            .orderBy(Characters.name to SortOrder.ASC)
             .map { row ->
                 Character(
                     id = row[Characters.id],

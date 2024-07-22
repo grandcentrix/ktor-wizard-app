@@ -128,7 +128,7 @@ fun Application.configureRouting() {
                 val books = fetchBooks().associateBy { it.title.lowercase() }
                 val houses = APIRequesting.fetchHouses().associateBy { it.name.lowercase() }
                 val characters = daoapi.getCharacters().associateBy { it.name.lowercase() }
-                val movies = APIRequesting.fetchMovies().associateBy { it.slug!!.lowercase() }
+                val movies = daoapi.getMovies().associateBy { it.slug!!.lowercase() }
                 val potions = daoapi.getPotions().associateBy { it.name.lowercase() }
                 val spells = daoapi.getSpells().associateBy { it.name.lowercase() }
 
@@ -176,7 +176,7 @@ fun Application.configureRouting() {
                 val books = fetchBooks().associateBy { it.title.lowercase() }
                 val houses = fetchHouses().associateBy { it.name.lowercase() }
                 val characters = daoapi.getCharacters().associateBy { it.name.lowercase() }
-                val movies = APIRequesting.fetchMovies().associateBy { it.title.lowercase() }
+                val movies = daoapi.getMovies().associateBy { it.slug!!.lowercase() }
                 val potions = daoapi.getPotions().associateBy { it.name.lowercase() }
                 val spells = daoapi.getSpells().associateBy { it.name.lowercase() }
 

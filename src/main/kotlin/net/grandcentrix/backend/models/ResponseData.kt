@@ -34,6 +34,18 @@ data class CharacterDataItem(
 )
 
 @Serializable
+data class MovieResponseData(
+    val data: MovieDataItem
+)
+
+@Serializable
+data class MovieDataItem(
+    val id: String,
+    val type: String,
+    val attributes: Movie
+)
+
+@Serializable
 data class SpellResponseData(
     val data: SpellDataItem
 )

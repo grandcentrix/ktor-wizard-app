@@ -48,9 +48,19 @@ object APIRequesting {
         Chapter(it.attributes.title, it.attributes.summary)
     }
 
-    fun fetchMovieById(id: String): Movie = runBlocking<ResponseObject<Movie>> {
-        client.get("${API_URL}/movies/$id").body()
-    }.data.attributes
+    fun fetchMovieById(id: String): Movie = runBlocking {
+        val movie = daoApi.getMovieByID(id)
+        if (movie != null) {
+            return@runBlocking movie
+        }
+
+        val response = client.get("$API_URL/movies/$id")
+        val responseData = response.body<MovieResponseData>()
+        val movieAttributes = responseData.data.attributes
+        // Save the movie to the database
+        daoApi.saveMovies(listOf(movieAttributes))
+        return@runBlocking movieAttributes
+    }
 
 
     fun fetchHouseById(id: String): House = runBlocking {
@@ -114,12 +124,20 @@ object APIRequesting {
         client.get("$API_URL/characters?page[number]=$pageNumber").body()
     }.meta.pagination
 
-    fun fetchMovies(): List<Movie> = runBlocking<ResponseData<Movie>> {
-            client.get("$API_URL/movies").body()
-        }.data.map {
-            it.attributes.id = it.id
-            it.attributes
+    fun fetchMovies(pageNumber: String = "1"): List<Movie> = runBlocking {
+        val response = client.get("$API_URL/movies?page[number]=$pageNumber").body<ResponseData<Movie>>()
+        val movies = response.data.map { movie ->
+            movie.attributes.id = movie.id
+            if (movie.attributes.posterUrl == null) {
+                movie.attributes.posterUrl = "/static/img/no_image.png"
+            }
+            movie.attributes
         }
+        // Save the movies to the database
+        daoApi.saveMovies(movies)
+        movies
+    }
+
 
     fun fetchPotions(pageNumber: String): List<Potion> = runBlocking {
         val response = client.get("$API_URL/potions?page[number]=$pageNumber").body<ResponseData<Potion>>()
