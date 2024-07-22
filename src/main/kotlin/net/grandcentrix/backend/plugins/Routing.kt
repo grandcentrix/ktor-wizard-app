@@ -29,6 +29,7 @@ import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.dao.daoapi
 import net.grandcentrix.backend.plugins.api.APIRequesting
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBooks
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharacters
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouses
 
 
@@ -239,7 +240,7 @@ fun Application.configureRouting() {
                     val pageNumber = id
                     val userSession: UserSession? = call.sessions.get<UserSession>()
                     val item = call.request.local.uri.removePrefix("/")
-                    call.getCharactersTemplate(userSession, item, pageNumber)
+                    call.getCharactersTemplate(userSession, item, pageNumber.toIntOrNull())
                 } else {
                     val characterId = id
                     val userSession: UserSession? = call.sessions.get<UserSession>()
@@ -306,8 +307,9 @@ fun Application.configureRouting() {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
                 val pageNumber = call.parameters.getOrFail<String>("pageNumber")
                 val item = call.request.local.uri.removePrefix("/")
-                call.getCharactersTemplate(userSession, item, pageNumber)
+                call.getCharactersTemplate(userSession, item, pageNumber.toIntOrNull())
             }
+
 
             get("/movies") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()

@@ -63,7 +63,12 @@ object APIRequesting {
             client.get("https://wizard-world-api.herokuapp.com/Houses").body()
     }
 
-    fun fetchCharacters(pageNumber: String): List<Character> = runBlocking {
+    suspend fun fetchCharacters(pageNumber: Int): List<Character> {
+        val cachedCharacters = daoApi.getCharactersByPage(pageNumber, pageSize = 100)
+        if (cachedCharacters.isNotEmpty()) {
+            return cachedCharacters
+        }
+
         val response = client.get("$API_URL/characters?page[number]=$pageNumber").body<ResponseData<Character>>()
         val characters = response.data.map {
             it.attributes.id = it.id
@@ -74,13 +79,23 @@ object APIRequesting {
         }
         // Save the characters to the database
         daoApi.saveCharacters(characters)
-        characters
+        return characters
     }
 
-    fun fetchCharacterById(id: String): Character = runBlocking {
+    suspend fun fetchCharacterById(id: String): Character {
+        val character = daoApi.getCharacterByID(id)
+        if (character!= null) {
+            return character
+        }
+
         val response = client.get("$API_URL/characters/$id")
         val responseData = response.body<CharacterResponseData>()
-        responseData.data.attributes
+        val characterAttributes = responseData.data.attributes
+        // Save the character to the database
+        if (character != null) {
+            daoApi.saveCharacters(character)
+        }
+        return characterAttributes
     }
 
     fun fetchSpellById(id: String): Spell = runBlocking {

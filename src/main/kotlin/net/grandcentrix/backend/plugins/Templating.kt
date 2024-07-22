@@ -9,6 +9,7 @@ import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.controllers.getProfilePicture
 import net.grandcentrix.backend.controllers.userFavouriteItems
 import net.grandcentrix.backend.dao.daoUsers
+import net.grandcentrix.backend.plugins.api.APIRequesting.daoApi
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBookById
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBooks
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchChapters
@@ -123,7 +124,7 @@ suspend fun ApplicationCall.getHouseById(
 suspend fun ApplicationCall.getCharactersTemplate(
     userSession: UserSession?,
     item: String,
-    pageNumber: String? = null
+    pageNumber: Int? = null
 ) =
     respondTemplate(
         "characters.ftl",
@@ -134,7 +135,7 @@ suspend fun ApplicationCall.getCharactersTemplate(
             "house" to userSession?.let { daoUsers.getHouse(it.username) },
             "profilePictureData" to getProfilePicture(userSession),
             "userFavourites" to userFavouriteItems(userSession?.username, item),
-            "pagination" to pageNumber?.let { fetchCharactersPagination(it) }
+            "pagination" to pageNumber?.let { fetchCharactersPagination(it.toString()) }
         )
     )
 
