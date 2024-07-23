@@ -146,6 +146,10 @@ object APIRequesting {
     }.meta.pagination
 
     fun fetchMovies(pageNumber: String = "1"): List<Movie> = runBlocking {
+        val cachedMovie = daoApi.getMovies()
+        if (cachedMovie.isNotEmpty()) {
+            return@runBlocking cachedMovie
+        }
         val response = client.get("$API_URL/movies?page[number]=$pageNumber").body<ResponseData<Movie>>()
         val movies = response.data.map { movie ->
             movie.attributes.id = movie.id
