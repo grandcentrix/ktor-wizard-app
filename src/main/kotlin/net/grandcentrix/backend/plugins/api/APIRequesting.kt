@@ -32,6 +32,10 @@ object APIRequesting {
     }
 
     fun fetchBooks(): List<Book> = runBlocking {
+        val cachedBooks = daoApi.getBooks()
+        if (cachedBooks.isNotEmpty()) {
+            return@runBlocking cachedBooks
+        }
         val response = client.get("$API_URL/books").body<ResponseData<Book>>()
         val book = response.data.map { book ->
             book.attributes.id = book.id
