@@ -10,7 +10,7 @@ data class Book(
     val wiki: String,
     val dedication: String,
     @SerialName("cover")
-    val coverUrl: String?,
+    var coverUrl: String?,
     val pages: Int,
     @SerialName("release_date")
     val releaseDate: String,

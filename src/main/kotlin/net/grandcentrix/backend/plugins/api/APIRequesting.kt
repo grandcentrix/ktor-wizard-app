@@ -31,16 +31,33 @@ object APIRequesting {
         }
     }
 
-     fun fetchBooks(): List<Book> = runBlocking<ResponseData<Book>> {
-              client.get("$API_URL/books").body()
-         }.data.map {
-             it.attributes.id = it.id
-             it.attributes
-         }
+    fun fetchBooks(): List<Book> = runBlocking {
+        val response = client.get("$API_URL/books").body<ResponseData<Book>>()
+        val book = response.data.map { book ->
+            book.attributes.id = book.id
+            if (book.attributes.coverUrl == null) {
+                book.attributes.coverUrl = "/static/img/no_image.png"
+            }
+            book.attributes
+        }
+        // Save the movies to the database
+        daoApi.saveBooks(book)
+        book
+    }
 
-    fun fetchBookById(id: String): Book = runBlocking<ResponseObject<Book>> {
-        client.get("${API_URL}/books/$id").body()
-    }.data.attributes
+    fun fetchBookById(id: String): Book = runBlocking {
+        val book = daoApi.getBookByID(id)
+        if (book != null) {
+            return@runBlocking book
+        }
+
+        val response = client.get("$API_URL/books/$id")
+        val responseData = response.body<BookResponseData>()
+        val bookAttributes = responseData.data.attributes
+        // Save the book to the database
+        daoApi.saveBooks(listOf(bookAttributes))
+        return@runBlocking bookAttributes
+    }
 
     fun fetchChapters(bookId: String): List<Chapter> = runBlocking<ResponseData<Chapter>> {
         client.get("$API_URL/books/$bookId/chapters").body()

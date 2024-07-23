@@ -125,7 +125,7 @@ fun Application.configureRouting() {
                 val query = call.request.queryParameters["search"].orEmpty().lowercase()
 
 
-                val books = fetchBooks().associateBy { it.title.lowercase() }
+                val books = daoapi.getBooks().associateBy { it.title.lowercase() }
                 val houses = APIRequesting.fetchHouses().associateBy { it.name.lowercase() }
                 val characters = daoapi.getCharacters().associateBy { it.name.lowercase() }
                 val movies = daoapi.getMovies().associateBy { it.slug!!.lowercase() }
@@ -173,7 +173,7 @@ fun Application.configureRouting() {
                 val query = call.receiveParameters()["search"]?.lowercase()
 
 
-                val books = fetchBooks().associateBy { it.title.lowercase() }
+                val books = daoapi.getBooks().associateBy { it.title.lowercase() }
                 val houses = fetchHouses().associateBy { it.name.lowercase() }
                 val characters = daoapi.getCharacters().associateBy { it.name.lowercase() }
                 val movies = daoapi.getMovies().associateBy { it.slug!!.lowercase() }

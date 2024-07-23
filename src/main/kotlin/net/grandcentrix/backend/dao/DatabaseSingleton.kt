@@ -37,6 +37,7 @@ object DatabaseSingleton {
                 Potions,
                 Spells,
                 Movies,
+                Books,
             )
 
             }

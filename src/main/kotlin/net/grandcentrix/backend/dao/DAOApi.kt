@@ -58,7 +58,19 @@ object Spells : Table("spells") {
     val light = varchar("light", 255)
     val slug = varchar("slug", 255)
 }
-
+object Books : Table("books") {
+    val id = varchar("id", 255)
+    val title = varchar("title", 255)
+    val author = varchar("author", 255)
+    val wiki = varchar("wiki", 255)
+    val dedication = varchar("dedication", 255)
+    val coverUrl = varchar("cover", 255)
+    val pages = integer("pages")
+    val releaseDate = varchar("release_date", 255)
+    val summary = text("summary")
+    val slug = varchar("slug", 255)
+    val chapters = text("chapters")
+}
 object Movies : Table("movies") {
     val id = varchar("id", 255)
     val title = varchar("title", 255)
@@ -192,6 +204,65 @@ class DAOApi {
                     it[trailer] = movie.trailer?: ""
                 }
             }
+        }
+    }
+
+    fun saveBooks(books: List<Book>) = transaction {
+        books.forEach { book ->
+            val existingBook = Books.select { Books.title eq book.title }.firstOrNull()
+            if (existingBook == null) {
+                Books.insert {
+                    it[id] = book.id ?: ""
+                    it[title] = book.title
+                    it[author] = book.author
+                    it[wiki] = book.wiki
+                    it[dedication] = book.dedication
+                    it[coverUrl] = book.coverUrl ?: ""
+                    it[pages] = book.pages
+                    it[releaseDate] = book.releaseDate
+                    it[summary] = book.summary
+                    it[slug] = book.slug
+                    it[chapters] = book.chapters.joinToString(separator = ",")
+                }
+            }
+        }
+    }
+
+    fun getBookByID(id: String): Book? = transaction {
+        Books.select { Books.id eq id }.firstOrNull()?.let { row ->
+            Book(
+                id = row[Books.id],
+                title = row[Books.title],
+                author = row[Books.author],
+                wiki = row[Books.wiki],
+                dedication = row[Books.dedication],
+                coverUrl = row[Books.coverUrl],
+                pages = row[Books.pages],
+                releaseDate = row[Books.releaseDate],
+                summary = row[Books.summary],
+                slug = row[Books.slug],
+                chapters = row[Books.chapters]?.split(",")?.map { Chapter(it, "") } ?: emptyList()
+            )
+        }
+    }
+
+
+
+    fun getBooks(): List<Book> = transaction {
+        Books.selectAll().map { row ->
+            Book(
+                id = row[Books.id],
+                title = row[Books.title],
+                author = row[Books.author],
+                wiki = row[Books.wiki],
+                dedication = row[Books.dedication],
+                coverUrl = row[Books.coverUrl],
+                pages = row[Books.pages],
+                releaseDate = row[Books.releaseDate],
+                summary = row[Books.summary],
+                slug = row[Books.slug],
+                chapters = row[Books.chapters]?.split(",")?.map { Chapter(it, "") } ?: emptyList()
+            )
         }
     }
 

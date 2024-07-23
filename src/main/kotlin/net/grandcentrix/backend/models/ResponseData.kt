@@ -45,6 +45,19 @@ data class MovieDataItem(
     val attributes: Movie
 )
 
+
+@Serializable
+data class BookResponseData(
+    val data: BookDataItem
+)
+
+@Serializable
+data class BookDataItem(
+    val id: String,
+    val type: String,
+    val attributes: Book
+)
+
 @Serializable
 data class SpellResponseData(
     val data: SpellDataItem
