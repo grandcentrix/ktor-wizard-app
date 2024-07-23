@@ -93,11 +93,10 @@ object APIRequesting {
     fun fetchHouses(): List<House> = runBlocking {
             client.get("https://wizard-world-api.herokuapp.com/Houses").body()
     }
-
     suspend fun fetchCharacters(pageNumber: Int): List<Character> {
         val cachedCharacters = daoApi.getCharactersByPage(pageNumber, pageSize = 100)
-        if (cachedCharacters.isNotEmpty()) {
-            return cachedCharacters
+        if (cachedCharacters.characters.isNotEmpty()) {
+            return cachedCharacters.characters
         }
 
         val response = client.get("$API_URL/characters?page[number]=$pageNumber").body<ResponseData<Character>>()
@@ -141,9 +140,31 @@ object APIRequesting {
         responseData.data.attributes
     }
 
-    fun fetchCharactersPagination(pageNumber: String): PaginationData = runBlocking<ResponseData<PaginationData>> {
-        client.get("$API_URL/characters?page[number]=$pageNumber").body()
-    }.meta.pagination
+    fun fetchCharactersPagination(pageNumber: String): PaginationData {
+        val cachedPage = daoApi.getCharactersByPage(pageNumber.toInt())
+        if (cachedPage.characters.isNotEmpty()) {
+            // Calculate pagination data from cached page
+            val currentPage = pageNumber.toInt()
+            val totalCount = daoApi.getTotalCharacterCount()
+            val pageSize = 100
+            val totalPages = (totalCount / pageSize) + 1
+            val isFirstPage = currentPage == 1
+            val isLastPage = currentPage.toLong() == totalPages
+            val paginationData = PaginationData(
+                current = currentPage,
+                first = if (isFirstPage) null else 1,
+                previous = if (isFirstPage) null else currentPage - 1,
+                next = if (isLastPage) null else currentPage + 1,
+                last = if (isLastPage) null else totalPages,
+                records = totalCount
+            )
+            return paginationData
+        } else {
+            return runBlocking<ResponseData<PaginationData>> {
+                client.get("$API_URL/characters?page[number]=$pageNumber").body()
+            }.meta.pagination
+        }
+    }
 
     fun fetchMovies(pageNumber: String = "1"): List<Movie> = runBlocking {
         val cachedMovie = daoApi.getMovies()

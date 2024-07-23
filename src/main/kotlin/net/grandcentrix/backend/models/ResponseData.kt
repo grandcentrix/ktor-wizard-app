@@ -46,6 +46,7 @@ data class MovieDataItem(
 )
 
 
+
 @Serializable
 data class BookResponseData(
     val data: BookDataItem
@@ -93,8 +94,8 @@ data class PaginationData(
     val first: Int? = null,
     val previous: Int? = null,
     val next: Int? = null,
-    val last: Int? = null,
-    val records: Int? = null
+    val last: Long? = null,
+    val records: Long? = null
 )
 
 @Serializable

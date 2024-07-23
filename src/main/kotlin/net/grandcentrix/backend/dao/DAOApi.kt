@@ -93,6 +93,7 @@ object Movies : Table("movies") {
     val trailer = varchar("trailer", 255)
 }
 
+
 class DAOApi {
 
     fun saveCharacters(characters: List<Character>) = transaction {
@@ -125,6 +126,43 @@ class DAOApi {
         }
     }
 
+    fun getTotalCharacterCount(): Long = transaction {
+        Characters.selectAll().count()
+    }
+
+
+    data class PaginatedCharacters(val characters: List<Character>, val pageNumber: Int)
+
+    fun getCharactersByPage(pageNumber: Int, pageSize: Int = 100): PaginatedCharacters = transaction {
+        val characters = Characters.selectAll()
+            .limit(pageSize, ((pageNumber - 1) * pageSize).toLong())
+            .map { row ->
+                Character(
+                    id = row[Characters.id],
+                    name = row[Characters.name],
+                    wiki = row[Characters.wiki],
+                    aliasNames = row[Characters.aliasNames]?.split(","),
+                    animagus = row[Characters.animagus],
+                    boggart = row[Characters.boggart],
+                    patronus = row[Characters.patronus],
+                    birth = row[Characters.birth],
+                    death = row[Characters.death],
+                    familyMembers = row[Characters.familyMembers]?.split(","),
+                    house = row[Characters.house],
+                    imageUrl = row[Characters.imageUrl],
+                    jobs = row[Characters.jobs]?.split(","),
+                    nationality = row[Characters.nationality],
+                    slug = row[Characters.slug],
+                    species = row[Characters.species],
+                    titles = row[Characters.titles]?.split(","),
+                    wands = row[Characters.wands]?.split(","),
+                    gender = row[Characters.gender],
+                    blood_status = row[Characters.bloodStatus],
+                )
+            }
+        PaginatedCharacters(characters, pageNumber)
+    }
+
 
     fun getMovieByID(id: String): Movie? = transaction {
         Movies.select { Movies.id eq id }.firstOrNull()?.let { row ->
@@ -151,6 +189,8 @@ class DAOApi {
             )
         }
     }
+
+
 
     fun getMovies(): List<Movie> = transaction {
         Movies.selectAll().map { row ->
@@ -362,35 +402,6 @@ class DAOApi {
                 blood_status = row[Characters.bloodStatus],
             )
         }
-    }
-
-    fun getCharactersByPage(pageNumber: Int, pageSize: Int = 100): List<Character> = transaction {
-        Characters.select(Characters.id.like("%$pageNumber%"))
-            .limit(pageSize, ((pageNumber - 1) * pageSize).toLong())
-            .map { row ->
-                Character(
-                    id = row[Characters.id],
-                    name = row[Characters.name],
-                    wiki = row[Characters.wiki],
-                    aliasNames = row[Characters.aliasNames]?.split(","),
-                    animagus = row[Characters.animagus],
-                    boggart = row[Characters.boggart],
-                    patronus = row[Characters.patronus],
-                    birth = row[Characters.birth],
-                    death = row[Characters.death],
-                    familyMembers = row[Characters.familyMembers]?.split(","),
-                    house = row[Characters.house],
-                    imageUrl = row[Characters.imageUrl],
-                    jobs = row[Characters.jobs]?.split(","),
-                    nationality = row[Characters.nationality],
-                    slug = row[Characters.slug],
-                    species = row[Characters.species],
-                    titles = row[Characters.titles]?.split(","),
-                    wands = row[Characters.wands]?.split(","),
-                    gender = row[Characters.gender],
-                    blood_status = row[Characters.bloodStatus],
-                )
-            }
     }
 
 
