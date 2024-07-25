@@ -97,6 +97,8 @@ data class PaginationData(
     val last: Long? = null,
     val records: Long? = null
 )
+@Serializable
+data class CharactersCache(val characters: List<Character>)
 
 @Serializable
 data class PaginationLinks (

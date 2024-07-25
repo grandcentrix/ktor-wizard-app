@@ -135,6 +135,7 @@ class DAOApi {
 
     fun getCharactersByPage(pageNumber: Int, pageSize: Int = 100): PaginatedCharacters = transaction {
         val characters = Characters.selectAll()
+            .orderBy(Characters.name to SortOrder.ASC)
             .limit(pageSize, ((pageNumber - 1) * pageSize).toLong())
             .map { row ->
                 Character(
@@ -163,6 +164,15 @@ class DAOApi {
         PaginatedCharacters(characters, pageNumber)
     }
 
+    fun clearCharacters() {
+        transaction {
+            Characters.deleteAll()
+        }
+    }
+
+    fun getCharacterCount(characters: List<Character>): Int {
+        return characters.size
+    }
 
     fun getMovieByID(id: String): Movie? = transaction {
         Movies.select { Movies.id eq id }.firstOrNull()?.let { row ->
@@ -190,6 +200,32 @@ class DAOApi {
         }
     }
 
+    fun getSavedCharacters(): List<Character> = transaction {
+        Characters.selectAll().map { row ->
+            Character(
+                id = row[Characters.id],
+                name = row[Characters.name],
+                wiki = row[Characters.wiki],
+                aliasNames = row[Characters.aliasNames].split(","),
+                animagus = row[Characters.animagus],
+                boggart = row[Characters.boggart],
+                patronus = row[Characters.patronus],
+                birth = row[Characters.birth],
+                death = row[Characters.death],
+                familyMembers = row[Characters.familyMembers].split(","),
+                house = row[Characters.house],
+                imageUrl = row[Characters.imageUrl],
+                jobs = row[Characters.jobs].split(","),
+                nationality = row[Characters.nationality],
+                slug = row[Characters.slug],
+                species = row[Characters.species],
+                titles = row[Characters.titles].split(","),
+                wands = row[Characters.wands].split(","),
+                gender = row[Characters.gender],
+                blood_status = row[Characters.bloodStatus]
+            )
+        }
+    }
 
 
     fun getMovies(): List<Movie> = transaction {

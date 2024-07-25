@@ -22,7 +22,7 @@ object APIRequesting {
     private const val API_URL_HOUSE = "https://wizard-world-api.herokuapp.com/Houses"
     val daoApi = DAOApi()
 
-    private val client = HttpClient(CIO) {
+    var client = HttpClient(CIO) {
         install(ContentNegotiation) {
             json(Json {
                 ignoreUnknownKeys = true
@@ -94,12 +94,15 @@ object APIRequesting {
             client.get("https://wizard-world-api.herokuapp.com/Houses").body()
     }
     suspend fun fetchCharacters(pageNumber: Int): List<Character> {
-        val cachedCharacters = daoApi.getCharactersByPage(pageNumber, pageSize = 100)
+        val cachedCharacters = daoApi.getCharactersByPage(pageNumber).also {
+            println("Fetched ${it.characters.size} characters from database")
+        }
         if (cachedCharacters.characters.isNotEmpty()) {
             return cachedCharacters.characters
         }
 
         val response = client.get("$API_URL/characters?page[number]=$pageNumber").body<ResponseData<Character>>()
+        println("Response data: ${response.data.size}")
         val characters = response.data.map {
             it.attributes.id = it.id
             if (it.attributes.imageUrl == null) {
@@ -108,7 +111,9 @@ object APIRequesting {
             it.attributes
         }
         // Save the characters to the database
-        daoApi.saveCharacters(characters)
+        daoApi.saveCharacters(characters).also {
+            println("Saved ${characters.size} characters to database")
+        }
         return characters
     }
 
@@ -141,7 +146,7 @@ object APIRequesting {
     }
 
     fun fetchCharactersPagination(pageNumber: String): PaginationData {
-        val cachedPage = daoApi.getCharactersByPage(pageNumber.toInt())
+        val cachedPage = daoApi.getCharactersByPage(pageNumber.toInt(),100)
         if (cachedPage.characters.isNotEmpty()) {
             // Calculate pagination data from cached page
             val currentPage = pageNumber.toInt()

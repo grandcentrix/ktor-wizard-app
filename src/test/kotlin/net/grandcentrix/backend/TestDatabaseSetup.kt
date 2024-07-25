@@ -2,6 +2,7 @@ package net.grandcentrix.backend
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import net.grandcentrix.backend.dao.Characters
 import net.grandcentrix.backend.models.Users
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -33,6 +34,7 @@ object TestDatabaseSetup {
         transaction(database) {
             // creates the tables
             SchemaUtils.create(Users)
+            SchemaUtils.create(Characters)
 
         }
 
