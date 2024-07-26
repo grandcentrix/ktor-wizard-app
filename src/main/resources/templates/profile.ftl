@@ -1,161 +1,133 @@
 <#import "_layout.ftl" as layout />
-<#assign userSession = session in layout>
-<#assign profilePicture = profilePictureData in layout>
 
 <@layout.base>
 
-<h1>
-    <span class="material-symbols-outlined">account_box</span>
-    Welcome, ${username}!
-</h1>
+    <h1>
+        <span class="material-symbols-outlined">account_box</span>
+        Welcome, ${username}!
+    </h1>
 
-<section class="content" style="flex-direction: column;">
-    <div id="update-username" class="user-data">
-        <form
-                hx-put="/user/username"
-                hx-trigger="submit"
-                hx-target="#update-username"
-                hx-select="#update-username"
-                hx-swap="outerHTML"
-        >
-            <label for="new-username">New Username:</label>
-            <input type="text" id="new-username" name="newUsername" required>
-            <input type="submit" value="Update Username">
-            <#if statusMessage??>
-                <span>${statusMessage}</span>
-            </#if>
-        </form>
-    </div>
-
-    <div id="update-email"  class="user-data">
-        <form
-                hx-put="/user/email"
-                hx-trigger="submit"
-                hx-target="#update-email"
-                hx-select="#update-email"
-                hx-swap="outerHTML"
-        >
-            <label for="new-email">New Email:</label>
-            <input type="email" id="new-email" name="newEmail" required>
-            <input type="submit" value="Update Email">
-            <#if statusMessage??>
-                <span>${statusMessage}</span>
-            </#if>
-        </form>
-    </div>
-
-    <div id="update-password" class="user-data">
-        <form
-                hx-put="/user/password"
-                hx-trigger="submit"
-                hx-target="#update-password"
-                hx-select="#update-password"
-                hx-swap="outerHTML"
-        >
-            <label for="new-password">New Password:</label>
-            <input type="password" id="new-password" name="newPassword" required>
-            <input type="submit" value="Update Password">
-            <#if statusMessage??>
-                <span>${statusMessage}</span>
-            </#if>
-        </form>
-    </div>
-
-    <div id="update-profile-picture" class="user-data">
-        <p>Profile Picture:</p>
-        <form id="upload-form" enctype="multipart/form-data">
-            <input type="file" id="picture-upload" name="profilePicture" style="display: none;">
-            <button type="button" id="upload-button">Upload Picture</button>
-        </form>
-        <button
-                hx-delete="/user/profilePicture"
-                hx-target="#profile-pic"
-                hx-select-oob="#profile-pic"
-        >
-            Remove Picture
-        </button>
-    </div>
-
-    <div id="delete-account" class="delete-button">
-        <form
-                hx-delete="/user/account"
-                hx-trigger="submit"
-                hx-target="#delete-account"
-                hx-select="#delete-account"
-                onsubmit="return confirm('Are you sure you want to delete your account?');">
-            <input class="button" style="margin-left: 0;" type="submit" value="Delete Account">
-        </form>
-    </div>
-
-    <div class="user-data" hx-get="/hogwarts-house" hx-swap="outerHTML">
-        <#if house??>
-            <div class="user-data">
+    <section class="content profile-content">
+        <div class="user-house" hx-get="/hogwarts-house" hx-swap="outerHTML">
+            <#if house??>
                 <img
+                        class="user-house-symbol"
                         src="/static/img/${house}_symbol.png"
                         alt="${house} Symbol"
-                        style="width: 200px; height: 200px;"
                 />
-                <div style="color: #dab6bd;">Hogwarts House: ${house}</div>
+            </#if>
+        </div>
+
+        <div class="profile-picture-data">
+            <div class="picture-buttons">
+                <#if profilePictureData??>
+                        <div class="profile-picture-display">
+                            <img id="profile-pic" class="profile-picture" src="${profilePictureData}" alt="Profile Picture">
+                        </div>
+                </#if>
+                <div class="profile-picture-buttons">
+                    <form
+                            id="upload-form"
+                            enctype="multipart/form-data"
+                            hx-post="/user/profilepicture"
+                            hx-trigger="change from:#upload"
+                            hx-target="#profile-pic"
+                            hx-select-oob="#profile-pic"
+                            hx-swap="innerHTML"
+                    >
+                        <input
+                                type="file"
+                                id="upload"
+                                name="file"
+                                hidden
+                        />
+                        <label class="links button-main" for="upload">Choose file</label>
+                    </form>
+                    <button
+                            class="links"
+                            hx-delete="/user/profilepicture"
+                            hx-target="#profile-pic"
+                            hx-select="#profile-pic"
+                            style="margin: 15px 0 0 0;"
+                    >
+                        Remove Picture
+                    </button>
+                </div>
             </div>
-        <#else>
-            <p>No Hogwarts house assigned.</p>
-        </#if>
-    </div>
+            <span style="color:#f5c8ae;">Maximum size for picture: 5MB</span>
+        </div>
 
-    <script>
+        <div class="user-data-form">
+            <div id="update-username" class="user-data">
+                <form 
+                  class="profile-form" 
+                  hx-put="/user/username" 
+                  hx-trigger="submit" 
+                  hx-target="#update-username"
+                  hx-select="#update-username"
+                  hx-swap="outerHTML"
+                >
+                    <label for="new-username">
+                        <input type="text" id="new-username" name="newUsername" placeholder="New username" required>
+                    </label>
+                    <input class="button" type="submit" value="Save">
+                    <#if statusMessage??>
+                      <span>${statusMessage}</span>
+                    </#if>
+                </form>
+            </div>
 
+            <div id="update-email" class="user-data">
+                <form 
+                  class="profile-form" 
+                  hx-put="/user/email" 
+                  hx-trigger="submit" 
+                  hx-target="#update-email"
+                  hx-select="#update-email"
+                  hx-swap="outerHTML"
+                >
+                    <label for="new-email">
+                        <input type="email" id="new-email" name="newEmail" placeholder="Update e-mail" required>
+                    </label>
+                    <input class="button" type="submit" value="Save">
+                    <#if statusMessage??>
+                      <span>${statusMessage}</span>
+                    </#if>
+                </form>
+            </div>
 
+            <div id="update-password" class="user-data">
+                <form 
+                  class="profile-form" 
+                  hx-put="/user/password" 
+                  hx-trigger="submit" 
+                  hx-target="#update-password"
+                  hx-select="#update-password"
+                  hx-swap="outerHTML"
+                >
+                    <label for="new-password">
+                        <input type="password" id="new-password" name="newPassword" placeholder="New password" required>
+                    </label>
+                    <input class="button" type="submit" value="Save">
+                    <#if statusMessage??>
+                      <span>${statusMessage}</span>
+                    </#if>
+                </form>
+            </div>
+        </div>
 
-        document.addEventListener('DOMContentLoaded', function() {
-            var uploadButton = document.getElementById('upload-button');
+        <div id="delete-account" class="user-data " style="justify-content: flex-end;">
+            <form 
+              hx-delete="/user/account" 
+              hx-trigger="submit" 
+              hx-target="#delete-account"
+              hx-select="#delete-account"
+              onsubmit="return confirm('Are you sure you want to delete your account?');"
+            >
+                <input class="button delete-button" type="submit" value="Delete Account">
+            </form>
+        </div>
 
-            uploadButton.addEventListener('click', function() {
-                var fileInput = document.createElement('input');
-                fileInput.type = 'file';
-                fileInput.style.display = 'none';
-                document.body.appendChild(fileInput);
-                fileInput.click();
+    </section>
 
-                fileInput.addEventListener('change', function(event) {
-                    var file = event.target.files[0];
-
-                    if (file.size > 20 * 1024 * 1024) {
-                        alert('The selected picture is too big. Maximum file size is 20 MB.');
-                        return;
-                    }
-
-                    var reader = new FileReader();
-
-                    reader.onload = function(event) {
-                        var imageDataUrl = event.target.result;
-                        var profilePic = document.getElementById('profile-pic');
-                        profilePic.src = imageDataUrl;
-
-                        var formData = new FormData();
-                        formData.append('profilePicture', file);
-
-                        fetch('/user/profilePicture', {
-                            method: 'PUT',
-                            body: formData
-                        }).then(response => {
-                            return response.text().then(text => {
-                                if (response.ok) {
-                                    document.getElementById('message-container-picture').textContent = text;
-                                } else {
-                                    throw new Error(text);
-                                }
-                            });
-                        }).catch(error => {
-                            console.error('Error:', error);
-                            document.getElementById('message-container-picture').textContent = 'Failed to upload profile picture';
-                        });
-                    };
-
-                    reader.readAsDataURL(file);
-                    document.body.removeChild(fileInput);
-                });
-            });
-        });
-    </script>
-
-    </@layout.base>
+</@layout.base>

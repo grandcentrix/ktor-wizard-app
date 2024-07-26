@@ -1,6 +1,3 @@
-<#global userSession = "null">
-<#global profilePicture = "/static/img/no_profile_picture.png">
-
 <#macro base>
     <!DOCTYPE html>
     <html lang="en">
@@ -19,29 +16,24 @@
         <header>
             <nav class="user-menu">
                 <!-- Profile Picture Dropdown Section -->
-                <div class="dropdown tooltip" id="profile-dropdown">
+                <div class="dropdown" id="profile-dropdown">
                     <a href="#">
-                        <img class="profile-picture" id="profile-pic" src="${profilePicture}" alt="Profile Picture">
+                        <#if profilePictureData??>
+                            <img class="profile-picture" id="profile-pic" src="${profilePictureData}" alt="Profile Picture">
+                        </#if>
                     </a>
-                    <#if userSession == "null">
+                    <#if !userSession??>
                         <div class="dropdown-content">
                             <a href="/signup">Signup</a>
                             <a href="/login">Login</a>
                         </div>
                         <!-- End of Profile Picture Dropdown Section -->
-                    <#elseif userSession != "null">
-                        <div class="tooltip">
-                            <div class="tooltiptext">
-                                <#if username??>
-                                    <p>Username: ${username}
-                                        <#if house??>
-                                            <img src="/static/img/${house}_symbol.png" alt="${house} Symbol" style="width: 20px; height: 20px; vertical-align: middle;">
-                                        </#if>
-                                    </p>
-                                </#if>
-                            </div>
-                        </div>
+                    <#elseif userSession??>
+                        <#if house??>
+                            <img class="user-house-icon" src="/static/img/${house}_logo.webp" alt="${house} Symbol">
+                        </#if>
                         <div class="dropdown-content">
+                            <p>Hello, ${userSession.username}!</p>
                             <a href="/profile#favourites">Favourites</a>
                             <a href="/logout">Logout</a>
                         </div>

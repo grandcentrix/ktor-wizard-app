@@ -1,6 +1,4 @@
 <#import "_layout.ftl" as layout />
-<#assign statusMessage = message>
-<#assign profilePicture = profilePictureData in layout>
 
 <@layout.base>
 
@@ -11,7 +9,9 @@
 
     <form class="form form-signup" action="/signup" method="POST">
 
-        <span>${statusMessage}<br/></span>
+        <#if statusMessage??>
+            <span>${statusMessage}<br/></span>
+        </#if>
 
         <div class="register-fields">
             <label>

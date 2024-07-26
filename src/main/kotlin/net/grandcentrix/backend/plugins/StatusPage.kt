@@ -10,7 +10,8 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.controllers.getProfilePicture
-import net.grandcentrix.backend.repository.HousesRepository
+import net.grandcentrix.backend.dao.daoUsers
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouses
 
 fun Application.configureStatusPage() {
     routing {
@@ -59,15 +60,29 @@ fun Application.configureStatusPage() {
                         "signup.ftl",
                         mapOf(
                             "userSession" to "null",
-                            "houses" to HousesRepository.HousesRepositoryInstance.getAll(),
+                            "houses" to fetchHouses(),
                             "profilePictureData" to getProfilePicture(userSession=null),
-                            "message" to cause.message
+                            "statusMessage" to cause.message
                         )
                     )
                 }
 
                 is GravatarProfileException -> {
                     call.request.local.uri
+                }
+
+                is ProfilePictureException -> {
+                    val userSession: UserSession? = call.sessions.get<UserSession>()
+                    call.respondTemplate("profile.ftl",
+                        mapOf(
+                            "username" to userSession?.username,
+                            "uploadButton" to true,
+                            "userSession" to userSession,
+                            "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                            "profilePictureData" to getProfilePicture(userSession),
+                            "pictureStatusMessage" to cause.message
+                        )
+                    )
                 }
 
                 else -> {
@@ -123,3 +138,4 @@ class GravatarProfileException(
     override val message: String?,
     override val cause: Throwable? = null
 ): StatusException(message)
+class ProfilePictureException(override val message: String?): StatusException(message)
