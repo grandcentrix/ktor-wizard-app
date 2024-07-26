@@ -28,13 +28,11 @@ fun Application.configureRouting() {
 
             get {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val username = call.sessions.get<UserSession>()?.username
                 call.respond(
                     FreeMarkerContent(
                         "index.ftl",
                         mapOf(
-                            "session" to userSession.toString(),
-                            "username" to username,
+                            "userSession" to userSession,
                             "house" to userSession?.let { daoUsers.getHouse(it.username) },
                             "profilePictureData" to getProfilePicture(userSession)
                         )
@@ -48,7 +46,7 @@ fun Application.configureRouting() {
                     FreeMarkerContent(
                         "login.ftl",
                         mapOf(
-                            "session" to userSession.toString(),
+                            "userSession" to userSession,
                             "profilePictureData" to getProfilePicture(userSession)
                         )
                     )
@@ -73,7 +71,7 @@ fun Application.configureRouting() {
                             mapOf(
                                 "username" to username,
                                 "uploadButton" to true,
-                                "session" to userSession.toString(),
+                                "userSession" to userSession,
                                 "house" to userSession?.let { daoUsers.getHouse(it.username) },
                                 "profilePictureData" to getProfilePicture(userSession)
                             )
@@ -94,7 +92,7 @@ fun Application.configureRouting() {
                                 "session" to "null",
                                 "houses" to fetchHouses(),
                                 "profilePictureData" to getProfilePicture(userSession=null),
-                                "message" to ""
+                                "statusMessage" to null
                             )
                         )
                     )
@@ -246,7 +244,7 @@ fun Application.configureRouting() {
                 }
             }
 
-            put("/user/profilepicture") {
+            post("/user/profilepicture") {
                 val userSession = call.verifyUserSession()
                 val multipartData = call.receiveMultipart()
                 val imageDataPart = multipartData.readPart() as? PartData.FileItem
