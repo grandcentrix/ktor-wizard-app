@@ -164,7 +164,7 @@ fun Application.configureRouting() {
                 }
             }
 
-            post("/user/profilepicture") {
+            post("/user/profilePicture") {
                 val userSession = call.verifyUserSession()
                 val multipartData = call.receiveMultipart()
                 val imageDataPart = multipartData.readPart() as? PartData.FileItem

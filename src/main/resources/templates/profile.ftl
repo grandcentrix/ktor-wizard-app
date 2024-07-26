@@ -29,7 +29,7 @@
                     <form
                             id="upload-form"
                             enctype="multipart/form-data"
-                            hx-post="/user/profilepicture"
+                            hx-post="/user/profilePicture"
                             hx-trigger="change from:#upload"
                             hx-target="#profile-pic"
                             hx-select-oob="#profile-pic"
@@ -45,9 +45,9 @@
                     </form>
                     <button
                             class="links"
-                            hx-delete="/user/profilepicture"
+                            hx-delete="/user/profilePicture"
                             hx-target="#profile-pic"
-                            hx-select="#profile-pic"
+                            hx-select-oob="#profile-pic"
                             style="margin: 15px 0 0 0;"
                     >
                         Remove Picture
