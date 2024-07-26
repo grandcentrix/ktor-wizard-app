@@ -11,7 +11,7 @@ import io.ktor.server.sessions.*
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.controllers.getProfilePicture
 import net.grandcentrix.backend.dao.daoUsers
-import net.grandcentrix.backend.repository.HousesRepository
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouses
 
 fun Application.configureStatusPage() {
     routing {
@@ -67,7 +67,7 @@ fun Application.configureStatusPage() {
                         "signup.ftl",
                         mapOf(
                             "userSession" to "null",
-                            "houses" to HousesRepository.HousesRepositoryInstance.getAll(),
+                            "houses" to fetchHouses(),
                             "profilePictureData" to getProfilePicture(userSession=null),
                             "statusMessage" to cause.message
                         )

@@ -12,12 +12,12 @@ import io.ktor.server.sessions.*
 import net.grandcentrix.backend.controllers.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.dao.daoUsers
-import net.grandcentrix.backend.repository.BooksRepository.Companion.BooksRepositoryInstance
-import net.grandcentrix.backend.repository.CharactersRepository.Companion.CharactersRepositoryInstance
-import net.grandcentrix.backend.repository.HousesRepository.Companion.HousesRepositoryInstance
-import net.grandcentrix.backend.repository.MoviesRepository.Companion.MoviesRepositoryInstance
-import net.grandcentrix.backend.repository.PotionsRepository.Companion.PotionsRepositoryInstance
-import net.grandcentrix.backend.repository.SpellsRepository.Companion.SpellsRepositoryInstance
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBooks
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharacters
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouses
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchMovies
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchPotions
+import net.grandcentrix.backend.plugins.api.APIRequesting.fetchSpells
 
 fun Application.configureRouting() {
 
@@ -89,8 +89,8 @@ fun Application.configureRouting() {
                         FreeMarkerContent(
                             "signup.ftl",
                             mapOf(
-                                "userSession" to null,
-                                "houses" to HousesRepositoryInstance.getAll(),
+                                "session" to "null",
+                                "houses" to fetchHouses(),
                                 "profilePictureData" to getProfilePicture(userSession=null),
                                 "statusMessage" to null
                             )
@@ -116,8 +116,8 @@ fun Application.configureRouting() {
                 call.respondTemplate(
                     "books.ftl",
                     mapOf(
-                        "books" to BooksRepositoryInstance.getAll(),
-                        "userSession" to userSession,
+                        "books" to fetchBooks(),
+                        "session" to userSession.toString(),
                         "username" to username,
                         "house" to userSession?.let { daoUsers.getHouse(it.username) },
                         "profilePictureData" to getProfilePicture(userSession)
@@ -131,8 +131,8 @@ fun Application.configureRouting() {
                 call.respondTemplate(
                     "houses.ftl",
                     mapOf(
-                        "houses" to HousesRepositoryInstance.getAll(),
-                        "userSession" to userSession,
+                        "houses" to fetchHouses(),
+                        "session" to userSession.toString(),
                         "username" to username,
                         "house" to userSession?.let { daoUsers.getHouse(it.username) },
                         "profilePictureData" to getProfilePicture(userSession)
@@ -146,8 +146,8 @@ fun Application.configureRouting() {
                 call.respondTemplate(
                     "characters.ftl",
                     mapOf(
-                        "characters" to CharactersRepositoryInstance.getAll(),
-                        "userSession" to userSession,
+                        "characters" to fetchCharacters(),
+                        "session" to userSession.toString(),
                         "username" to username,
                         "house" to userSession?.let { daoUsers.getHouse(it.username) },
                         "profilePictureData" to getProfilePicture(userSession)
@@ -162,8 +162,8 @@ fun Application.configureRouting() {
                 call.respondTemplate(
                     "movies.ftl",
                     mapOf(
-                        "movies" to MoviesRepositoryInstance.getAll(),
-                        "userSession" to userSession,
+                        "movies" to fetchMovies(),
+                        "session" to userSession.toString(),
                         "username" to username,
                         "house" to userSession?.let { daoUsers.getHouse(it.username) },
                         "profilePictureData" to getProfilePicture(userSession)
@@ -178,8 +178,8 @@ fun Application.configureRouting() {
                 call.respondTemplate(
                     "potions.ftl",
                     mapOf(
-                        "potions" to PotionsRepositoryInstance.getAll(),
-                        "userSession" to userSession,
+                        "potions" to fetchPotions(),
+                        "session" to userSession.toString(),
                         "username" to username,
                         "house" to userSession?.let { daoUsers.getHouse(it.username) },
                         "profilePictureData" to getProfilePicture(userSession)
@@ -194,8 +194,8 @@ fun Application.configureRouting() {
                 call.respondTemplate(
                     "spells.ftl",
                     mapOf(
-                        "spells" to SpellsRepositoryInstance.getAll(),
-                        "userSession" to userSession,
+                        "spells" to fetchSpells(),
+                        "session" to userSession.toString(),
                         "username" to username,
                         "house" to userSession?.let { daoUsers.getHouse(it.username) },
                         "profilePictureData" to getProfilePicture(userSession)
