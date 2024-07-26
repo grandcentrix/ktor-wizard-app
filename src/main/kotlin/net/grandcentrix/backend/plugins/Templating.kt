@@ -7,12 +7,14 @@ import io.ktor.server.freemarker.*
 import net.grandcentrix.backend.controllers.UserSession
 import net.grandcentrix.backend.controllers.getProfilePicture
 import net.grandcentrix.backend.dao.daoUsers
+import net.grandcentrix.backend.models.House
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBooks
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharacters
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouses
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchMovies
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchPotions
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchSpells
+import net.grandcentrix.backend.plugins.api.APIRequesting.getHouseById
 
 fun Application.configureTemplating() {
     install(FreeMarker) {
@@ -21,14 +23,19 @@ fun Application.configureTemplating() {
     }
 }
 
-suspend fun ApplicationCall.getProfileTemplate(userSession: UserSession?, statusMessage: String? = null) =
+fun getUserHouse(username: String): House {
+    val houseId = daoUsers.getHouse(username)
+    return getHouseById(houseId)
+}
+
+suspend fun ApplicationCall.getProfileTemplate(userSession: UserSession, statusMessage: String? = null) =
     respondTemplate(
         "profile.ftl",
         mapOf(
-            "username" to userSession?.username,
+            "username" to userSession.username,
             "uploadButton" to true,
-            "session" to userSession.toString(),
-            "house" to userSession?.let { daoUsers.getHouse(it.username) },
+            "userSession" to userSession,
+            "house" to getUserHouse(userSession.username),
             "profilePictureData" to getProfilePicture(userSession),
             "statusMessage" to statusMessage
         )
@@ -39,9 +46,9 @@ suspend fun ApplicationCall.getBooksTemplate(userSession: UserSession?) =
         "books.ftl",
         mapOf(
             "books" to fetchBooks(),
-            "session" to userSession.toString(),
+            "userSession" to userSession,
             "username" to userSession?.username,
-            "house" to userSession?.let { daoUsers.getHouse(it.username) },
+            "house" to userSession?.let { getUserHouse(it.username) },
             "profilePictureData" to getProfilePicture(userSession),
         )
     )
@@ -51,9 +58,9 @@ suspend fun ApplicationCall.getCharactersTemplate(userSession: UserSession?) =
         "characters.ftl",
         mapOf(
             "characters" to fetchCharacters(),
-            "session" to userSession.toString(),
+            "userSession" to userSession,
             "username" to userSession?.username,
-            "house" to userSession?.let { daoUsers.getHouse(it.username) },
+            "house" to userSession?.let { getUserHouse(it.username) },
             "profilePictureData" to getProfilePicture(userSession),
         )
     )
@@ -63,9 +70,9 @@ suspend fun ApplicationCall.getHousesTemplate(userSession: UserSession?) =
         "houses.ftl",
         mapOf(
             "houses" to fetchHouses(),
-            "session" to userSession.toString(),
+            "userSession" to userSession,
             "username" to userSession?.username,
-            "house" to userSession?.let { daoUsers.getHouse(it.username) },
+            "house" to userSession?.let { getUserHouse(it.username) },
             "profilePictureData" to getProfilePicture(userSession),
         )
     )
@@ -75,9 +82,9 @@ suspend fun ApplicationCall.getMoviesTemplate(userSession: UserSession?) =
         "movies.ftl",
         mapOf(
             "movies" to fetchMovies(),
-            "session" to userSession.toString(),
+            "userSession" to userSession,
             "username" to userSession?.username,
-            "house" to userSession?.let { daoUsers.getHouse(it.username) },
+            "house" to userSession?.let { getUserHouse(it.username) },
             "profilePictureData" to getProfilePicture(userSession),
         )
     )
@@ -87,9 +94,9 @@ suspend fun ApplicationCall.getPotionsTemplate(userSession: UserSession?) =
         "potions.ftl",
         mapOf(
             "potions" to fetchPotions(),
-            "session" to userSession.toString(),
+            "userSession" to userSession,
             "username" to userSession?.username,
-            "house" to userSession?.let { daoUsers.getHouse(it.username) },
+            "house" to userSession?.let { getUserHouse(it.username) },
             "profilePictureData" to getProfilePicture(userSession),
         )
     )
@@ -99,9 +106,9 @@ suspend fun ApplicationCall.getSpellsTemplate(userSession: UserSession?) =
         "spells.ftl",
         mapOf(
             "spells" to fetchSpells(),
-            "session" to userSession.toString(),
+            "userSession" to userSession,
             "username" to userSession?.username,
-            "house" to userSession?.let { daoUsers.getHouse(it.username) },
+            "house" to userSession?.let { getUserHouse(it.username) },
             "profilePictureData" to getProfilePicture(userSession),
         )
     )

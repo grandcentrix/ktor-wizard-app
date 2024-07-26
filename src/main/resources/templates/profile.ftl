@@ -12,8 +12,8 @@
             <#if house??>
                 <img
                         class="user-house-symbol"
-                        src="/static/img/${house}_symbol.png"
-                        alt="${house} Symbol"
+                        src="/static/img/${house.name}_symbol.png"
+                        alt="${house.name} Symbol"
                 />
             </#if>
         </div>

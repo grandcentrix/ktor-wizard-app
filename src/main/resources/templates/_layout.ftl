@@ -30,7 +30,7 @@
                         <!-- End of Profile Picture Dropdown Section -->
                     <#elseif userSession??>
                         <#if house??>
-                            <img class="user-house-icon" src="/static/img/${house}_logo.webp" alt="${house} Symbol">
+                            <img class="user-house-icon" src="/static/img/${house.name}_logo.webp" alt="${house.name} Symbol">
                         </#if>
                         <div class="dropdown-content">
                             <p>Hello, ${userSession.username}!</p>

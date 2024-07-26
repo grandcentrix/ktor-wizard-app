@@ -51,7 +51,8 @@ fun Application.configureStatusPage() {
                 }
 
                 is UserAlreadyExistsException -> {
-                    val userSession: UserSession? = call.sessions.get<UserSession>()
+                    val userSession = call.sessions.get<UserSession>()
+                        ?: throw UnauthorizedException("User session not found")
                     call.getProfileTemplate(userSession, statusMessage = cause.message)
                 }
 

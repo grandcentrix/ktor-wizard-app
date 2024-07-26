@@ -11,13 +11,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import net.grandcentrix.backend.controllers.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
-import net.grandcentrix.backend.dao.daoUsers
-import net.grandcentrix.backend.plugins.api.APIRequesting.fetchBooks
-import net.grandcentrix.backend.plugins.api.APIRequesting.fetchCharacters
 import net.grandcentrix.backend.plugins.api.APIRequesting.fetchHouses
-import net.grandcentrix.backend.plugins.api.APIRequesting.fetchMovies
-import net.grandcentrix.backend.plugins.api.APIRequesting.fetchPotions
-import net.grandcentrix.backend.plugins.api.APIRequesting.fetchSpells
 
 fun Application.configureRouting() {
 
@@ -33,7 +27,7 @@ fun Application.configureRouting() {
                         "index.ftl",
                         mapOf(
                             "userSession" to userSession,
-                            "house" to userSession?.let { daoUsers.getHouse(it.username) },
+                            "house" to userSession?.let { getUserHouse(it.username) },
                             "profilePictureData" to getProfilePicture(userSession)
                         )
                     )
@@ -63,7 +57,8 @@ fun Application.configureRouting() {
 
             authenticate("auth-session") {
                 get("/profile") {
-                    val userSession: UserSession? = call.sessions.get<UserSession>()
+                    val userSession = call.sessions.get<UserSession>()
+                        ?: throw UnauthorizedException("User session not found")
                     call.getProfileTemplate(userSession)
                 }
             }
@@ -77,7 +72,7 @@ fun Application.configureRouting() {
                         FreeMarkerContent(
                             "signup.ftl",
                             mapOf(
-                                "session" to "null",
+                                "userSession" to "null",
                                 "houses" to fetchHouses(),
                                 "profilePictureData" to getProfilePicture(userSession=null),
                                 "statusMessage" to null
@@ -100,95 +95,32 @@ fun Application.configureRouting() {
 
             get("/books") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val username = call.sessions.get<UserSession>()?.username
-                call.respondTemplate(
-                    "books.ftl",
-                    mapOf(
-                        "books" to fetchBooks(),
-                        "session" to userSession.toString(),
-                        "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
-                        "profilePictureData" to getProfilePicture(userSession)
-                    )
-                )
+                call.getBooksTemplate(userSession)
             }
 
             get("/houses") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val username = call.sessions.get<UserSession>()?.username
-                call.respondTemplate(
-                    "houses.ftl",
-                    mapOf(
-                        "houses" to fetchHouses(),
-                        "session" to userSession.toString(),
-                        "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
-                        "profilePictureData" to getProfilePicture(userSession)
-                    )
-                )
+                call.getHousesTemplate(userSession)
             }
 
             get("/characters") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val username = call.sessions.get<UserSession>()?.username
-                call.respondTemplate(
-                    "characters.ftl",
-                    mapOf(
-                        "characters" to fetchCharacters(),
-                        "session" to userSession.toString(),
-                        "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
-                        "profilePictureData" to getProfilePicture(userSession)
-                    )
-                )
+                call.getCharactersTemplate(userSession)
             }
 
             get("/movies") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val username = call.sessions.get<UserSession>()?.username
-
-                call.respondTemplate(
-                    "movies.ftl",
-                    mapOf(
-                        "movies" to fetchMovies(),
-                        "session" to userSession.toString(),
-                        "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
-                        "profilePictureData" to getProfilePicture(userSession)
-                    )
-                )
+                call.getMoviesTemplate(userSession)
             }
 
             get("/potions") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val username = call.sessions.get<UserSession>()?.username
-
-                call.respondTemplate(
-                    "potions.ftl",
-                    mapOf(
-                        "potions" to fetchPotions(),
-                        "session" to userSession.toString(),
-                        "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
-                        "profilePictureData" to getProfilePicture(userSession)
-                    )
-                )
+                call.getPotionsTemplate(userSession)
             }
 
             get("/spells") {
                 val userSession: UserSession? = call.sessions.get<UserSession>()
-                val username = call.sessions.get<UserSession>()?.username
-
-                call.respondTemplate(
-                    "spells.ftl",
-                    mapOf(
-                        "spells" to fetchSpells(),
-                        "session" to userSession.toString(),
-                        "username" to username,
-                        "house" to userSession?.let { daoUsers.getHouse(it.username) },
-                        "profilePictureData" to getProfilePicture(userSession)
-                    )
-                )
+                call.getSpellsTemplate(userSession)
             }
 
             get("/logout") {
