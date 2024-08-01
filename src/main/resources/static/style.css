@@ -327,15 +327,15 @@ input[type=submit] {
 }
 
 .home-items {
-    width: calc(100% / 6);
+    width: 200px; /* fixed width */
+    height: 310px; /* fixed height */
     display: flex;
     flex-direction: column;
-    height: 310px;
     background-position: top;
     background-size: cover;
     justify-content: flex-end;
     align-items: center;
-    padding: 0 15px;
+    padding: 0 40px;
 }
 
 .home-items h2 {
