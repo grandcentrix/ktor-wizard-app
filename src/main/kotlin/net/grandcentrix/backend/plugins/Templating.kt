@@ -28,6 +28,20 @@ fun getUserHouse(username: String): House {
     return getHouseById(houseId)
 }
 
+suspend fun ApplicationCall.getTemplate(
+    templateName: String,
+    userSession: UserSession? = null,
+    valueMap: MutableMap<String,Any?>
+) = respondTemplate(
+        templateName,
+        valueMap.apply {
+            put("userSession", userSession)
+            put("username", userSession?.username)
+            put("house", userSession?.let { getUserHouse(it.username) })
+            put("profilePictureData", getProfilePicture(userSession))
+        }
+    )
+
 suspend fun ApplicationCall.getProfileTemplate(userSession: UserSession, statusMessage: String? = null) =
     respondTemplate(
         "profile.ftl",
@@ -42,73 +56,43 @@ suspend fun ApplicationCall.getProfileTemplate(userSession: UserSession, statusM
     )
 
 suspend fun ApplicationCall.getBooksTemplate(userSession: UserSession?) =
-    respondTemplate(
-        "books.ftl",
-        mapOf(
-            "books" to fetchBooks(),
-            "userSession" to userSession,
-            "username" to userSession?.username,
-            "house" to userSession?.let { getUserHouse(it.username) },
-            "profilePictureData" to getProfilePicture(userSession),
-        )
-    )
+   getTemplate(
+       "books.ftl",
+       userSession,
+       mutableMapOf("books" to fetchBooks())
+   )
 
 suspend fun ApplicationCall.getCharactersTemplate(userSession: UserSession?) =
-    respondTemplate(
+    getTemplate(
         "characters.ftl",
-        mapOf(
-            "characters" to fetchCharacters(),
-            "userSession" to userSession,
-            "username" to userSession?.username,
-            "house" to userSession?.let { getUserHouse(it.username) },
-            "profilePictureData" to getProfilePicture(userSession),
-        )
+        userSession,
+        mutableMapOf("characters" to fetchCharacters())
     )
 
 suspend fun ApplicationCall.getHousesTemplate(userSession: UserSession?) =
-    respondTemplate(
+    getTemplate(
         "houses.ftl",
-        mapOf(
-            "houses" to fetchHouses(),
-            "userSession" to userSession,
-            "username" to userSession?.username,
-            "house" to userSession?.let { getUserHouse(it.username) },
-            "profilePictureData" to getProfilePicture(userSession),
-        )
+        userSession,
+        mutableMapOf("houses" to fetchHouses())
     )
 
 suspend fun ApplicationCall.getMoviesTemplate(userSession: UserSession?) =
-    respondTemplate(
+    getTemplate(
         "movies.ftl",
-        mapOf(
-            "movies" to fetchMovies(),
-            "userSession" to userSession,
-            "username" to userSession?.username,
-            "house" to userSession?.let { getUserHouse(it.username) },
-            "profilePictureData" to getProfilePicture(userSession),
-        )
+        userSession,
+        mutableMapOf("movies" to fetchMovies())
     )
 
 suspend fun ApplicationCall.getPotionsTemplate(userSession: UserSession?) =
-    respondTemplate(
+    getTemplate(
         "potions.ftl",
-        mapOf(
-            "potions" to fetchPotions(),
-            "userSession" to userSession,
-            "username" to userSession?.username,
-            "house" to userSession?.let { getUserHouse(it.username) },
-            "profilePictureData" to getProfilePicture(userSession),
-        )
+        userSession,
+        mutableMapOf("potions" to fetchPotions())
     )
 
 suspend fun ApplicationCall.getSpellsTemplate(userSession: UserSession?) =
-    respondTemplate(
+    getTemplate(
         "spells.ftl",
-        mapOf(
-            "spells" to fetchSpells(),
-            "userSession" to userSession,
-            "username" to userSession?.username,
-            "house" to userSession?.let { getUserHouse(it.username) },
-            "profilePictureData" to getProfilePicture(userSession),
-        )
+        userSession,
+        mutableMapOf("spells" to fetchSpells())
     )
