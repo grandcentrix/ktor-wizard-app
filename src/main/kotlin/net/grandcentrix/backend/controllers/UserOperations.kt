@@ -2,21 +2,20 @@ package net.grandcentrix.backend.controllers
 
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.freemarker.*
 import io.ktor.server.response.*
 import io.ktor.server.sessions.*
 import io.ktor.util.*
 import net.grandcentrix.backend.controllers.Signup.Companion.SignupInstance
 import net.grandcentrix.backend.dao.daoUsers
 import net.grandcentrix.backend.models.GravatarProfile
-import net.grandcentrix.backend.plugins.DAOException
-import net.grandcentrix.backend.plugins.GravatarProfileException
-import net.grandcentrix.backend.plugins.RequestException
-import net.grandcentrix.backend.plugins.UserAlreadyExistsException
+import net.grandcentrix.backend.plugins.*
 import net.grandcentrix.backend.plugins.api.APIRequesting
 import java.io.File
 import java.nio.file.NoSuchFileException
 import java.util.*
 
+const val MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB - Profile Picture
 
 fun ApplicationCall.verifyUserSession(): UserSession? {
     val userSession = sessions.get<UserSession>()
@@ -107,10 +106,21 @@ suspend fun ApplicationCall.deleteAccount(userSession: UserSession) {
 suspend fun ApplicationCall.updateProfilePicture(userSession: UserSession, imageData: ByteArray?) {
     if (imageData == null) {
         throw RequestException("Image data is missing")
+    } else if (imageData.size > MAX_FILE_SIZE) {
+        val message = "File size exceeds the maximum limit of 5MB."
+        throw ProfilePictureException(message)
     }
     try {
         daoUsers.updateProfilePicture(userSession.username, imageData)
-        respondText("Profile picture uploaded successfully", status = HttpStatusCode.OK)
+        respondTemplate("profile.ftl",
+            mapOf(
+                "username" to userSession.username,
+                "uploadButton" to true,
+                "userSession" to userSession,
+                "house" to userSession.let { daoUsers.getHouse(it.username) },
+                "profilePictureData" to getProfilePicture(userSession),
+            )
+        )
     } catch (e: IllegalArgumentException) {
         throw RequestException("Invalid argument: ${e.localizedMessage}")
     } catch (e: DAOException) {
