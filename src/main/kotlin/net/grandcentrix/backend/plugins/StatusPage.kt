@@ -20,6 +20,7 @@ fun Application.configureStatusPage() {
 
     install(StatusPages) {
         exception<StatusException> { call, cause ->
+
             when (cause) {
                 is RequestException -> {
                     val userSession: UserSession? = call.sessions.get<UserSession>()
@@ -50,16 +51,9 @@ fun Application.configureStatusPage() {
                 }
 
                 is UserAlreadyExistsException -> {
-                    val userSession: UserSession? = call.sessions.get<UserSession>()
-                    call.respondTemplate(
-                        "error.ftl",
-                        mapOf(
-                            "errorMessage" to cause.message,
-                            "redirectLink" to "/signup",
-                            "session" to userSession.toString(),
-                            "profilePictureData" to getProfilePicture(userSession)
-                        )
-                    )
+                    val userSession = call.sessions.get<UserSession>()
+                        ?: throw UnauthorizedException("User session not found")
+                    call.getProfileTemplate(userSession, statusMessage = cause.message)
                 }
 
                 is SignupException -> {

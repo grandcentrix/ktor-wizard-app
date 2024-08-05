@@ -4,9 +4,7 @@
     <head>
         <title>Wizard</title>
         <link href="/static/style.css" rel="stylesheet" />
-        <link rel="stylesheet"
-              href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-        />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
         <script src="https://unpkg.com/htmx.org@2.0.0"
                 integrity="sha384-wS5l5IKJBvK6sPTKa2WZ1js3d947pvWXbPJ1OmWfEuxLgeHcEbjUUA5i9V5ZkpCw"
                 crossorigin="anonymous">
@@ -30,7 +28,7 @@
                         <!-- End of Profile Picture Dropdown Section -->
                     <#elseif userSession??>
                         <#if house??>
-                            <img class="user-house-icon" src="/static/img/${house}_logo.webp" alt="${house} Symbol">
+                            <img class="user-house-icon" src="/static/img/${house.name}_logo.webp" alt="${house.name} Symbol">
                         </#if>
                         <div class="dropdown-content">
                             <p>Hello, ${userSession.username}!</p>

@@ -18,6 +18,7 @@ import java.util.*
 const val MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB - Profile Picture
 
 fun ApplicationCall.verifyUserSession(): UserSession? {
+
     val userSession = sessions.get<UserSession>()
     if (userSession == null) {
         throw RequestException("User session is missing")
@@ -56,8 +57,10 @@ suspend fun ApplicationCall.updateEmail(userSession: UserSession, newEmail: Stri
     }
     try {
         daoUsers.updateEmail(username, newEmail)
-        response.headers.append("HX-Redirect", "/profile")
-        respondText("Email updated successfully", status = HttpStatusCode.OK)
+        val message = "Email updated successfully"
+        getProfileTemplate(userSession, message)
+//        response.headers.append("HX-Redirect", "/profile")
+//        respondText("Email updated successfully", status = HttpStatusCode.OK)
     } catch (e: IllegalArgumentException) {
         throw RequestException("Invalid argument: ${e.localizedMessage}")
     } catch (e: DAOException) {
@@ -133,8 +136,9 @@ suspend fun ApplicationCall.updateProfilePicture(userSession: UserSession, image
 suspend fun ApplicationCall.removeProfilePicture(userSession: UserSession) {
     try {
         daoUsers.removeProfilePicture(userSession.username)
-        response.headers.append("HX-Redirect", "/profile")
-        respondText("Profile picture removed successfully", status = HttpStatusCode.OK)
+        getProfileTemplate(userSession)
+//        response.headers.append("HX-Redirect", "/profile")
+//        respondText("Profile picture removed successfully", status = HttpStatusCode.OK)
     } catch (e: IllegalArgumentException) {
         throw RequestException("Invalid argument: ${e.localizedMessage}")
     } catch (e: DAOException) {
@@ -158,6 +162,7 @@ suspend fun ApplicationCall.getHogwartsHouse(userSession: UserSession) {
         throw RequestException("Failed to retrieve house: ${e.localizedMessage}")
     }
 }
+
 fun getGravatarProfile(userSession: UserSession): GravatarProfile {
     val username = userSession.username
     val userEmail = daoUsers.getItem(username)?.email

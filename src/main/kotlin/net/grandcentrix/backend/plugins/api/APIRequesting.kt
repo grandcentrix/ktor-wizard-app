@@ -42,7 +42,7 @@ object APIRequesting {
         client.get("https://wizard-world-api.herokuapp.com/Houses").body()
     }
 
-    fun getHouseById(id: String): List<House> = runBlocking {
+    fun getHouseById(id: String): House = runBlocking {
         client.get("https://wizard-world-api.herokuapp.com/Houses/$id").body()
     }
 

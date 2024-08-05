@@ -67,12 +67,12 @@ class DAOUsers : DAOFacade {
         }
     }
 
-    fun getHouse(username: String): String? {
+    fun getHouse(username: String): String {
         return transaction {
             Users.select { Users.username eq username }
                 .map { it[Users.house] }
                 .singleOrNull()
-        }
+        } ?: throw DAOException("House ID of user $username not found")
     }
 
     override fun deleteItem(username: String): Unit = transaction {
