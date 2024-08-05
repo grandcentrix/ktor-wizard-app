@@ -74,10 +74,6 @@ fun Application.configureStatusPage() {
                     )
                 }
 
-                is GravatarProfileException -> {
-                    call.request.local.uri
-                }
-
                 is ProfilePictureException -> {
                     val userSession: UserSession? = call.sessions.get<UserSession>()
                     call.respondTemplate("profile.ftl",

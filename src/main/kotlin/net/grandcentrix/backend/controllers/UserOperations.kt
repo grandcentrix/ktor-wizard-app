@@ -158,6 +158,7 @@ suspend fun ApplicationCall.getHogwartsHouse(userSession: UserSession) {
         throw RequestException("Failed to retrieve house: ${e.localizedMessage}")
     }
 }
+
 fun getGravatarProfile(userSession: UserSession): GravatarProfile {
     val username = userSession.username
     val userEmail = daoUsers.getItem(username)?.email
@@ -183,10 +184,9 @@ fun getProfilePicture(userSession: UserSession?): String {
         return if (profilePictureData?.isNotEmpty() == true) {
             "data:image/png;base64," + Base64.getEncoder().encodeToString(profilePictureData)
         } else {
-            val gravatarProfile = getGravatarProfile(userSession)
-            return if (gravatarProfile.error.isEmpty()) {
-                gravatarProfile.avatarUrl
-            } else {
+            try {
+                return getGravatarProfile(userSession).avatarUrl
+            } catch (e: GravatarProfileException) {
                 return getDefaultProfilePicture()
             }
         }
