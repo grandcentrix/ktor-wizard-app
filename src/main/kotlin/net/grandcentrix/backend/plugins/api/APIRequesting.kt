@@ -5,6 +5,7 @@ import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
+import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
@@ -76,10 +77,24 @@ object APIRequesting {
 
         try {
             val profile: GravatarProfile = runBlocking {
-                client.get("https://api.gravatar.com/v3/profiles/${emailKey}") {
+                val request = client.get("https://api.gravatar.com/v3/profiles/${emailKey}") {
                     bearerAuth("129:gk-N0JYWAg0JaYac_Bdl3ha8nadRp1rLIasSakKhP9VZMWoQzii2yBZM2VEZrsYP")
-                }.body()
+                }
+
+                when (request.status) {
+                    HttpStatusCode.NotFound -> {
+                        throw GravatarProfileException("404 - Profile not found")
+                    }
+                    HttpStatusCode.TooManyRequests -> {
+                        throw GravatarProfileException("429 - API rate limit exceeded")
+                    }
+                    HttpStatusCode.InternalServerError -> {
+                        throw GravatarProfileException("500 - Profile not found")
+                    }
+                    else -> request.body()
+                }
             }
+
             return profile
         } catch (cause: Throwable) {
             throw GravatarProfileException("Gravatar API failed", cause)
