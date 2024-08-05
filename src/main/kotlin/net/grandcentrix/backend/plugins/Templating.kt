@@ -43,14 +43,11 @@ suspend fun ApplicationCall.getTemplate(
     )
 
 suspend fun ApplicationCall.getProfileTemplate(userSession: UserSession, statusMessage: String? = null) =
-    respondTemplate(
+    getTemplate(
         "profile.ftl",
-        mapOf(
-            "username" to userSession.username,
+        userSession,
+        mutableMapOf(
             "uploadButton" to true,
-            "userSession" to userSession,
-            "house" to getUserHouse(userSession.username),
-            "profilePictureData" to getProfilePicture(userSession),
             "statusMessage" to statusMessage
         )
     )
